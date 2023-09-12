@@ -1,7 +1,7 @@
-import { app } from './settings'
+import { app } from "./settings";
 
-const port = process.env.PORT || 3005
+const port = process.env.PORT || 3006;
 
 app.listen(port, () => {
-  console.log(`listening port: ${port}`)
-})
+  console.log(`listening port: ${port}`);
+});
