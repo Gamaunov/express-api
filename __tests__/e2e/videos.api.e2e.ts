@@ -12,7 +12,7 @@ const getRequest = () => {
 
 describe('home video', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPath.__test__}/data`)
+    await getRequest().delete(`${RouterPath.testing}/all-data`)
   })
 
   it('should return 200 and empty array', async () => {
