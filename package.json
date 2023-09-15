@@ -16,13 +16,16 @@
     "dev": "yarn nodemon --inspect dist/index.js",
     "build": "tsc",
     "start": "node dist/index.js",
-    "jest": "jest -i"
+    "pretty": "prettier --write \"**/*.{js,ts}\"",
+    "test-e2e": "jest -i --detectOpenHandles --no-cashe  --watchAll --config ./__tests__/jest-e2e.config.js"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
     "@types/node": "^20.6.0",
     "nodemon": "^3.0.1",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
+    "@trivago/prettier-plugin-sort-imports": "^4.2.0",
     "typescript": "^5.2.2"
   }
 }
