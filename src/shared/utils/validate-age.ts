@@ -1,9 +1,9 @@
 export const validateAge = (age: any) => {
   if (
     age === null ||
-    (typeof age === "number" && Number.isInteger(age) && age >= 1 && age <= 18)
+    (typeof age === 'number' && Number.isInteger(age) && age >= 1 && age <= 18)
   ) {
-    return true;
+    return true
   }
-  return false;
-};
+  return false
+}

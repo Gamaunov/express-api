@@ -1,12 +1,13 @@
-import express from "express";
-import { RouterPath } from "./shared/utils/router-path";
-import { getVideoRouter } from "./features/videos/video.router";
-import { db } from "./db/db";
-import { getTestsRouter } from "./routes/tests";
+import express from 'express'
 
-export const app = express();
+import { db } from './db/db'
+import { getVideoRouter } from './features/videos/video.router'
+import { getTestsRouter } from './routes/tests'
+import { RouterPath } from './shared/utils/router-path'
 
-app.use(express.json());
+export const app = express()
 
-app.use(RouterPath.videos, getVideoRouter(db));
-app.use(RouterPath.__test__, getTestsRouter(db));
+app.use(express.json())
+
+app.use(RouterPath.videos, getVideoRouter(db))
+app.use(RouterPath.__test__, getTestsRouter(db))

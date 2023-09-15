@@ -1,7 +1,7 @@
-import { app } from "./app";
+import { app } from './app'
 
-const port = process.env.PORT || 3006;
+const port = process.env.PORT || 3006
 
 app.listen(port, () => {
-  console.log(`listening port:: https://localhost:${port}`);
-});
+  console.log(`listening port:: https://localhost:${port}`)
+})

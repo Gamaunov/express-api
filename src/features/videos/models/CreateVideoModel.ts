@@ -1,7 +1,7 @@
-import { AvailableResolutions } from "../../../shared/types/types";
+import { AvailableResolutions } from '../../../shared/types/types'
 
 export type CreateVideoModel = {
-  title: string;
-  author: string;
-  availableResolutions: AvailableResolutions[];
-};
+  title: string
+  author: string
+  availableResolutions: AvailableResolutions[]
+}

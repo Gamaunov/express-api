@@ -1,3 +1,3 @@
 export type QueryVideoModel = {
-  title: string;
-};
+  title: string
+}

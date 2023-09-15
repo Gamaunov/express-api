@@ -1,5 +1,5 @@
-import { VideoViewModel } from "./VideoViewModel";
-import { VideoType } from "../../../shared/types/types";
+import { VideoType } from '../../../shared/types/types'
+import { VideoViewModel } from './VideoViewModel'
 
 export const getVideoViewModel = (dbVideo: VideoType): VideoViewModel => {
   return {
@@ -11,5 +11,5 @@ export const getVideoViewModel = (dbVideo: VideoType): VideoViewModel => {
     createdAt: dbVideo.createdAt,
     publicationDate: dbVideo.publicationDate,
     availableResolutions: dbVideo.availableResolutions,
-  };
-};
+  }
+}

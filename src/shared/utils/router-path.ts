@@ -1,4 +1,4 @@
 export enum RouterPath {
-  videos = "/videos",
-  __test__ = "/__test__",
+  videos = '/videos',
+  __test__ = '/__test__',
 }
