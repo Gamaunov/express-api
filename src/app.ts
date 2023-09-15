@@ -14,7 +14,7 @@ app.use(RouterPath.home, getHomeRouter())
 app.use(RouterPath.videos, getVideoRouter(db))
 // app.use(RouterPath.testing, getTestingRouter(db))
 
-app.delete('/testing/all-data', (req, res) => {
+app.delete('/videos/testing/all-data', (req, res) => {
   db.video.length = 0
   res.send(204)
 })
