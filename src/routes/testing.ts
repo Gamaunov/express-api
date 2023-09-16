@@ -8,7 +8,7 @@ export const getTestingRouter = (db: DBType) => {
 
   router.delete('/all-data', (req, res) => {
     db.video.length = 0
-    res.send(HTTP_STATUSES.NO_CONTENT_204)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   })
 
   return router
