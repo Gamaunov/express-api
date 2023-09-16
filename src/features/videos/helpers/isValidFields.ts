@@ -20,11 +20,11 @@ export const isValidFields = (
   minAgeRestriction?: number | null,
   publicationDate?: string,
 ) => {
-  if (!title || !title.length || title.trim().length > 40) {
+  if (!title || title.length === 0 || title.trim().length > 40) {
     pushErrors('title')
   }
 
-  if (!author || !author.length || author.trim().length > 20) {
+  if (!author || author.length === 0 || author.trim().length > 20) {
     pushErrors('author')
   }
 

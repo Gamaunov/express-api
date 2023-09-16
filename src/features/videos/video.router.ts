@@ -81,18 +81,22 @@ export const getVideoRouter = (db: DBType) => {
 
   router.put(
     `/:id`,
-    (req: RequestWithParamsAndBody<{ id: string }, UpdateVideoModel>, res) => {
-      let {
-        title,
-        author,
-        availableResolutions,
-        canBeDownloaded,
-        minAgeRestriction,
-        publicationDate,
-      } = req.body
+    (
+      req: RequestWithParamsAndBody<{ id: string }, UpdateVideoModel>,
+      res: Response,
+    ) => {
       const foundVideo = db.video.find((v) => v.id === +req.params.id)
 
-      const handleVideo = () => {
+      if (foundVideo) {
+        const {
+          title,
+          author,
+          availableResolutions,
+          canBeDownloaded,
+          minAgeRestriction,
+          publicationDate,
+        } = req.body
+
         if (
           isValidFields(
             title,
@@ -104,20 +108,19 @@ export const getVideoRouter = (db: DBType) => {
           )
         ) {
           res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
-          errors.errorsMessages = []
-          return
         } else {
           foundVideo.author = author
           foundVideo.minAgeRestriction = minAgeRestriction! //!
           foundVideo.canBeDownloaded = canBeDownloaded! //!
           foundVideo.publicationDate = publicationDate
           foundVideo.title = title
+          foundVideo.availableResolutions = availableResolutions
 
           res.status(HTTP_STATUSES.NO_CONTENT_204).send()
         }
+      } else {
+        res.send(HTTP_STATUSES.NOT_FOUND_404)
       }
-
-      foundVideo ? handleVideo() : res.send(HTTP_STATUSES.NOT_FOUND_404)
     },
   )
 
