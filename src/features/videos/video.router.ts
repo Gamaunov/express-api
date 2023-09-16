@@ -38,7 +38,7 @@ export const getVideoRouter = (db: DBType) => {
     `/:id`,
     (req: RequestWithParams<{ id: string }>, res: Response<VideoViewModel>) => {
       let foundVideo = db.video.find((v) => v.id === +req.params.id)
-      foundVideo
+      return foundVideo
         ? res.status(HTTP_STATUSES.OK_200).send(foundVideo)
         : res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     },
@@ -64,7 +64,7 @@ export const getVideoRouter = (db: DBType) => {
       publicationDate.setDate(createdAt.getDate() + 1)
 
       const newVideo: VideoType = {
-        id: +new Date(),
+        id: +createdAt,
         canBeDownloaded: false,
         minAgeRestriction: null,
         createdAt: createdAt.toISOString(),
@@ -86,9 +86,11 @@ export const getVideoRouter = (db: DBType) => {
         title,
         author,
         availableResolutions,
-        canBeDownloaded = false,
-        minAgeRestriction = null,
+        canBeDownloaded,
+        minAgeRestriction,
+        publicationDate,
       } = req.body
+      const foundVideo = db.video.find((v) => v.id === +req.params.id)
 
       if (
         isValidFields(
@@ -97,42 +99,21 @@ export const getVideoRouter = (db: DBType) => {
           availableResolutions,
           canBeDownloaded,
           minAgeRestriction,
+          publicationDate,
         )
       ) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
         errors.errorsMessages = []
         return
+      } else {
+        foundVideo.author = author
+        foundVideo.minAgeRestriction = minAgeRestriction! //!
+        foundVideo.canBeDownloaded = canBeDownloaded! //!
+        foundVideo.publicationDate = publicationDate
+        foundVideo.title = title
+
+        res.status(HTTP_STATUSES.NO_CONTENT_204)
       }
-
-      const createdAt = new Date()
-      const publicationDate = new Date()
-
-      publicationDate.setDate(createdAt.getDate() + 1)
-
-      const updatedVideo: VideoType = {
-        id: +new Date(),
-        createdAt: createdAt.toISOString(),
-        publicationDate: publicationDate.toISOString(),
-        canBeDownloaded,
-        minAgeRestriction,
-        title,
-        author,
-        availableResolutions,
-      }
-
-      const videoIndex = db.video.findIndex((i) => i.id === +req.params.id)
-
-      if (videoIndex === -1) {
-        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        return
-      }
-
-      db.video[videoIndex] = {
-        ...db.video[videoIndex],
-        ...updatedVideo,
-      }
-
-      res.status(HTTP_STATUSES.NO_CONTENT_204).send(db.video[videoIndex])
     },
   )
 

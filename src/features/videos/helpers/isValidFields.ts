@@ -18,6 +18,7 @@ export const isValidFields = (
   availableResolutions: AvailableResolutions[],
   canBeDownloaded?: boolean,
   minAgeRestriction?: number | null,
+  publicationDate?: string,
 ) => {
   if (!title || !title.length || title.trim().length > 40) {
     pushErrors('title')
@@ -32,9 +33,6 @@ export const isValidFields = (
       !AvailableResolutions[r] && pushErrors('availableResolutions')
     })
   }
-  // else {
-  //   availableResolutions = [];
-  // }
 
   if (canBeDownloaded) {
     if (
@@ -48,6 +46,12 @@ export const isValidFields = (
   if (minAgeRestriction) {
     if (!validateAge(minAgeRestriction)) {
       pushErrors('minAgeRestriction')
+    }
+  }
+
+  if (publicationDate) {
+    if (!publicationDate || typeof publicationDate !== 'string') {
+      pushErrors('publicationDate')
     }
   }
 
