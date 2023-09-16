@@ -107,7 +107,7 @@ export const getVideoRouter = (db: DBType) => {
             publicationDate,
           )
         ) {
-          res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
+          res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors.errorsMessages)
         } else {
           foundVideo.author = author
           foundVideo.minAgeRestriction = minAgeRestriction! //!
