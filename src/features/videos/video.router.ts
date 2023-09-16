@@ -108,6 +108,7 @@ export const getVideoRouter = (db: DBType) => {
           )
         ) {
           res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors.errorsMessages)
+          errors.errorsMessages = []
         } else {
           foundVideo.author = author
           foundVideo.minAgeRestriction = minAgeRestriction! //!
