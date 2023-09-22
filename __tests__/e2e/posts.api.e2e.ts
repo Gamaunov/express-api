@@ -161,7 +161,7 @@ describe('posts', () => {
       title: 'string',
       shortDescription: 'string',
       content: 'string',
-      blogId: 'string',
+      blogId: '0',
     }
 
     const username = 'admin'

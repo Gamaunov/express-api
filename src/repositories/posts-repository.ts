@@ -10,6 +10,11 @@ export const postsRepository = {
     return post
   },
 
+  getPostByBlogId(id: string) {
+    let blog = db.posts.find((b) => b.blogId === id)
+    blog ? true : false
+  },
+
   createPost(
     blogId: string,
     content: string,

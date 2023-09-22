@@ -34,12 +34,12 @@ export const BlogErrorsValidation = (
 ) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    const errorMessages = errors
+    const errorsMessages = errors
       .array({ onlyFirstError: true })
       .map((e) => ErrorsFormatter(e))
 
     const responseData = {
-      errorMessages,
+      errorMessages: errorsMessages,
     }
 
     res.status(400).json(responseData)
