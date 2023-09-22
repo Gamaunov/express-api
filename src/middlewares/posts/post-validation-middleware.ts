@@ -53,6 +53,7 @@ export const PostErrorsValidation = (
 
     const responseData = {
       errorsMessages: errorsMessages,
+      errorMessages: errorsMessages,
     }
 
     res.status(400).json(responseData)
