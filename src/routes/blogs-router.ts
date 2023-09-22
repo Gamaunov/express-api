@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express'
 
 import { authGuardMiddleware } from '../middlewares/authGuardMiddleware'
 import {
-  ErrorsBlogValidation,
+  BlogErrorsValidation,
   ValidateBlog,
 } from '../middlewares/blogs/blog-validation-middleware'
 import { CreateBlogModel } from '../models/blogs/CreatBlogModel'
@@ -34,7 +34,7 @@ export const blogsRouter = () => {
     `/`,
     authGuardMiddleware,
     ValidateBlog(),
-    ErrorsBlogValidation,
+    BlogErrorsValidation,
     (req: RequestWithBody<CreateBlogModel>, res: Response) => {
       const { name, description, websiteUrl } = req.body
       const newBlog = blogsRepository.createBlog(name, description, websiteUrl)
@@ -46,7 +46,7 @@ export const blogsRouter = () => {
     `/:id`,
     authGuardMiddleware,
     ValidateBlog(),
-    ErrorsBlogValidation,
+    BlogErrorsValidation,
     (
       req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreateBlogModel>,
       res: Response,
@@ -64,11 +64,15 @@ export const blogsRouter = () => {
     },
   )
 
-  router.delete(`/:id`, authGuardMiddleware, (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
-    const isDeleted = blogsRepository.deleteBlog(req.params.id)
+  router.delete(
+    `/:id`,
+    authGuardMiddleware,
+    (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
+      const isDeleted = blogsRepository.deleteBlog(req.params.id)
 
-    isDeleted ? res.send(204) : res.send(404)
-  })
+      isDeleted ? res.send(204) : res.send(404)
+    },
+  )
 
   return router
 }

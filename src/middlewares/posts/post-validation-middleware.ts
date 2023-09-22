@@ -40,7 +40,12 @@ export const PostErrorsValidation = (
     const errorMessages = errors
       .array({ onlyFirstError: true })
       .map((e) => ErrorsFormatter(e))
-    res.status(400).send(errorMessages)
+
+    const responseData = {
+      errorMessages,
+    }
+
+    res.status(400).json(responseData)
     return
   }
   next()
