@@ -70,11 +70,15 @@ export const postsRouter = () => {
     },
   )
 
-  router.delete(`/:id`, (req: RequestWithParams<URIParamsPostIdModel>, res) => {
-    const isDeleted = postsRepository.deletePost(req.params.id)
+  router.delete(
+    `/:id`,
+    authGuardMiddleware,
+    (req: RequestWithParams<URIParamsPostIdModel>, res) => {
+      const isDeleted = postsRepository.deletePost(req.params.id)
 
-    isDeleted ? res.sendStatus(204) : res.sendStatus(404)
-  })
+      isDeleted ? res.sendStatus(204) : res.sendStatus(404)
+    },
+  )
 
   return router
 }

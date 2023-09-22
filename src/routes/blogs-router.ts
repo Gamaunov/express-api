@@ -64,7 +64,7 @@ export const blogsRouter = () => {
     },
   )
 
-  router.delete(`/:id`, (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
+  router.delete(`/:id`, authGuardMiddleware, (req: RequestWithParams<URIParamsBlogIdModel>, res) => {
     const isDeleted = blogsRepository.deleteBlog(req.params.id)
 
     isDeleted ? res.send(204) : res.send(404)
