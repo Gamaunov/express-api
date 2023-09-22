@@ -6,7 +6,7 @@ import { blogsRepository } from '../../repositories/blogs-repository'
 const validateBlogId = async (blogId: string) => {
   const blog = await blogsRepository.getBlogByBlogId(blogId)
   if (!blog) {
-    throw new Error('blogId')
+    throw new Error()
   }
 }
 
