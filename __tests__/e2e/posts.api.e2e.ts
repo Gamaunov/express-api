@@ -1,6 +1,7 @@
 import request from 'supertest'
 
 import { app } from '../../src/app'
+import { CreateBlogModel } from '../../src/models/blogs/CreatBlogModel'
 import { CreatePostModel } from '../../src/models/posts/CreatPostModel'
 import { RouterPath } from '../../src/shared/utils/router-path'
 
@@ -150,24 +151,51 @@ describe('posts', () => {
   })
 
   let createdPost: any = null
-
-  it(`should create post with correct input data + 
+  let createdBlog: any = null
+  it(`should create blog with correct input data +
+  should create post with correct input data + 
   shouldn't update blog with incorrect input data + 
   shouldn update blog with correct authorization data, input data +
   should delete blog by id with existing id +
   shouldn't delete blog by id with not existing id 
   `, async () => {
+    const username = 'admin'
+    const password = 'qwerty'
+    const authHeader = encodeCredentials(username, password)
+
+    //creating blog
+    const blogData: CreateBlogModel = {
+      name: 'string',
+      description: 'string',
+      websiteUrl: 'https://google.com',
+    }
+
+    const createBlogRequest = await getRequest()
+      .post(RouterPath.blogs)
+      .set('Authorization', authHeader)
+      .send(blogData)
+      .expect(201)
+
+    createdBlog = createBlogRequest.body
+
+    expect(createdBlog).toEqual({
+      id: expect.any(String),
+      name: blogData.name,
+      description: blogData.description,
+      websiteUrl: blogData.websiteUrl,
+    })
+
+    const getBlogsRequest = await getRequest().get(RouterPath.blogs).expect(200)
+
+    expect(getBlogsRequest.body).toContainEqual(createdBlog)
+
+    //creating posts
     const data: CreatePostModel = {
       title: 'string',
       shortDescription: 'string',
       content: 'string',
-      blogId: '0',
+      blogId: createdBlog.id,
     }
-
-    const username = 'admin'
-    const password = 'qwerty'
-
-    const authHeader = encodeCredentials(username, password)
 
     const createRequest = await getRequest()
       .post(RouterPath.posts)
