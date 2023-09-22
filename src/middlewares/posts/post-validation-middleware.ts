@@ -1,6 +1,15 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
+import { blogsRepository } from '../../repositories/blogs-repository'
+
+const validateBlogId = async (blogId: string) => {
+  const blog = await blogsRepository.getBlogByBlogId(blogId)
+  if (!blog) {
+    throw new Error('blogId')
+  }
+}
+
 export const PostValidation = () => {
   return [
     body('title')
@@ -26,7 +35,8 @@ export const PostValidation = () => {
       .isString()
       .trim()
       .isLength({ min: 1, max: 100 })
-      .withMessage('Invalid blogId'),
+      .withMessage('Invalid blogId')
+      .custom(validateBlogId),
   ]
 }
 
@@ -37,12 +47,12 @@ export const PostErrorsValidation = (
 ) => {
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
-    const errorMessages = errors
+    const errorsMessages = errors
       .array({ onlyFirstError: true })
       .map((e) => ErrorsFormatter(e))
 
     const responseData = {
-      errorMessages,
+      errorsMessages: errorsMessages,
     }
 
     res.status(400).json(responseData)

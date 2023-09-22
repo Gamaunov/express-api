@@ -10,6 +10,11 @@ export const blogsRepository = {
     return blog
   },
 
+  getBlogByBlogId(id: string) {
+    const blog = db.blogs.find((b) => b.id === id)
+    return blog || null
+  },
+
   createBlog(name: string, description: string, websiteUrl: string) {
     const newBlog = {
       id: new Date().toISOString(),
