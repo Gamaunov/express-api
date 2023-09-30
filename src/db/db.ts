@@ -5,7 +5,9 @@ import { BlogType, PostType } from './dbTypes'
 
 dotenv.config()
 
-const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
+const mongoURI = process.env.MONGO_URI
+
+if (!mongoURI) throw new Error('mongoURI not found')
 
 const client = new MongoClient(mongoURI)
 
