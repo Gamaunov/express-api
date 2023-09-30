@@ -1,68 +1,77 @@
-import { db } from '../db/db'
+import { ObjectId } from 'mongodb'
+
+import { postsCollection } from '../db/db'
+import { PostType } from '../db/dbTypes'
 
 export const postsRepository = {
-  getAllPosts() {
-    return db.posts
+  async getAllPosts() {
+    return postsCollection.find({}).toArray()
   },
 
-  getPostById(id: string) {
-    let post = db.posts.find((p) => p.id === id)
-    return post
+  async getPostById(id: string): Promise<PostType | null> {
+    const _id = new ObjectId(id)
+
+    const blog: PostType | null = await postsCollection.findOne({ _id })
+
+    return blog
   },
 
-  getPostByBlogId(id: string) {
-    let blog = db.posts.find((b) => b.blogId === id)
-    blog ? true : false
-  },
+  // async getPostByBlogId(id: string) {
+  //   let blog = db.find((b) => b.blogId === id)
+  //   blog ? true : false
+  // },
 
-  createPost(
+  async createPost(
     blogId: string,
-    content: string,
     shortDescription: string,
+    content: string,
     title: string,
-  ) {
-    const newpost = {
-      id: new Date().toISOString(),
-      blogId: blogId,
-      content: content,
-      shortDescription: shortDescription,
-      title: title,
+  ): Promise<PostType> {
+    const newPost = {
+      _id: new ObjectId(),
+      title,
+      shortDescription,
+      content,
+      blogId,
       blogName: title,
+      createdAt: new Date().toISOString(),
     }
-    db.posts.push(newpost)
-    return newpost
+
+    await postsCollection.insertOne(newPost)
+
+    return newPost
   },
 
-  updatePost(
+  async updatePost(
     id: string,
-    blogId: string,
-    content: string,
-    shortDescription: string,
     title: string,
-  ) {
-    let post = db.posts.find((p) => p.id === id)
+    shortDescription: string,
+    content: string,
+    blogId: string,
+  ): Promise<boolean> {
+    const _id = new ObjectId(id)
 
-    if (!post) {
-      return false
-    } else {
-      post.blogId = blogId
-      post.content = content
-      post.shortDescription = shortDescription
-      post.title = title
-      return true
-    }
+    let isPostUpdated = await postsCollection.updateOne(
+      { _id },
+      { $set: { title, shortDescription, content, blogId } },
+    )
+
+    return isPostUpdated.matchedCount === 1
   },
 
-  deletePost(id: string) {
-    const index = db.posts.findIndex((post) => post.id === id)
-    if (index !== -1) {
-      db.posts.splice(index, 1)
-      return true
-    }
-    return false
+  async deletePost(id: string): Promise<boolean> {
+    const _id = new ObjectId(id)
+
+    const isPostDeleted = await postsCollection.deleteOne({ _id })
+
+    return isPostDeleted.deletedCount === 1
   },
 
-  deleteAllPosts() {
-    db.posts.length = 0
+  async deleteAllPosts() {
+    try {
+      await postsCollection.deleteMany({})
+    } catch (e) {
+      console.error('Error deleting documents:', e)
+    }
   },
 }

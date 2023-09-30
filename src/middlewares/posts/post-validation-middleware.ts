@@ -4,7 +4,7 @@ import { ValidationError, body, validationResult } from 'express-validator'
 import { blogsRepository } from '../../repositories/blogs-repository'
 
 const validateBlogId = async (blogId: string) => {
-  const blog = await blogsRepository.getBlogByBlogId(blogId)
+  const blog = await blogsRepository.getBlogById(blogId)
   if (!blog) {
     throw new Error()
   }
