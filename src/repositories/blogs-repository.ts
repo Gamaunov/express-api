@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb'
 
-import { blogsCollection, db } from '../db/db'
+import { blogsCollection } from '../db/db'
 import { BlogType } from '../db/dbTypes'
 
 export const blogsRepository = {

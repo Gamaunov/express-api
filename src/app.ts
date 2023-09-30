@@ -1,6 +1,5 @@
 import express from 'express'
 
-import { db } from './db/db'
 import { blogsRouter } from './routes/blogs-router'
 import { getHomeRouter } from './routes/home'
 import { postsRouter } from './routes/posts-router'
