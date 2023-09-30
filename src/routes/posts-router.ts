@@ -35,7 +35,6 @@ export const postsRouter = () => {
 
   router.post(
     `/`,
-    validateObjectId,
     authGuardMiddleware,
     PostValidation(),
     PostErrorsValidation,
