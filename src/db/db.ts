@@ -10,7 +10,7 @@ const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 // console.log(process.env.MONGO_URL)
 
 const client = new MongoClient(mongoURI)
-export const db = client.db('hw03')
+export const db = client.db('hw')
 export const blogsCollection = db.collection<BlogType>('blogs')
 export const postsCollection = db.collection<PostType>('posts')
 
