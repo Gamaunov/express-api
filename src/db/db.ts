@@ -8,9 +8,9 @@ dotenv.config()
 const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 
 const client = new MongoClient(mongoURI)
-export const db = client.db('hw')
-export const blogsCollection = db.collection<BlogType>('blogs')
-export const postsCollection = db.collection<PostType>('posts')
+
+export const blogsCollection = client.db().collection<BlogType>('blogs')
+export const postsCollection = client.db().collection<PostType>('posts')
 
 export async function runDb() {
   try {
