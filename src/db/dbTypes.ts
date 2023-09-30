@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 
 export type BlogType = {
-  _id: ObjectId
+  id: ObjectId
   name: string
   description: string
   websiteUrl: string
@@ -10,7 +10,7 @@ export type BlogType = {
 }
 
 export type PostType = {
-  _id: ObjectId
+  id: ObjectId
   title: string
   shortDescription: string
   content: string

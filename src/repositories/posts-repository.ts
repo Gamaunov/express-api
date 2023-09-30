@@ -28,7 +28,7 @@ export const postsRepository = {
     title: string,
   ): Promise<PostType> {
     const newPost = {
-      _id: new ObjectId(),
+      id: new ObjectId(),
       title,
       shortDescription,
       content,

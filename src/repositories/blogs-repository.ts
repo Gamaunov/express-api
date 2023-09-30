@@ -25,20 +25,27 @@ export const blogsRepository = {
     description: string,
     websiteUrl: string,
   ): Promise<BlogType> {
-    const now = new Date()
-
     const newBlog = {
-      _id: new ObjectId(),
+      id: new ObjectId(),
       name: name,
       description: description,
       websiteUrl: websiteUrl,
-      createdAt: now.toISOString(),
+      createdAt: new Date().toISOString(),
       isMembership: false,
     }
 
     await blogsCollection.insertOne(newBlog)
 
-    return newBlog
+    const transformedResponse = {
+      id: newBlog.id,
+      name: newBlog.name,
+      description: newBlog.description,
+      websiteUrl: newBlog.websiteUrl,
+      createdAt: newBlog.createdAt,
+      isMembership: newBlog.isMembership,
+    }
+
+    return transformedResponse
   },
 
   async updateBlog(
