@@ -190,6 +190,8 @@ describe('blogs', () => {
       name: data.name,
       description: data.description,
       websiteUrl: data.websiteUrl,
+      createdAt: expect.any(String),
+      isMembership: false,
     })
 
     const getBlogsRequest = await getRequest().get(RouterPath.blogs).expect(200)
@@ -365,6 +367,7 @@ describe('blogs', () => {
       .send(validData)
       .expect(404)
   })
+  
   afterAll((done) => {
     done()
   })

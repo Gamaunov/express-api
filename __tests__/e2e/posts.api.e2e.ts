@@ -183,6 +183,8 @@ describe('posts', () => {
       name: blogData.name,
       description: blogData.description,
       websiteUrl: blogData.websiteUrl,
+      createdAt: expect.any(String),
+      isMembership: false,
     })
 
     const getBlogsRequest = await getRequest().get(RouterPath.blogs).expect(200)
@@ -212,6 +214,7 @@ describe('posts', () => {
       content: data.content,
       blogId: data.blogId,
       blogName: 'string',
+      createdAt: expect.any(String),
     })
     const getPostsRequest = await getRequest().get(RouterPath.posts).expect(200)
 
