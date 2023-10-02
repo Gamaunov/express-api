@@ -1,7 +1,8 @@
 import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb'
 
-import { BlogType, PostType } from './dbTypes'
+import { BlogViewModel } from '../models/blogs/BlogViewModel'
+import { PostViewModel } from '../models/posts/PostViewModel'
 
 dotenv.config()
 
@@ -11,8 +12,8 @@ if (!mongoURI) throw new Error('mongoURI not found')
 
 const client = new MongoClient(mongoURI)
 
-export const blogsCollection = client.db().collection<BlogType>('blogs')
-export const postsCollection = client.db().collection<PostType>('posts')
+export const blogsCollection = client.db().collection<BlogViewModel>('blogs')
+export const postsCollection = client.db().collection<PostViewModel>('posts')
 
 export async function runDb() {
   try {

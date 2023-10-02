@@ -1,19 +1,22 @@
 import { ObjectId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
-import { PostType } from '../db/dbTypes'
+import { PostViewModel } from '../models/posts/PostViewModel'
 
 export const postsRepository = {
   async getAllPosts() {
-    return postsCollection.find({}).toArray()
+    return postsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
-  async getPostById(id: string): Promise<PostType | null> {
-    const _id = new ObjectId(id)
+  async getPostById(id: string): Promise<PostViewModel | null> {
+    // const _id = new ObjectId(id)
 
-    const blog: PostType | null = await postsCollection.findOne({ _id })
+    const post: PostViewModel | null = await postsCollection.findOne(
+      { id },
+      { projection: { _id: 0 } },
+    )
 
-    return blog
+    return post
   },
 
   // async getPostByBlogId(id: string) {
@@ -26,9 +29,9 @@ export const postsRepository = {
     shortDescription: string,
     content: string,
     title: string,
-  ): Promise<PostType> {
+  ): Promise<PostViewModel> {
     const newPost = {
-      id: new ObjectId(),
+      id: new ObjectId().toString(),
       title,
       shortDescription,
       content,
@@ -39,7 +42,17 @@ export const postsRepository = {
 
     await postsCollection.insertOne(newPost)
 
-    return newPost
+    const transformedResponse = {
+      id: newPost.id,
+      title: newPost.title,
+      shortDescription: newPost.shortDescription,
+      content: newPost.content,
+      blogId: newPost.blogId,
+      blogName: newPost.blogName,
+      createdAt: newPost.createdAt,
+    }
+
+    return transformedResponse
   },
 
   async updatePost(
@@ -49,10 +62,10 @@ export const postsRepository = {
     content: string,
     blogId: string,
   ): Promise<boolean> {
-    const _id = new ObjectId(id)
+    // const _id = new ObjectId(id)
 
     let isPostUpdated = await postsCollection.updateOne(
-      { _id },
+      { id },
       { $set: { title, shortDescription, content, blogId } },
     )
 
@@ -60,9 +73,9 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const _id = new ObjectId(id)
+    // const _id = new ObjectId(id)
 
-    const isPostDeleted = await postsCollection.deleteOne({ _id })
+    const isPostDeleted = await postsCollection.deleteOne({ id })
 
     return isPostDeleted.deletedCount === 1
   },

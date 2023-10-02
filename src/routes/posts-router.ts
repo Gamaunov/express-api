@@ -54,10 +54,10 @@ export const postsRouter = () => {
 
   router.put(
     `/:id`,
-    validateObjectId,
-    authGuardMiddleware,
-    PostValidation(),
-    PostErrorsValidation,
+    // validateObjectId,
+    // authGuardMiddleware,
+    // PostValidation(),
+    // PostErrorsValidation,
     async (
       req: RequestWithParamsAndBody<URIParamsPostIdModel, CreatePostModel>,
       res: Response,
@@ -78,7 +78,7 @@ export const postsRouter = () => {
 
   router.delete(
     `/:id`,
-    validateObjectId,
+    // validateObjectId,
     authGuardMiddleware,
     async (req: RequestWithParams<URIParamsPostIdModel>, res) => {
       const isDeleted = await postsRepository.deletePost(req.params.id)
