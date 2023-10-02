@@ -1,19 +1,16 @@
 import express, { Request, Response } from 'express'
 
-import { authGuardMiddleware } from '../middlewares/authGuardMiddleware'
-import { validateObjectId } from '../middlewares/objectId-middleware'
-import {
-  PostErrorsValidation,
-  PostValidation,
-} from '../middlewares/posts/post-validation-middleware'
-import { CreatePostModel } from '../models/posts/CreatPostModel'
-import { URIParamsPostIdModel } from '../models/posts/URIParamsPostModel'
+import { authGuardMiddleware } from '../middlewares/index'
+import { validateObjectId } from '../middlewares/index'
+import { PostErrorsValidation, PostValidation } from '../middlewares/index'
+import { CreatePostModel } from '../models/index'
+import { URIParamsPostModel } from '../models/index'
 import { postsRepository } from '../repositories/posts-repository'
 import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-} from '../shared/types/types'
+} from '../shared/index'
 
 export const postsRouter = () => {
   const router = express.Router()
@@ -26,7 +23,7 @@ export const postsRouter = () => {
 
   router.get(
     `/:id`,
-    async (req: RequestWithParams<URIParamsPostIdModel>, res: Response) => {
+    async (req: RequestWithParams<URIParamsPostModel>, res: Response) => {
       const blog = await postsRepository.getPostById(req.params.id)
 
       blog ? res.status(200).send(blog) : res.sendStatus(404)
@@ -59,11 +56,13 @@ export const postsRouter = () => {
     PostValidation(),
     PostErrorsValidation,
     async (
-      req: RequestWithParamsAndBody<URIParamsPostIdModel, CreatePostModel>,
+      req: RequestWithParamsAndBody<URIParamsPostModel, CreatePostModel>,
       res: Response,
     ) => {
       const { blogId, content, shortDescription, title } = req.body
+
       const { id } = req.params
+
       const isUpdated = await postsRepository.updatePost(
         id,
         title,
@@ -80,7 +79,7 @@ export const postsRouter = () => {
     `/:id`,
     validateObjectId,
     authGuardMiddleware,
-    async (req: RequestWithParams<URIParamsPostIdModel>, res) => {
+    async (req: RequestWithParams<URIParamsPostModel>, res) => {
       const isDeleted = await postsRepository.deletePost(req.params.id)
 
       isDeleted ? res.sendStatus(204) : res.sendStatus(404)

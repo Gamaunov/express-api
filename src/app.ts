@@ -4,7 +4,7 @@ import { blogsRouter } from './routes/blogs-router'
 import { getHomeRouter } from './routes/home'
 import { postsRouter } from './routes/posts-router'
 import { getTestingRouter } from './routes/testing'
-import { RouterPath } from './shared/utils/router-path'
+import { RouterPath } from './shared/index'
 
 export const app = express()
 

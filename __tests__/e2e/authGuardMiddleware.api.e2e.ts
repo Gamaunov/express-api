@@ -1,8 +1,8 @@
 import request from 'supertest'
 
 import { app } from '../../src/app'
-import { CreateBlogModel } from '../../src/models/blogs/CreatBlogModel'
-import { RouterPath } from '../../src/shared/utils/router-path'
+import { CreateBlogModel } from '../../src/models/index'
+import { RouterPath } from '../../src/shared/index'
 
 const getRequest = () => {
   return request(app)

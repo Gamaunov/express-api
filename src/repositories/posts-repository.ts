@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
-import { PostViewModel } from '../models/posts/PostViewModel'
+import { PostViewModel } from '../models/index'
 
 export const postsRepository = {
   async getAllPosts() {
@@ -9,8 +9,6 @@ export const postsRepository = {
   },
 
   async getPostById(id: string): Promise<PostViewModel | null> {
-    // const _id = new ObjectId(id)
-
     const post: PostViewModel | null = await postsCollection.findOne(
       { id },
       { projection: { _id: 0 } },
@@ -18,11 +16,6 @@ export const postsRepository = {
 
     return post
   },
-
-  // async getPostByBlogId(id: string) {
-  //   let blog = db.find((b) => b.blogId === id)
-  //   blog ? true : false
-  // },
 
   async createPost(
     blogId: string,
@@ -62,8 +55,6 @@ export const postsRepository = {
     content: string,
     blogId: string,
   ): Promise<boolean> {
-    // const _id = new ObjectId(id)
-
     let isPostUpdated = await postsCollection.updateOne(
       { id },
       { $set: { title, shortDescription, content, blogId } },
@@ -73,8 +64,6 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    // const _id = new ObjectId(id)
-
     const isPostDeleted = await postsCollection.deleteOne({ id })
 
     return isPostDeleted.deletedCount === 1

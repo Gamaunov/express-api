@@ -1,9 +1,8 @@
 import request from 'supertest'
 
 import { app } from '../../src/app'
-import { CreateBlogModel } from '../../src/models/blogs/CreatBlogModel'
-import { HTTP_STATUSES } from '../../src/shared/utils/http-statuses'
-import { RouterPath } from '../../src/shared/utils/router-path'
+import { CreateBlogModel } from '../../src/models/index'
+import { RouterPath } from '../../src/shared/index'
 
 const getRequest = () => {
   return request(app)
@@ -21,7 +20,7 @@ describe('blogs', () => {
   })
 
   it('should return 200 and empty array', async () => {
-    await getRequest().get(RouterPath.blogs).expect(HTTP_STATUSES.OK_200, [])
+    await getRequest().get(RouterPath.blogs).expect(200, [])
   })
 
   it(`should return 404 for not existing blog`, async () => {
@@ -367,7 +366,7 @@ describe('blogs', () => {
       .send(validData)
       .expect(404)
   })
-  
+
   afterAll((done) => {
     done()
   })

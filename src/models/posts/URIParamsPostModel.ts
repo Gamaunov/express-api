@@ -1,3 +1,3 @@
-export type URIParamsPostIdModel = {
+export type URIParamsPostModel = {
   id: string
 }

@@ -1,28 +1,21 @@
 import { ObjectId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
-import { BlogViewModel } from '../models/blogs/BlogViewModel'
+import { BlogViewModel } from '../models/index'
 
 export const blogsRepository = {
   async getAllBlogs() {
-    // return blogsCollection.find({})
     return blogsCollection.find({}, { projection: { _id: 0 } }).toArray()
   },
 
   async getBlogById(id: string): Promise<BlogViewModel | null> {
-    // const _id = new ObjectId(id)
-
     const blog: BlogViewModel | null = await blogsCollection.findOne(
       { id },
       { projection: { _id: 0 } },
     )
+
     return blog
   },
-
-  // async getBlogByBlogId(id: string): Promise<BlogType | null> {
-  //   const blog: BlogType | null = await blogsCollection.findOne({ id })
-  //   return blog
-  // },
 
   async createBlog(
     name: string,
@@ -58,8 +51,6 @@ export const blogsRepository = {
     description: string,
     websiteUrl: string,
   ): Promise<boolean> {
-    // const _id = new ObjectId(id)
-
     let isBlogUpdated = await blogsCollection.updateOne(
       { id },
       { $set: { name, description, websiteUrl } },
@@ -69,8 +60,6 @@ export const blogsRepository = {
   },
 
   async deleteBlog(id: string): Promise<boolean> {
-    // const _id = new ObjectId(id)
-
     const isBlogDeleted = await blogsCollection.deleteOne({ id })
 
     return isBlogDeleted.deletedCount === 1

@@ -1,19 +1,16 @@
 import express, { Request, Response } from 'express'
 
-import { authGuardMiddleware } from '../middlewares/authGuardMiddleware'
-import {
-  BlogErrorsValidation,
-  ValidateBlog,
-} from '../middlewares/blogs/blog-validation-middleware'
-import { validateObjectId } from '../middlewares/objectId-middleware'
-import { CreateBlogModel } from '../models/blogs/CreatBlogModel'
-import { URIParamsBlogIdModel } from '../models/blogs/URIParamsBlogModel'
+import { authGuardMiddleware } from '../middlewares/index'
+import { BlogErrorsValidation, ValidateBlog } from '../middlewares/index'
+import { validateObjectId } from '../middlewares/index'
+import { CreateBlogModel } from '../models/index'
+import { URIParamsBlogIdModel } from '../models/index'
 import { blogsRepository } from '../repositories/blogs-repository'
 import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-} from '../shared/types/types'
+} from '../shared/index'
 
 export const blogsRouter = () => {
   const router = express.Router()
