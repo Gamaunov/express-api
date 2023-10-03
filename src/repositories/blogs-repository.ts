@@ -1,20 +1,33 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
+import { BlogOutput } from '../db/dbTypes'
 import { BlogViewModel } from '../models/index'
 
+const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
+  return {
+    id: blog._id.toString(),
+    name: blog.name,
+    description: blog.description,
+    websiteUrl: blog.websiteUrl,
+    createdAt: blog.createdAt,
+    isMembership: blog.isMembership,
+  }
+}
+
 export const blogsRepository = {
-  async getAllBlogs() {
-    return blogsCollection.find({}, { projection: { _id: 0 } }).toArray()
+  async getAllBlogs(): Promise<BlogOutput[]> {
+    const blogs = await blogsCollection.find({}).toArray()
+
+    return blogs.map((b) => blogMapper(b))
   },
 
-  async getBlogById(id: string): Promise<BlogViewModel | null> {
-    const blog: BlogViewModel | null = await blogsCollection.findOne(
-      { id },
-      { projection: { _id: 0 } },
-    )
+  async getBlogById(id: string): Promise<BlogOutput | null> {
+    const blog = await blogsCollection.findOne({ _id: new ObjectId(id) })
 
-    return blog
+    if (!blog) return null
+
+    return blogMapper(blog)
   },
 
   async createBlog(
@@ -23,26 +36,16 @@ export const blogsRepository = {
     websiteUrl: string,
   ): Promise<BlogViewModel> {
     const newBlog = {
-      id: new ObjectId().toString(),
-      name: name,
-      description: description,
-      websiteUrl: websiteUrl,
+      name,
+      description,
+      websiteUrl,
       createdAt: new Date().toISOString(),
       isMembership: false,
     }
 
-    await blogsCollection.insertOne(newBlog)
+    const res = await blogsCollection.insertOne({ ...newBlog })
 
-    const transformedResponse = {
-      id: newBlog.id,
-      name: newBlog.name,
-      description: newBlog.description,
-      websiteUrl: newBlog.websiteUrl,
-      createdAt: newBlog.createdAt,
-      isMembership: newBlog.isMembership,
-    }
-
-    return transformedResponse
+    return blogMapper({ ...newBlog, _id: res.insertedId })
   },
 
   async updateBlog(
@@ -50,17 +53,21 @@ export const blogsRepository = {
     name: string,
     description: string,
     websiteUrl: string,
-  ): Promise<boolean> {
-    let isBlogUpdated = await blogsCollection.updateOne(
-      { id },
+  ): Promise<BlogOutput | null> {
+    let blog = await blogsCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
       { $set: { name, description, websiteUrl } },
     )
 
-    return isBlogUpdated.matchedCount === 1
+    if (!blog) return null
+
+    return blogMapper(blog)
   },
 
   async deleteBlog(id: string): Promise<boolean> {
-    const isBlogDeleted = await blogsCollection.deleteOne({ id })
+    const isBlogDeleted = await blogsCollection.deleteOne({
+      _id: new ObjectId(id),
+    })
 
     return isBlogDeleted.deletedCount === 1
   },

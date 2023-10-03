@@ -1,20 +1,34 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
+import { PostOutput } from '../db/dbTypes'
 import { PostViewModel } from '../models/index'
 
+const postMapper = (post: WithId<PostViewModel>): PostOutput => {
+  return {
+    id: post._id.toString(),
+    title: post.title,
+    shortDescription: post.shortDescription,
+    content: post.content,
+    blogId: post.blogId,
+    blogName: post.blogName,
+    createdAt: post.createdAt,
+  }
+}
+
 export const postsRepository = {
-  async getAllPosts() {
-    return postsCollection.find({}, { projection: { _id: 0 } }).toArray()
+  async getAllPosts(): Promise<PostOutput[]> {
+    const post = await postsCollection.find({}).toArray()
+
+    return post.map((p) => postMapper(p))
   },
 
-  async getPostById(id: string): Promise<PostViewModel | null> {
-    const post: PostViewModel | null = await postsCollection.findOne(
-      { id },
-      { projection: { _id: 0 } },
-    )
+  async getPostById(id: string): Promise<PostOutput | null> {
+    const post = await postsCollection.findOne({ _id: new ObjectId(id) })
 
-    return post
+    if (!post) return null
+
+    return postMapper(post)
   },
 
   async createPost(
@@ -24,7 +38,6 @@ export const postsRepository = {
     title: string,
   ): Promise<PostViewModel> {
     const newPost = {
-      id: new ObjectId().toString(),
       title,
       shortDescription,
       content,
@@ -33,19 +46,9 @@ export const postsRepository = {
       createdAt: new Date().toISOString(),
     }
 
-    await postsCollection.insertOne(newPost)
+    const res = await postsCollection.insertOne({ ...newPost })
 
-    const transformedResponse = {
-      id: newPost.id,
-      title: newPost.title,
-      shortDescription: newPost.shortDescription,
-      content: newPost.content,
-      blogId: newPost.blogId,
-      blogName: newPost.blogName,
-      createdAt: newPost.createdAt,
-    }
-
-    return transformedResponse
+    return postMapper({ ...newPost, _id: res.insertedId })
   },
 
   async updatePost(
@@ -54,17 +57,21 @@ export const postsRepository = {
     shortDescription: string,
     content: string,
     blogId: string,
-  ): Promise<boolean> {
-    let isPostUpdated = await postsCollection.updateOne(
-      { id },
+  ): Promise<PostOutput | null> {
+    let post = await postsCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
       { $set: { title, shortDescription, content, blogId } },
     )
 
-    return isPostUpdated.matchedCount === 1
+    if (!post) return null
+
+    return postMapper(post)
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const isPostDeleted = await postsCollection.deleteOne({ id })
+    const isPostDeleted = await postsCollection.deleteOne({
+      _id: new ObjectId(id),
+    })
 
     return isPostDeleted.deletedCount === 1
   },

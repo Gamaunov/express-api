@@ -23,6 +23,7 @@ export const postsRouter = () => {
 
   router.get(
     `/:id`,
+    validateObjectId,
     async (req: RequestWithParams<URIParamsPostModel>, res: Response) => {
       const blog = await postsRepository.getPostById(req.params.id)
 
