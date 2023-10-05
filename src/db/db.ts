@@ -1,8 +1,8 @@
 import dotenv from 'dotenv'
 import { MongoClient } from 'mongodb'
 
-import { BlogViewModel } from '../models/index'
-import { PostViewModel } from '../models/index'
+import { BlogViewModel, PostViewModel } from '../models'
+
 
 dotenv.config()
 

@@ -2,7 +2,7 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
 import { PostOutput } from '../db/dbTypes'
-import { PostViewModel } from '../models/index'
+import { PostViewModel } from '../models'
 
 const postMapper = (post: WithId<PostViewModel>): PostOutput => {
   return {

@@ -1,7 +1,7 @@
 import { WithId } from 'mongodb'
 
-import { BlogViewModel } from '../models/index'
-import { PostViewModel } from '../models/index'
+import { BlogViewModel, PostViewModel } from '../models'
+
 
 export type BlogDb = WithId<BlogViewModel>
 export type BlogOutput = BlogViewModel & { id: string }

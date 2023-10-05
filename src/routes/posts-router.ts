@@ -10,7 +10,7 @@ import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-} from '../shared/index'
+} from '../shared'
 
 export const postsRouter = () => {
   const router = express.Router()

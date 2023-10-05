@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express'
 
-import { authGuardMiddleware } from '../middlewares/index'
-import { BlogErrorsValidation, ValidateBlog } from '../middlewares/index'
-import { validateObjectId } from '../middlewares/index'
-import { CreateBlogModel } from '../models/index'
-import { URIParamsBlogIdModel } from '../models/index'
+import { BlogErrorsValidation, ValidateBlog } from '../middlewares'
+import { validateObjectId } from '../middlewares'
+import { authGuardMiddleware } from '../middlewares'
+import { CreateBlogModel } from '../models'
+import { URIParamsBlogIdModel } from '../models'
 import { blogsRepository } from '../repositories/blogs-repository'
 import {
   RequestWithBody,

@@ -2,7 +2,7 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
 import { BlogOutput } from '../db/dbTypes'
-import { BlogViewModel } from '../models/index'
+import { BlogViewModel } from '../models'
 
 const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
   return {
