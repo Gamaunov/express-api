@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
 
-import { authGuardMiddleware } from '../middlewares/index'
-import { validateObjectId } from '../middlewares/index'
-import { PostErrorsValidation, PostValidation } from '../middlewares/index'
-import { CreatePostModel } from '../models/index'
-import { URIParamsPostModel } from '../models/index'
-import { postsRepository } from '../repositories/posts-repository'
+import { postsService } from '../domain'
+import { authGuardMiddleware } from '../middlewares'
+import { validateObjectId } from '../middlewares'
+import { PostErrorsValidation, PostValidation } from '../middlewares'
+import { CreatePostModel } from '../models'
+import { URIParamsPostModel } from '../models'
 import {
   RequestWithBody,
   RequestWithParams,
@@ -16,7 +16,7 @@ export const postsRouter = () => {
   const router = express.Router()
 
   router.get(`/`, async (req: Request, res: Response) => {
-    const posts = await postsRepository.getAllPosts()
+    const posts = await postsService.getAllPosts()
 
     posts ? res.status(200).send(posts) : res.sendStatus(404)
   })
@@ -25,7 +25,7 @@ export const postsRouter = () => {
     `/:id`,
     validateObjectId,
     async (req: RequestWithParams<URIParamsPostModel>, res: Response) => {
-      const blog = await postsRepository.getPostById(req.params.id)
+      const blog = await postsService.getPostById(req.params.id)
 
       blog ? res.status(200).send(blog) : res.sendStatus(404)
     },
@@ -39,7 +39,7 @@ export const postsRouter = () => {
     async (req: RequestWithBody<CreatePostModel>, res: Response) => {
       const { blogId, content, shortDescription, title } = req.body
 
-      const newPost = await postsRepository.createPost(
+      const newPost = await postsService.createPost(
         blogId,
         content,
         shortDescription,
@@ -64,7 +64,7 @@ export const postsRouter = () => {
 
       const { id } = req.params
 
-      const isUpdated = await postsRepository.updatePost(
+      const isUpdated = await postsService.updatePost(
         id,
         title,
         shortDescription,
@@ -81,7 +81,7 @@ export const postsRouter = () => {
     validateObjectId,
     authGuardMiddleware,
     async (req: RequestWithParams<URIParamsPostModel>, res) => {
-      const isDeleted = await postsRepository.deletePost(req.params.id)
+      const isDeleted = await postsService.deletePost(req.params.id)
 
       isDeleted ? res.sendStatus(204) : res.sendStatus(404)
     },

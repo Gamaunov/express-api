@@ -3,6 +3,7 @@ import { ObjectId, WithId } from 'mongodb'
 import { postsCollection } from '../db/db'
 import { PostOutput } from '../db/dbTypes'
 import { PostViewModel } from '../models'
+import { UpdatePostModel } from '../models'
 
 const postMapper = (post: WithId<PostViewModel>): PostOutput => {
   return {
@@ -31,36 +32,26 @@ export const postsRepository = {
     return postMapper(post)
   },
 
-  async createPost(
-    blogId: string,
-    shortDescription: string,
-    content: string,
-    title: string,
-  ): Promise<PostViewModel> {
-    const newPost = {
-      title,
-      shortDescription,
-      content,
-      blogId,
-      blogName: title,
-      createdAt: new Date().toISOString(),
-    }
-
+  async createPost(newPost: PostViewModel): Promise<PostViewModel> {
     const res = await postsCollection.insertOne({ ...newPost })
 
     return postMapper({ ...newPost, _id: res.insertedId })
   },
 
   async updatePost(
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
+    postId: string,
+    postData: UpdatePostModel,
   ): Promise<PostOutput | null> {
     let post = await postsCollection.findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: { title, shortDescription, content, blogId } },
+      { _id: new ObjectId(postId) },
+      {
+        $set: {
+          title: postData.title,
+          shortDescription: postData.shortDescription,
+          content: postData.content,
+          blogId: postData.blogId,
+        },
+      },
     )
 
     if (!post) return null

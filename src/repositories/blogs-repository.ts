@@ -1,10 +1,10 @@
 import { ObjectId, WithId } from 'mongodb'
 
 import { blogsCollection } from '../db/db'
-import { BlogOutput } from '../db/dbTypes'
+import { BlogDb, BlogOutput } from '../db/dbTypes'
 import { BlogViewModel } from '../models'
 
-const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
+export const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
   return {
     id: blog._id.toString(),
     name: blog.name,
@@ -30,19 +30,7 @@ export const blogsRepository = {
     return blogMapper(blog)
   },
 
-  async createBlog(
-    name: string,
-    description: string,
-    websiteUrl: string,
-  ): Promise<BlogViewModel> {
-    const newBlog = {
-      name,
-      description,
-      websiteUrl,
-      createdAt: new Date().toISOString(),
-      isMembership: false,
-    }
-
+  async createBlog(newBlog: BlogViewModel): Promise<BlogViewModel> {
     const res = await blogsCollection.insertOne({ ...newBlog })
 
     return blogMapper({ ...newBlog, _id: res.insertedId })

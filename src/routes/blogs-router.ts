@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express'
 
+import { blogsService } from '../domain'
 import { BlogErrorsValidation, ValidateBlog } from '../middlewares'
 import { validateObjectId } from '../middlewares'
 import { authGuardMiddleware } from '../middlewares'
 import { CreateBlogModel } from '../models'
 import { URIParamsBlogIdModel } from '../models'
-import { blogsRepository } from '../repositories/blogs-repository'
 import {
   RequestWithBody,
   RequestWithParams,
@@ -16,7 +16,7 @@ export const blogsRouter = () => {
   const router = express.Router()
 
   router.get(`/`, async (req: Request, res: Response) => {
-    const blogs = await blogsRepository.getAllBlogs()
+    const blogs = await blogsService.getAllBlogs()
     blogs ? res.status(200).send(blogs) : res.sendStatus(404)
   })
 
@@ -24,7 +24,7 @@ export const blogsRouter = () => {
     `/:id`,
     validateObjectId,
     async (req: RequestWithParams<URIParamsBlogIdModel>, res: Response) => {
-      const blog = await blogsRepository.getBlogById(req.params.id)
+      const blog = await blogsService.getBlogById(req.params.id)
 
       blog ? res.status(200).send(blog) : res.sendStatus(404)
     },
@@ -38,7 +38,7 @@ export const blogsRouter = () => {
     async (req: RequestWithBody<CreateBlogModel>, res: Response) => {
       const { name, description, websiteUrl } = req.body
 
-      const newBlog = await blogsRepository.createBlog(
+      const newBlog = await blogsService.createBlog(
         name,
         description,
         websiteUrl,
@@ -62,7 +62,7 @@ export const blogsRouter = () => {
 
       const { id } = req.params
 
-      const isUpdated = await blogsRepository.updateBlog(
+      const isUpdated = await blogsService.updateBlog(
         id,
         name,
         description,
@@ -78,7 +78,7 @@ export const blogsRouter = () => {
     validateObjectId,
     authGuardMiddleware,
     async (req: RequestWithParams<URIParamsBlogIdModel>, res: Response) => {
-      const isDeleted = await blogsRepository.deleteBlog(req.params.id)
+      const isDeleted = await blogsService.deleteBlog(req.params.id)
 
       isDeleted ? res.sendStatus(204) : res.sendStatus(404)
     },
