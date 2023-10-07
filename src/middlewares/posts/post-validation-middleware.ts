@@ -32,6 +32,7 @@ export const PostValidation = () => {
       .withMessage('Invalid content'),
 
     body('blogId')
+      .optional()
       .isString()
       .trim()
       .isLength({ min: 1, max: 100 })

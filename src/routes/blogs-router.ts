@@ -1,23 +1,31 @@
 import express, { Request, Response } from 'express'
 
 import { blogsService } from '../domain'
-import { BlogErrorsValidation, ValidateBlog } from '../middlewares'
-import { validateObjectId } from '../middlewares'
-import { authGuardMiddleware } from '../middlewares'
-import { CreateBlogModel } from '../models'
-import { URIParamsBlogIdModel } from '../models'
+import {
+  BlogErrorsValidation,
+  FindBlogMiddleware,
+  PostErrorsValidation,
+  PostValidation,
+  ValidateBlog,
+  authGuardMiddleware,
+  validateObjectId,
+} from '../middlewares'
+import { CreateBlogModel, URIParamsBlogIdModel } from '../models'
 import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-} from '../shared/index'
+} from '../shared'
 
 export const blogsRouter = () => {
   const router = express.Router()
 
   router.get(`/`, async (req: Request, res: Response) => {
-    const blogs = await blogsService.getAllBlogs()
-    blogs ? res.status(200).send(blogs) : res.sendStatus(404)
+    const data = req.query
+
+    const blogs = await blogsService.getAllBlogs(data)
+    // console.log(data, 'blogs')
+    return res.status(200).send(blogs)
   })
 
   router.get(
@@ -36,15 +44,44 @@ export const blogsRouter = () => {
     ValidateBlog(),
     BlogErrorsValidation,
     async (req: RequestWithBody<CreateBlogModel>, res: Response) => {
-      const { name, description, websiteUrl } = req.body
+      const data = req.body
 
-      const newBlog = await blogsService.createBlog(
-        name,
-        description,
-        websiteUrl,
-      )
+      const newBlog = await blogsService.createBlog(data)
 
       return res.status(201).send(newBlog)
+    },
+  )
+
+  router.get(
+    `/:blogId/posts`,
+    FindBlogMiddleware,
+    async (req: Request, res: Response) => {
+      const blogId = req.params.blogId
+      const data = req.query
+
+      const postsByBlogId = await blogsService.getPostsByBlogId(blogId, data)
+
+      return res.status(200).send(postsByBlogId)
+    },
+  )
+
+  router.post(
+    `/:blogId/posts`,
+    authGuardMiddleware,
+    FindBlogMiddleware,
+    PostValidation(),
+    PostErrorsValidation,
+    async (req: Request, res: Response) => {
+      const blogId = req.params.blogId
+
+      const data = req.body
+
+      const createdPostByBlogId = await blogsService.createPostByBlogId(
+        blogId,
+        data,
+      )
+
+      return res.status(200).send(createdPostByBlogId)
     },
   )
 

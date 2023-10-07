@@ -1,21 +1,9 @@
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { postsCollection } from '../db/db'
 import { PostOutput } from '../db/dbTypes'
-import { PostViewModel } from '../models'
-import { UpdatePostModel } from '../models'
-
-const postMapper = (post: WithId<PostViewModel>): PostOutput => {
-  return {
-    id: post._id.toString(),
-    title: post.title,
-    shortDescription: post.shortDescription,
-    content: post.content,
-    blogId: post.blogId,
-    blogName: post.blogName,
-    createdAt: post.createdAt,
-  }
-}
+import { PostViewModel, UpdatePostModel } from '../models'
+import { postMapper } from '../shared'
 
 export const postsRepository = {
   async getAllPosts(): Promise<PostOutput[]> {

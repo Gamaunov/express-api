@@ -1,21 +1,7 @@
-import { ObjectId, WithId } from 'mongodb'
-
-import { postsCollection } from '../db/db'
 import { PostOutput } from '../db/dbTypes'
 import { PostViewModel } from '../models'
 import { postsRepository } from '../repositories/posts-repository'
 
-const postMapper = (post: WithId<PostViewModel>): PostOutput => {
-  return {
-    id: post._id.toString(),
-    title: post.title,
-    shortDescription: post.shortDescription,
-    content: post.content,
-    blogId: post.blogId,
-    blogName: post.blogName,
-    createdAt: post.createdAt,
-  }
-}
 
 export const postsService = {
   async getAllPosts(): Promise<PostOutput[]> {
@@ -41,9 +27,7 @@ export const postsService = {
       createdAt: new Date().toISOString(),
     }
 
-    const createdPost = await postsRepository.createPost(newPost)
-
-    return createdPost
+    return await postsRepository.createPost(newPost)
   },
 
   async updatePost(
@@ -60,9 +44,8 @@ export const postsService = {
       content,
       blogId,
     }
-    let updatedPost = await postsRepository.updatePost(postId, postData)
 
-    return updatedPost
+    return  await postsRepository.updatePost(postId, postData)
   },
 
   async deletePost(id: string): Promise<boolean> {

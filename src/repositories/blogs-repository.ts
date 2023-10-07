@@ -1,25 +1,100 @@
 import { ObjectId, WithId } from 'mongodb'
 
-import { blogsCollection } from '../db/db'
-import { BlogDb, BlogOutput } from '../db/dbTypes'
-import { BlogViewModel } from '../models'
+import { blogsCollection, postsCollection } from '../db/db'
+import { BlogOutput } from '../db/dbTypes'
+import {
+  BlogByBlogIdQueryModel,
+  BlogQueryModel,
+  BlogViewModel,
+  PaginatorBlogModel,
+  PaginatorPostModel,
+} from '../models'
+import { SortDirections, blogMapper, blogsMapper, postsMapper } from '../shared'
 
-export const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
-  return {
-    id: blog._id.toString(),
-    name: blog.name,
-    description: blog.description,
-    websiteUrl: blog.websiteUrl,
-    createdAt: blog.createdAt,
-    isMembership: blog.isMembership,
-  }
+const skipFn = (pn: number, ps: number): number => {
+  return (pn - 1) * ps
 }
 
 export const blogsRepository = {
-  async getAllBlogs(): Promise<BlogOutput[]> {
-    const blogs = await blogsCollection.find({}).toArray()
+  async getAllBlogs(
+    queryData: BlogQueryModel,
+  ): Promise<PaginatorBlogModel | null> {
+    try {
+      const filter = queryData.searchNameTerm
+        ? { name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } }
+        : {}
 
-    return blogs.map((b) => blogMapper(b))
+      const sortByProperty: string = queryData.sortBy!
+      const sortDirection: number =
+        queryData.sortDirection === SortDirections.asc ? 1 : -1
+      const sortCriteria: any = { sortByProperty: sortDirection }
+
+      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
+
+      const limit = queryData.pageSize
+
+      const blogs: WithId<BlogViewModel>[] = await blogsCollection
+        .find(filter)
+        .sort(sortCriteria)
+        .skip(skip)
+        .limit(limit!)
+        .toArray()
+
+      const blogItems = blogsMapper(blogs)
+
+      const totalCount = await blogsCollection.countDocuments(filter)
+
+      return {
+        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        page: queryData.pageNumber!,
+        pageSize: queryData.pageSize!,
+        totalCount: totalCount,
+        items: blogItems,
+      }
+    } catch (e) {
+      console.log(e)
+      return null
+    }
+  },
+
+  async getPostsByBlogId(
+    blogId: string,
+    queryData: BlogByBlogIdQueryModel,
+  ): Promise<PaginatorPostModel | null> {
+    try {
+      const filter = { blogId: blogId }
+
+      const sortByProperty: string = queryData.sortBy!
+      const sortDirection: number =
+        queryData.sortDirection === SortDirections.asc ? 1 : -1
+      const sortCriteria: any = { sortByProperty: sortDirection }
+
+      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
+
+      const limit = queryData.pageSize
+
+      const posts = await postsCollection
+        .find(filter)
+        .sort(sortCriteria)
+        .skip(skip)
+        .limit(limit!)
+        .toArray()
+
+      const postItems = postsMapper(posts)
+
+      const totalCount = await postsCollection.countDocuments(filter)
+
+      return {
+        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        page: queryData.pageNumber!,
+        pageSize: queryData.pageSize!,
+        totalCount: totalCount,
+        items: postItems,
+      }
+    } catch (e) {
+      console.log(e)
+      return null
+    }
   },
 
   async getBlogById(id: string): Promise<BlogOutput | null> {
