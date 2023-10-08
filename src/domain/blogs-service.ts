@@ -1,6 +1,5 @@
 import { BlogOutput } from '../db/dbTypes'
 import {
-  BlogByBlogIdQueryModel,
   BlogQueryModel,
   BlogViewModel,
   CreateBlogModel,
@@ -11,17 +10,12 @@ import {
 } from '../models'
 import { blogsRepository } from '../repositories/blogs-repository'
 import { postsRepository } from '../repositories/posts-repository'
+import { queryBlogValidator } from '../shared'
 
 export const blogsService = {
   async getAllBlogs(data: BlogQueryModel): Promise<PaginatorBlogModel | null> {
-    const queryData = {
-      searchNameTerm: data.searchNameTerm ?? null,
-      sortBy: data.sortBy ?? 'createdAt',
-      sortDirection: data.sortDirection ?? 'desc',
-      pageNumber: data.pageNumber ? +data.pageNumber : 1,
-      pageSize: data.pageSize ? +data.pageSize : 10,
-    }
-    // console.log(queryData, 'queryData')
+    const queryData = queryBlogValidator(data)
+
     return await blogsRepository.getAllBlogs(queryData)
   },
 
@@ -31,15 +25,9 @@ export const blogsService = {
 
   async getPostsByBlogId(
     blogId: string,
-    data: BlogByBlogIdQueryModel,
+    data: BlogQueryModel,
   ): Promise<PaginatorPostModel | null> {
-    const queryData = {
-      pageNumber: data.pageNumber ? +data.pageNumber : 1,
-      pageSize: data.pageSize ? +data.pageSize : 10,
-      sortBy: data.sortBy ?? 'createdAt',
-      sortDirection: data.sortDirection ?? 'desc',
-      blogId: data.blogId,
-    }
+    const queryData = queryBlogValidator(data)
 
     return await blogsRepository.getPostsByBlogId(blogId, queryData)
   },

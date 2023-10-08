@@ -3,13 +3,12 @@ import { ObjectId, WithId } from 'mongodb'
 import { blogsCollection, postsCollection } from '../db/db'
 import { BlogOutput } from '../db/dbTypes'
 import {
-  BlogByBlogIdQueryModel,
   BlogQueryModel,
   BlogViewModel,
   PaginatorBlogModel,
   PaginatorPostModel,
 } from '../models'
-import { SortDirections, blogMapper, blogsMapper, postsMapper } from '../shared'
+import { SortDirections, blogMapper, postMapper } from '../shared'
 
 const skipFn = (pn: number, ps: number): number => {
   return (pn - 1) * ps
@@ -25,8 +24,7 @@ export const blogsRepository = {
         : {}
 
       const sortByProperty: string = queryData.sortBy!
-      const sortDirection: number =
-        queryData.sortDirection === SortDirections.asc ? 1 : -1
+      const sortDirection: number = queryData.sortDirection as number
       const sortCriteria: any = { sortByProperty: sortDirection }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
@@ -40,7 +38,7 @@ export const blogsRepository = {
         .limit(limit!)
         .toArray()
 
-      const blogItems = blogsMapper(blogs)
+      const blogItems = blogs.map((b) => blogMapper(b))
 
       const totalCount = await blogsCollection.countDocuments(filter)
 
@@ -59,7 +57,7 @@ export const blogsRepository = {
 
   async getPostsByBlogId(
     blogId: string,
-    queryData: BlogByBlogIdQueryModel,
+    queryData: BlogQueryModel,
   ): Promise<PaginatorPostModel | null> {
     try {
       const filter = { blogId: blogId }
@@ -80,7 +78,7 @@ export const blogsRepository = {
         .limit(limit!)
         .toArray()
 
-      const postItems = postsMapper(posts)
+      const postItems = posts.map((p) => postMapper(p))
 
       const totalCount = await postsCollection.countDocuments(filter)
 

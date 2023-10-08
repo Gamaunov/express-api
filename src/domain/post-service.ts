@@ -2,7 +2,6 @@ import { PostOutput } from '../db/dbTypes'
 import { PostViewModel } from '../models'
 import { postsRepository } from '../repositories/posts-repository'
 
-
 export const postsService = {
   async getAllPosts(): Promise<PostOutput[]> {
     return postsRepository.getAllPosts()
@@ -45,7 +44,7 @@ export const postsService = {
       blogId,
     }
 
-    return  await postsRepository.updatePost(postId, postData)
+    return await postsRepository.updatePost(postId, postData)
   },
 
   async deletePost(id: string): Promise<boolean> {

@@ -24,7 +24,7 @@ export const blogsRouter = () => {
     const data = req.query
 
     const blogs = await blogsService.getAllBlogs(data)
-    // console.log(data, 'blogs')
+    // console.log(data, 'data')
     return res.status(200).send(blogs)
   })
 
