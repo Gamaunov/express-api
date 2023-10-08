@@ -81,7 +81,7 @@ export const blogsRouter = () => {
         data,
       )
 
-      return res.status(200).send(createdPostByBlogId)
+      return res.status(201).send(createdPostByBlogId)
     },
   )
 
