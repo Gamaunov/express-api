@@ -1,7 +1,2 @@
 export { authGuardMiddleware } from './auth-guard-middleware'
 export { validateObjectId } from './objectId-middleware'
-export { ValidateBlog } from './blogs/blog-validation-middleware'
-export { BlogErrorsValidation } from './blogs/blog-validation-middleware'
-export { FindBlogMiddleware } from './blogs/find-blog-middleware'
-export { PostErrorsValidation } from './posts/post-validation-middleware'
-export { PostValidation } from './posts/post-validation-middleware'

@@ -1,8 +1,8 @@
 import request from 'supertest'
 
 import { app } from '../../src/app'
-import { CreateBlogModel } from '../../src/models/index'
-import { RouterPath } from '../../src/shared/index'
+import { CreateBlogModel } from '../../src/features/blogs'
+import { RouterPath } from '../../src/shared'
 
 const getRequest = () => {
   return request(app)
@@ -16,7 +16,7 @@ function encodeCredentials(username: string, password: string) {
 
 describe('posts', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPath.testing}/all-data`)
+    await getRequest().delete(`${RouterPath}/all-data`)
   })
 
   it(` shouldn't update blog with incorrect authorization data`, async () => {

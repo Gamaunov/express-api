@@ -1,8 +1,8 @@
 import express from 'express'
 
-import { blogsRouter } from './routes/blogs-router'
+import { blogsRouter } from './features/blogs'
+import { postsRouter } from './features/posts'
 import { getHomeRouter } from './routes/home'
-import { postsRouter } from './routes/posts-router'
 import { getTestingRouter } from './routes/testing'
 import { RouterPath } from './shared'
 

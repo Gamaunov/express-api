@@ -1,14 +1,14 @@
 import express from 'express'
 
-import { blogsRepository } from '../repositories/blogs-repository'
-import { postsRepository } from '../repositories/posts-repository'
+import { blogsRepository } from '../features/blogs'
+import { postsRepository } from '../features/posts'
 
 export const getTestingRouter = () => {
   const router = express.Router()
 
-  router.delete('/all-data', (req, res) => {
-    blogsRepository.deleteAllBlogs()
-    postsRepository.deleteAllPosts()
+  router.delete('/all-data', async (req, res) => {
+    await blogsRepository.deleteAllBlogs()
+    await postsRepository.deleteAllPosts()
 
     res.sendStatus(204)
   })
