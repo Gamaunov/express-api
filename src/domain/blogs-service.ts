@@ -36,8 +36,8 @@ export const blogsService = {
     blogId: string,
     data: CreatePostByBlogIdModel,
   ): Promise<PostViewModel | null> {
-    const serchedBlog = await blogsRepository.getBlogById(blogId)
-    const blogName =  serchedBlog?.name
+    const searchedBlog = await blogsRepository.getBlogById(blogId)
+    const blogName = searchedBlog?.name
 
     const newPost = {
       title: data.title,
