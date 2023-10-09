@@ -16,9 +16,7 @@ export const blogsRepository = {
     queryData: BlogQueryModel,
   ): Promise<PaginatorBlogModel | null> {
     try {
-      const filter = queryData.searchNameTerm
-        ? { name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } }
-        : {}
+      const filter =  { name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } }
 
       const sortByProperty: string = queryData.sortBy as string
       const sortDirection: number = queryData.sortDirection as number
@@ -35,7 +33,7 @@ export const blogsRepository = {
       
 
       const blogs: WithId<BlogViewModel>[] = await blogsCollection
-        .find({ name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } })
+        .find(filter)
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
