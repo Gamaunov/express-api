@@ -2,15 +2,13 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { blogsCollection, postsCollection } from '../../../db/db'
 import { BlogOutput } from '../../../db/dbTypes'
+import { skipFn } from '../../../shared'
 import { PaginatorPostModel, postMapper } from '../../posts'
 import { blogMapper } from '../helpers/mappers/blog-mappers'
 import { BlogQueryModel } from '../models/BlogQueryModel'
 import { BlogViewModel } from '../models/BlogViewModel'
 import { PaginatorBlogModel } from '../models/PaginatorBlogModel'
 
-const skipFn = (pn: number, ps: number): number => {
-  return (pn - 1) * ps
-}
 
 export const blogsRepository = {
   async getAllBlogs(
@@ -26,8 +24,6 @@ export const blogsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
-
-      console.log(sortCriteria)
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 

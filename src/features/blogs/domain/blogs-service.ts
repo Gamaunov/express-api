@@ -5,7 +5,6 @@ import {
   PostViewModel,
   postsRepository,
 } from '../../posts'
-import { queryPostValidator } from '../../posts/helpers/validators/query-post-validator'
 import { queryBlogValidator } from '../helpers/validators/query-blog-validator'
 import { BlogQueryModel } from '../models/BlogQueryModel'
 import { BlogViewModel } from '../models/BlogViewModel'
@@ -13,9 +12,10 @@ import { CreateBlogModel } from '../models/CreatBlogModel'
 import { PaginatorBlogModel } from '../models/PaginatorBlogModel'
 import { blogsRepository } from '../repository/blogs-repository'
 
+
 export const blogsService = {
   async getAllBlogs(data: BlogQueryModel): Promise<PaginatorBlogModel | null> {
-    const queryData = queryPostValidator(data)
+    const queryData = queryBlogValidator(data)
 
     return await blogsRepository.getAllBlogs(queryData)
   },

@@ -1,16 +1,52 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, WithId } from 'mongodb'
 
 import { postsCollection } from '../../../db/db'
 import { PostOutput } from '../../../db/dbTypes'
+import { skipFn } from '../../../shared'
 import { postMapper } from '../helpers/mappers/post-mappers'
+import { PaginatorPostModel } from '../models/PaginatorPostModel'
+import { PostQueryModel } from '../models/PostQueryModel'
 import { PostViewModel } from '../models/PostViewModel'
 import { UpdatePostModel } from '../models/UpdatePostModel'
 
-export const postsRepository = {
-  async getAllPosts(): Promise<PostOutput[]> {
-    const post = await postsCollection.find({}).toArray()
 
-    return post.map((p) => postMapper(p))
+export const postsRepository = {
+  async getAllPosts(
+    queryData: PostQueryModel,
+  ): Promise<PaginatorPostModel | null> {
+    try {
+      const sortByProperty: string = queryData.sortBy as string
+      const sortDirection: number = queryData.sortDirection as number
+      const sortCriteria: { [key: string]: any } = {
+        [sortByProperty]: sortDirection,
+      }
+
+      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
+
+      const limit = queryData.pageSize
+
+      const posts: WithId<PostViewModel>[] = await postsCollection
+        .find()
+        .sort(sortCriteria)
+        .skip(skip)
+        .limit(limit!)
+        .toArray()
+
+      const postItems = posts.map((p) => postMapper(p))
+
+      const totalCount = await postsCollection.countDocuments()
+
+      return {
+        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        page: queryData.pageNumber!,
+        pageSize: queryData.pageSize!,
+        totalCount: totalCount,
+        items: postItems,
+      }
+    } catch (e) {
+      console.log(e)
+      return null
+    }
   },
 
   async getPostById(id: string): Promise<PostOutput | null> {

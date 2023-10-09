@@ -6,6 +6,7 @@ import {
   RequestWithParams,
   RequestWithParamsAndBody,
 } from '../../../shared'
+import { blogsService } from '../../blogs'
 import { postsService } from '../domain/post-service'
 import {
   PostErrorsValidation,
@@ -14,13 +15,16 @@ import {
 import { CreatePostModel } from '../models/CreatPostModel'
 import { URIParamsPostModel } from '../models/URIParamsPostModel'
 
+
 export const postsRouter = () => {
   const router = express.Router()
 
   router.get(`/`, async (req: Request, res: Response) => {
-    const posts = await postsService.getAllPosts()
+      const data = req.query
 
-    posts ? res.status(200).send(posts) : res.sendStatus(404)
+      const posts = await blogsService.getAllBlogs(data)
+
+      return res.status(200).send(posts)
   })
 
   router.get(

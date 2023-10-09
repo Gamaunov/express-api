@@ -1,10 +1,16 @@
 import { PostOutput } from '../../../db/dbTypes'
+import { queryPostValidator } from '../helpers/validators/query-post-validator'
+import { PaginatorPostModel } from '../models/PaginatorPostModel'
+import { PostQueryModel } from '../models/PostQueryModel'
 import { PostViewModel } from '../models/PostViewModel'
 import { postsRepository } from '../repository/posts-repository'
 
+
 export const postsService = {
-  async getAllPosts(): Promise<PostOutput[]> {
-    return postsRepository.getAllPosts()
+  async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null>{
+    const queryData = queryPostValidator(data)
+
+    return await postsRepository.getAllPosts(queryData)
   },
 
   async getPostById(id: string): Promise<PostOutput | null> {
