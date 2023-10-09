@@ -22,7 +22,7 @@ export const postsRouter = () => {
   router.get(`/`, async (req: Request, res: Response) => {
       const data = req.query
 
-      const posts = await blogsService.getAllBlogs(data)
+      const posts = await postsService.getAllPosts(data)
 
       return res.status(200).send(posts)
   })
