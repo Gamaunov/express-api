@@ -8,7 +8,8 @@ import {
   PaginatorBlogModel,
   PaginatorPostModel,
 } from '../models'
-import { SortDirections, blogMapper, postMapper } from '../shared'
+import { blogMapper, postMapper } from '../shared'
+
 
 const skipFn = (pn: number, ps: number): number => {
   return (pn - 1) * ps
@@ -63,8 +64,7 @@ export const blogsRepository = {
       const filter = { blogId: blogId }
 
       const sortByProperty: string = queryData.sortBy!
-      const sortDirection: number =
-        queryData.sortDirection === SortDirections.asc ? 1 : -1
+      const sortDirection: number = queryData.sortDirection as number
       const sortCriteria: any = { sortByProperty: sortDirection }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
