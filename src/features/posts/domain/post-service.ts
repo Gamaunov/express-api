@@ -9,7 +9,8 @@ import { postsRepository } from '../repository/posts-repository'
 export const postsService = {
   async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null>{
     const queryData = queryPostValidator(data)
-
+    console.log(queryData);
+    
     return await postsRepository.getAllPosts(queryData)
   },
 

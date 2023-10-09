@@ -5,7 +5,7 @@ import { PostViewModel } from '../../models/PostViewModel'
 
 export const postMapper = (post: WithId<PostViewModel>): PostOutput => {
   return {
-    id: post._id.toString(),
+    id: post._id.toHexString(),
     title: post.title,
     shortDescription: post.shortDescription,
     content: post.content,

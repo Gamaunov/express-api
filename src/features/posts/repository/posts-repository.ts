@@ -8,6 +8,7 @@ import { PaginatorPostModel } from '../models/PaginatorPostModel'
 import { PostQueryModel } from '../models/PostQueryModel'
 import { PostViewModel } from '../models/PostViewModel'
 import { UpdatePostModel } from '../models/UpdatePostModel'
+import { log } from 'console'
 
 
 export const postsRepository = {
@@ -20,10 +21,12 @@ export const postsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
+console.log(sortCriteria);
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
       const limit = queryData.pageSize
+
 
       const posts: WithId<PostViewModel>[] = await postsCollection
         .find()
