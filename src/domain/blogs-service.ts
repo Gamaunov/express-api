@@ -36,12 +36,15 @@ export const blogsService = {
     blogId: string,
     data: CreatePostByBlogIdModel,
   ): Promise<PostViewModel | null> {
+    const serchedBlog = await blogsRepository.getBlogById(blogId)
+    const blogName =  serchedBlog?.name
+
     const newPost = {
       title: data.title,
       shortDescription: data.shortDescription,
       content: data.content,
       blogId: blogId,
-      blogName: data.title,
+      blogName: blogName!,
       createdAt: new Date().toISOString(),
     }
 

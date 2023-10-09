@@ -24,7 +24,7 @@ export const blogsRouter = () => {
     const data = req.query
 
     const blogs = await blogsService.getAllBlogs(data)
-    // console.log(data, 'data')
+
     return res.status(200).send(blogs)
   })
 
@@ -57,6 +57,7 @@ export const blogsRouter = () => {
     FindBlogMiddleware,
     async (req: Request, res: Response) => {
       const blogId = req.params.blogId
+    
       const data = req.query
 
       const postsByBlogId = await blogsService.getPostsByBlogId(blogId, data)
