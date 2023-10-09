@@ -8,6 +8,7 @@ import { blogMapper } from '../helpers/mappers/blog-mappers'
 import { BlogQueryModel } from '../models/BlogQueryModel'
 import { BlogViewModel } from '../models/BlogViewModel'
 import { PaginatorBlogModel } from '../models/PaginatorBlogModel'
+import { log } from 'console'
 
 
 export const blogsRepository = {
@@ -24,13 +25,17 @@ export const blogsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
+      
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
-      const limit = queryData.pageSize
+      const limit = queryData.pageSize 
+
+      console.log(skip, limit);
+      
 
       const blogs: WithId<BlogViewModel>[] = await blogsCollection
-        .find(filter)
+        .find({ name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } })
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
