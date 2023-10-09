@@ -47,8 +47,8 @@ export const postsRouter = () => {
 
       const newPost = await postsService.createPost(
         blogId,
-        content,
         shortDescription,
+        content,
         title,
       )
 

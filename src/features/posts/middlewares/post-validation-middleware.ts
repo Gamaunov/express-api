@@ -8,6 +8,7 @@ const validateBlogId = async (blogId: string) => {
   if (!blog) {
     throw new Error()
   }
+  return true
 }
 
 export const PostValidation = () => {

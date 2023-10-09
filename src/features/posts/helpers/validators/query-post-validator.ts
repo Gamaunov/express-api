@@ -22,7 +22,6 @@ export function queryPostValidator(query: any): PostQueryModel {
   query.pageSize = validateNumber(+query.pageSize, 10)
   query.sortBy = validateSortBy(query.sortBy)
   query.sortDirection = query.sortDirection === SortDirections.asc ? 1 : -1
-  query.blogId
 
   return query
 }

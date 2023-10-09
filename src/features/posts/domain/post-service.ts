@@ -1,4 +1,5 @@
 import { PostOutput } from '../../../db/dbTypes'
+import { blogsRepository } from '../../blogs'
 import { queryPostValidator } from '../helpers/validators/query-post-validator'
 import { PaginatorPostModel } from '../models/PaginatorPostModel'
 import { PostQueryModel } from '../models/PostQueryModel'
@@ -24,12 +25,14 @@ export const postsService = {
     content: string,
     title: string,
   ): Promise<PostViewModel> {
+    const blogName = await blogsRepository.getBlogById(blogId)
+
     const newPost = {
       title,
       shortDescription,
       content,
       blogId,
-      blogName: title,
+      blogName: blogName!.name,
       createdAt: new Date().toISOString(),
     }
 
