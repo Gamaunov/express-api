@@ -2,7 +2,7 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { blogsCollection, postsCollection } from '../../../db/db'
 import { BlogOutput } from '../../../db/dbTypes'
-import { skipFn } from '../../../shared'
+import { pagesCount, skipFn } from '../../../shared'
 import { PaginatorPostModel, postMapper } from '../../posts'
 import { blogMapper } from '../helpers/mappers/blog-mappers'
 import { BlogQueryModel } from '../models/BlogQueryModel'
@@ -41,7 +41,7 @@ export const blogsRepository = {
       const totalCount = await blogsCollection.countDocuments(filter)
 
       return {
-        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        pagesCount: pagesCount(totalCount, queryData.pageSize!),
         page: queryData.pageNumber!,
         pageSize: queryData.pageSize!,
         totalCount: totalCount,

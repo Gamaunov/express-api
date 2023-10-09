@@ -2,7 +2,7 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { postsCollection } from '../../../db/db'
 import { PostOutput } from '../../../db/dbTypes'
-import { skipFn } from '../../../shared'
+import { pagesCount, skipFn } from '../../../shared'
 import { postMapper } from '../helpers/mappers/post-mappers'
 import { PaginatorPostModel } from '../models/PaginatorPostModel'
 import { PostQueryModel } from '../models/PostQueryModel'
@@ -37,7 +37,7 @@ export const postsRepository = {
       const totalCount = await postsCollection.countDocuments()
 
       return {
-        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        pagesCount: pagesCount(totalCount, queryData.pageSize!),
         page: queryData.pageNumber!,
         pageSize: queryData.pageSize!,
         totalCount: totalCount,
