@@ -10,6 +10,7 @@ import {
 } from '../models'
 import { blogMapper, postMapper } from '../shared'
 
+
 const skipFn = (pn: number, ps: number): number => {
   return (pn - 1) * ps
 }
@@ -28,6 +29,9 @@ export const blogsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
+
+      console.log(sortCriteria);
+
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
@@ -69,6 +73,7 @@ export const blogsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
+      
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 

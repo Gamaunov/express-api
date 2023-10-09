@@ -1,9 +1,8 @@
 export enum SortBlogFields {
   id = 'id',
-  title = 'title',
-  shortDescription = 'shortDescription',
-  content = 'content',
-  blogId = 'blogId',
-  blogName = 'blogName',
+  name = 'name',
+  description = 'description',
+  websiteUrl = 'websiteUrl',
   createdAt = 'createdAt',
+  isMembership = 'isMembership',
 }
