@@ -10,7 +10,6 @@ import {
 } from '../models'
 import { blogMapper, postMapper } from '../shared'
 
-
 const skipFn = (pn: number, ps: number): number => {
   return (pn - 1) * ps
 }
@@ -24,9 +23,11 @@ export const blogsRepository = {
         ? { name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } }
         : {}
 
-      const sortByProperty: string = queryData.sortBy!
+      const sortByProperty: string = queryData.sortBy as string
       const sortDirection: number = queryData.sortDirection as number
-      const sortCriteria: any = { sortByProperty: sortDirection }
+      const sortCriteria: { [key: string]: any } = {
+        [sortByProperty]: sortDirection,
+      }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
@@ -63,9 +64,11 @@ export const blogsRepository = {
     try {
       const filter = { blogId: blogId }
 
-      const sortByProperty: string = queryData.sortBy!
+      const sortByProperty: string = queryData.sortBy as string
       const sortDirection: number = queryData.sortDirection as number
-      const sortCriteria: any = { sortByProperty: sortDirection }
+      const sortCriteria: { [key: string]: any } = {
+        [sortByProperty]: sortDirection,
+      }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
