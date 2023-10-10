@@ -1,17 +1,16 @@
 import { PostOutput } from '../../../db/dbTypes'
 import { blogsRepository } from '../../blogs'
 import { queryPostValidator } from '../helpers/validators/query-post-validator'
+import { CreatePostModel } from '../models/CreatPostModel'
 import { PaginatorPostModel } from '../models/PaginatorPostModel'
 import { PostQueryModel } from '../models/PostQueryModel'
 import { PostViewModel } from '../models/PostViewModel'
 import { postsRepository } from '../repository/posts-repository'
 
-
 export const postsService = {
-  async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null>{
+  async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null> {
     const queryData = queryPostValidator(data)
-    console.log(queryData);
-    
+
     return await postsRepository.getAllPosts(queryData)
   },
 
@@ -19,19 +18,14 @@ export const postsService = {
     return postsRepository.getPostById(id)
   },
 
-  async createPost(
-    blogId: string,
-    shortDescription: string,
-    content: string,
-    title: string,
-  ): Promise<PostViewModel> {
-    const blogName = await blogsRepository.getBlogById(blogId)
+  async createPost(data: CreatePostModel): Promise<PostViewModel> {
+    const blogName = await blogsRepository.getBlogById(data.blogId)
 
     const newPost = {
-      title,
-      shortDescription,
-      content,
-      blogId,
+      title: data.title,
+      shortDescription: data.shortDescription,
+      content: data.content,
+      blogId: data.blogId,
       blogName: blogName!.name,
       createdAt: new Date().toISOString(),
     }

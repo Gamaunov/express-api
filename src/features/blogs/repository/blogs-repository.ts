@@ -8,29 +8,27 @@ import { blogMapper } from '../helpers/mappers/blog-mappers'
 import { BlogQueryModel } from '../models/BlogQueryModel'
 import { BlogViewModel } from '../models/BlogViewModel'
 import { PaginatorBlogModel } from '../models/PaginatorBlogModel'
-import { log } from 'console'
-
 
 export const blogsRepository = {
   async getAllBlogs(
     queryData: BlogQueryModel,
   ): Promise<PaginatorBlogModel | null> {
     try {
-      const filter =  { name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' } }
+      const filter = {
+        name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' },
+      }
 
       const sortByProperty: string = queryData.sortBy as string
       const sortDirection: number = queryData.sortDirection as number
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
-      
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 
-      const limit = queryData.pageSize 
+      const limit = queryData.pageSize
 
-      console.log(skip, limit);
-      
+      console.log(skip, limit)
 
       const blogs: WithId<BlogViewModel>[] = await blogsCollection
         .find(filter)

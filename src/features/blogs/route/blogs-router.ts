@@ -16,7 +16,6 @@ import { FindBlogMiddleware } from '../middlewares/find-blog-middleware'
 import { CreateBlogModel } from '../models/CreatBlogModel'
 import { URIParamsBlogIdModel } from '../models/URIParamsBlogModel'
 
-
 export const blogsRouter = () => {
   const router = express.Router()
 
@@ -25,7 +24,7 @@ export const blogsRouter = () => {
 
     const blogs = await blogsService.getAllBlogs(data)
 
-      return res.status(200).send(blogs)
+    return res.status(200).send(blogs)
   })
 
   router.get(

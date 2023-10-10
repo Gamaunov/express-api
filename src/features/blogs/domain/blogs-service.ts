@@ -12,7 +12,6 @@ import { CreateBlogModel } from '../models/CreatBlogModel'
 import { PaginatorBlogModel } from '../models/PaginatorBlogModel'
 import { blogsRepository } from '../repository/blogs-repository'
 
-
 export const blogsService = {
   async getAllBlogs(data: BlogQueryModel): Promise<PaginatorBlogModel | null> {
     const queryData = queryBlogValidator(data)

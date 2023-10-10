@@ -58,6 +58,7 @@ export const PostErrorsValidation = (
     }
 
     res.status(400).json(responseData)
+
     return
   }
   next()
