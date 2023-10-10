@@ -19,7 +19,6 @@ export const postsRepository = {
       const sortCriteria: { [key: string]: any } = {
         [sortByProperty]: sortDirection,
       }
-      console.log(sortCriteria)
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
 

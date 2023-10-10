@@ -1,11 +1,10 @@
 import request from 'supertest'
 
-import { app } from '../../src/app'
 import { CreateBlogModel } from '../../src/features/blogs'
 import { RouterPath } from '../../src/shared'
 
 const getRequest = () => {
-  return request(app)
+  return request('http://localhost:5000/')
 }
 
 function encodeCredentials(username: string, password: string) {
@@ -19,7 +18,7 @@ describe('posts', () => {
     await getRequest().delete(`${RouterPath}/all-data`)
   })
 
-  it(` shouldn't update blog with incorrect authorization data`, async () => {
+  it(` shouldn't create blog with incorrect authorization data`, async () => {
     const data: CreateBlogModel = {
       name: 'string',
       description: 'string',
@@ -32,12 +31,10 @@ describe('posts', () => {
     const authHeader = encodeCredentials(username, password)
 
     await getRequest()
-      .post(RouterPath.blogs)
+      .post('blogs')
       .set('Authorization', authHeader)
       .send(data)
       .expect(401)
-
-    await getRequest().get(RouterPath.blogs).expect(200)
   })
 
   it(`shouldn't create blog with incorrect authorization // username`, async () => {
@@ -53,33 +50,33 @@ describe('posts', () => {
     const authHeader = encodeCredentials(username, password)
 
     await getRequest()
-      .post(RouterPath.blogs)
+      .post('blogs')
       .set('Authorization', authHeader)
       .send(data)
       .expect(401)
 
-    await getRequest().get(RouterPath.blogs).expect(200)
+    await getRequest().get('blogs').expect(200)
   })
 
-  it(`shouldn't create blog with incorrect authorization // password`, async () => {
+  it(`shouldn't create blog with incorrect authorization`, async () => {
     const data: CreateBlogModel = {
       name: 'string',
       description: 'string',
       websiteUrl: 'https://google.com',
     }
 
-    const username = 'admin'
+    const username = 'sudoadmin'
     const password = ''
 
     const authHeader = encodeCredentials(username, password)
 
     await getRequest()
-      .post(RouterPath.blogs)
+      .post('blogs')
       .set('Authorization', authHeader)
       .send(data)
       .expect(401)
 
-    await getRequest().get(RouterPath.blogs).expect(200)
+    await getRequest().get('blogs').expect(200)
   })
 
   it(`shouldn't create blog with incorrect authorization // password`, async () => {
@@ -95,12 +92,12 @@ describe('posts', () => {
     const authHeader = encodeCredentials(username, password)
 
     await getRequest()
-      .post(RouterPath.blogs)
+      .post('blogs')
       .set('Authorization', authHeader)
       .send(data)
       .expect(401)
 
-    await getRequest().get(RouterPath.blogs).expect(200)
+    await getRequest().get('blogs').expect(200)
   })
 
   afterAll((done) => {

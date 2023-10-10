@@ -28,8 +28,6 @@ export const blogsRepository = {
 
       const limit = queryData.pageSize
 
-      console.log(skip, limit)
-
       const blogs: WithId<BlogViewModel>[] = await blogsCollection
         .find(filter)
         .sort(sortCriteria)

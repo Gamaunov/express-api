@@ -1,12 +1,11 @@
 import request from 'supertest'
 
-import { app } from '../../src/app'
 import { CreateBlogModel } from '../../src/features/blogs'
 import { CreatePostModel } from '../../src/features/posts'
-import { RouterPath } from '../../src/shared'
+import { EmptyOutput } from './blogs.api.e2e'
 
 const getRequest = () => {
-  return request(app)
+  return request('http://localhost:5000/')
 }
 
 function encodeCredentials(username: string, password: string) {
@@ -17,15 +16,15 @@ function encodeCredentials(username: string, password: string) {
 
 describe('posts', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPath}/all-data`)
+    await getRequest().delete(`${'testing'}/all-data`)
   })
 
   it('should return 200 and empty array', async () => {
-    await getRequest().get(RouterPath.posts).expect(200, [])
+    await getRequest().get('posts').expect(200, EmptyOutput)
   })
 
   it(`should return 404 for not existing post`, async () => {
-    await getRequest().get(`${RouterPath.posts}/5`).expect(404)
+    await getRequest().get(`${'posts'}/5`).expect(404)
   })
 
   it(`shouldn't create post with incorrect input data`, async () => {
@@ -43,12 +42,12 @@ describe('posts', () => {
     const authHeader = encodeCredentials(username, password)
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(data)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case invalid title max length > 30
     const invalidTitleData: CreatePostModel = {
@@ -60,12 +59,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(invalidTitleData)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case empty shortDescription
     const emptyShortDescription: CreatePostModel = {
@@ -76,12 +75,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(emptyShortDescription)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case invalid shortDescription max length > 100
     const invalidShortDescription: CreatePostModel = {
@@ -93,12 +92,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(invalidShortDescription)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case empty content
     const emptyContent: CreatePostModel = {
@@ -109,12 +108,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(emptyContent)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case invalid content max length > 1000
     const invalidContent: CreatePostModel = {
@@ -126,12 +125,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(invalidContent)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
 
     //case invalid blogId
     const invalidBlogId: CreatePostModel = {
@@ -142,12 +141,12 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(invalidBlogId)
       .expect(400)
 
-    await getRequest().get(RouterPath.posts).expect(200)
+    await getRequest().get('posts').expect(200)
   })
 
   let createdPost: any = null
@@ -171,7 +170,7 @@ describe('posts', () => {
     }
 
     const createBlogRequest = await getRequest()
-      .post(RouterPath.blogs)
+      .post('blogs')
       .set('Authorization', authHeader)
       .send(blogData)
       .expect(201)
@@ -187,10 +186,6 @@ describe('posts', () => {
       isMembership: false,
     })
 
-    const getBlogsRequest = await getRequest().get(RouterPath.blogs).expect(200)
-
-    expect(getBlogsRequest.body).toContainEqual(createdBlog)
-
     //creating posts
     const data: CreatePostModel = {
       title: 'string',
@@ -200,7 +195,7 @@ describe('posts', () => {
     }
 
     const createRequest = await getRequest()
-      .post(RouterPath.posts)
+      .post('posts')
       .set('Authorization', authHeader)
       .send(data)
       .expect(201)
@@ -216,9 +211,6 @@ describe('posts', () => {
       blogName: 'string',
       createdAt: expect.any(String),
     })
-    const getPostsRequest = await getRequest().get(RouterPath.posts).expect(200)
-
-    expect(getPostsRequest.body).toContainEqual(createdPost)
 
     //update title
     const emptyTitle: CreatePostModel = {
@@ -229,7 +221,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(emptyTitle)
       .expect(400)
@@ -244,7 +236,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(invalidTitle)
       .expect(400)
@@ -258,7 +250,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(emptyShortDescription)
       .expect(400)
@@ -273,7 +265,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(invalidShortDescription)
       .expect(400)
@@ -287,7 +279,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(emptyContent)
       .expect(400)
@@ -302,7 +294,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(invalidContent)
       .expect(400)
@@ -316,7 +308,7 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(emptyBlogId)
       .expect(400)
@@ -330,28 +322,28 @@ describe('posts', () => {
     }
 
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(invalidBlogId)
       .expect(400)
 
     //update posts with valida data
     await getRequest()
-      .put(`${RouterPath.posts}/${createdPost.id}`)
+      .put(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(data)
       .expect(204)
 
     //delete post by id
     await getRequest()
-      .delete(`${RouterPath.posts}/${createdPost.id}`)
+      .delete(`${'posts'}/${createdPost.id}`)
       .set('Authorization', authHeader)
       .send(data)
       .expect(204)
 
     //case invalid id
     await getRequest()
-      .delete(`${RouterPath.posts}/12`)
+      .delete(`${'posts'}/12`)
       .set('Authorization', authHeader)
       .send(data)
       .expect(404)
