@@ -13,6 +13,6 @@ export { PostValidation } from './middlewares/post-validation-middleware'
 export { PostErrorsValidation } from './middlewares/post-validation-middleware'
 
 export { SortPostFields } from './helpers/enums/sort-post-fields'
-export { postMapper } from './helpers/mappers/post-mappers'
+export { postMapper } from './helpers/mappers/post-mapper'
 
 export { postsService } from './domain/post-service'

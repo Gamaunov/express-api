@@ -15,7 +15,7 @@ export { BlogErrorsValidation } from './middlewares/blog-validation-middleware'
 export { FindBlogMiddleware } from './middlewares/find-blog-middleware'
 
 export { SortBlogFields } from './helpers/enums/sort-blog-fields'
-export { blogMapper } from './helpers/mappers/blog-mappers'
+export { blogMapper } from './helpers/mappers/blog-mapper'
 export { queryBlogValidator } from './helpers/validators/query-blog-validator'
 
 export { blogsService } from './domain/blogs-service'

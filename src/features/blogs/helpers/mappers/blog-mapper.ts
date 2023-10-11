@@ -5,7 +5,7 @@ import { BlogViewModel } from '../../models/BlogViewModel'
 
 export const blogMapper = (blog: WithId<BlogViewModel>): BlogOutput => {
   return {
-    id: blog._id.toString(),
+    id: blog._id.toHexString(),
     name: blog.name,
     description: blog.description,
     websiteUrl: blog.websiteUrl,
