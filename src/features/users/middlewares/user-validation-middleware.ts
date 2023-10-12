@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
+
 export const UserValidation = () => {
   return [
     body('login')
@@ -9,7 +10,7 @@ export const UserValidation = () => {
       .trim()
       .isLength({ min: 3, max: 10 })
       .matches(/^[a-zA-Z0-9_-]*$/)
-      .withMessage('Invalid credentials'),
+      .withMessage('Invalid login'),
 
     body('password')
       .notEmpty()
