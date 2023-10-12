@@ -14,10 +14,8 @@ export const postsRepository = {
     queryData: PostQueryModel,
   ): Promise<PaginatorPostModel | null> {
     try {
-      const sortByProperty: string = queryData.sortBy as string
-      const sortDirection: number = queryData.sortDirection as number
       const sortCriteria: { [key: string]: any } = {
-        [sortByProperty]: sortDirection,
+        [queryData.sortBy as string]: queryData.sortDirection,
       }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
