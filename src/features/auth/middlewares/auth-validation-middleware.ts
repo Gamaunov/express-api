@@ -1,15 +1,21 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
-export const UserValidation = () => {
+export const AuthValidation = () => {
   return [
-    body('login')
+    body('loginOrEmail')
       .notEmpty()
       .isString()
       .trim()
-      .isLength({ min: 3, max: 10 })
-      .matches(/^[a-zA-Z0-9_-]*$/)
-      .withMessage('Invalid login'),
+      .custom((value) => {
+        if (
+          !value.match(/^[a-zA-Z0-9_-]*$/) &&
+          !value.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+        ) {
+          throw new Error('Invalid loginOrEmail')
+        }
+        return true
+      }),
 
     body('password')
       .notEmpty()
@@ -17,18 +23,10 @@ export const UserValidation = () => {
       .trim()
       .isLength({ min: 6, max: 20 })
       .withMessage('Invalid credentials'),
-
-    body('email')
-      .notEmpty()
-      .isString()
-      .trim()
-      .isLength({ min: 1, max: 200 })
-      .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-      .withMessage('Invalid email'),
   ]
 }
 
-export const UserErrorsValidation = (
+export const AuthErrorsValidation = (
   req: Request,
   res: Response,
   next: NextFunction,

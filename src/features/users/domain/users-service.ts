@@ -7,7 +7,6 @@ import { PaginatorUserModel } from '../models/PaginatorUserModel'
 import { UserQueryModel } from '../models/UserQueryModel'
 import { usersRepository } from '../repository/users-repository'
 
-
 export const usersService = {
   async getAllUsers(data: UserQueryModel): Promise<PaginatorUserModel | null> {
     const queryData = queryUserValidator(data)
@@ -37,8 +36,7 @@ export const usersService = {
 
     const passwordHash = await this._generateHash(password, user.passwordSalt)
 
-    return user.passwordHash === passwordHash;
-
+    return user.passwordHash === passwordHash
   },
 
   async _generateHash(password: string, salt: string) {
