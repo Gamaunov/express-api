@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 
-import { UserErrorsValidation, UserValidation, usersService } from '../../users'
+import { usersService } from '../../users'
 import {
   AuthErrorsValidation,
   AuthValidation,
