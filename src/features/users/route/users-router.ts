@@ -29,9 +29,9 @@ export const usersRouter = () => {
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
       const data = req.body
 
-      const newPost = await usersService.createUser(data)
+      const newUser = await usersService.createUser(data)
 
-      return res.status(201).send(newPost)
+      return res.status(201).send(newUser)
     },
   )
 

@@ -6,6 +6,7 @@ export { URIParamsUserModel } from './models/URIParamsUserModel'
 export { UserQueryModel } from './models/UserQueryModel'
 export { PaginatorUserModel } from './models/PaginatorUserModel'
 export { CreateUserModel } from './models/CreatUserModel'
+export { MappedUserModel } from './models/MappedUserModel'
 
 export { SortUserFields } from './helpers/enums/sort-user-fields'
 export { queryUserValidator } from './helpers/validators/query-user-validator'

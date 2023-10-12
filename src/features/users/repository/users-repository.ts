@@ -2,7 +2,9 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { usersCollection } from '../../../db/db'
 import { pagesCount, skipFn } from '../../../shared'
+import { loginEmailFilter } from '../helpers/filters/login-email-filter'
 import { userMapper } from '../helpers/mappers/user-mapper'
+import { MappedUserModel } from '../models/MappedUserModel'
 import { PaginatorUserModel } from '../models/PaginatorUserModel'
 import { UserQueryModel } from '../models/UserQueryModel'
 import { UserViewModel } from '../models/UserViewModel'
@@ -12,14 +14,13 @@ export const usersRepository = {
     queryData: UserQueryModel,
   ): Promise<PaginatorUserModel | null> {
     try {
-      const filter = {
-        name: { $regex: queryData.searchEmailTerm ?? '', $options: 'i' },
-      }
+      const filter = loginEmailFilter(
+        queryData.searchLoginTerm,
+        queryData.searchEmailTerm,
+      )
 
-      const sortByProperty: string = queryData.sortBy as string
-      const sortDirection: number = queryData.sortDirection as number
       const sortCriteria: { [key: string]: any } = {
-        [sortByProperty]: sortDirection,
+        [queryData.sortBy as string]: queryData.sortDirection,
       }
 
       const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
@@ -50,10 +51,16 @@ export const usersRepository = {
     }
   },
 
-  async createUser(newPost: UserViewModel): Promise<UserViewModel> {
+  async createUser(newPost: UserViewModel): Promise<MappedUserModel> {
     const res = await usersCollection.insertOne({ ...newPost })
 
     return userMapper({ ...newPost, _id: res.insertedId })
+  },
+
+  async findLoginOrEmail(loginOrEmail: string) {
+    return await usersCollection.findOne({
+      $or: [{ email: loginOrEmail }, { userName: loginOrEmail }],
+    })
   },
 
   async deleteUser(id: string): Promise<boolean> {

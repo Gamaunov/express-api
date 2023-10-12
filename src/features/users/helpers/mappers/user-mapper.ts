@@ -1,9 +1,9 @@
 import { WithId } from 'mongodb'
 
-import { UserOutput } from '../../../../db/dbTypes'
+import { MappedUserModel } from '../../models/MappedUserModel'
 import { UserViewModel } from '../../models/UserViewModel'
 
-export const userMapper = (user: WithId<UserViewModel>): UserOutput => {
+export const userMapper = (user: WithId<UserViewModel>): MappedUserModel => {
   return {
     id: user._id.toHexString(),
     login: user.login,
