@@ -3,7 +3,6 @@ import request from 'supertest'
 import { CreateUserModel } from '../../src/features/users'
 import { EmptyOutput } from './blogs.api.e2e'
 
-
 const getRequest = () => {
   return request('http://localhost:5000/')
 }
