@@ -10,6 +10,7 @@ export { BlogErrorsValidation } from './blogs/blogValidationMiddleware'
 
 export { ValidateComment } from './comments/commentValidationMiddleware'
 export { CommentErrorsValidation } from './comments/commentValidationMiddleware'
+export { FindCommentMiddleware } from './comments/findCommentMiddleware'
 
 export { FindPostMiddleware } from './posts/findPostMiddleware'
 export { PostValidation } from './posts/postValidationMiddleware'

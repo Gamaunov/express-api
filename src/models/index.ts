@@ -14,6 +14,7 @@ export { CreateCommentModel } from './comment/CreateCommentModel'
 export { MappedCommentModel } from './comment/MappedCommentModel'
 export { CommentQueryModel } from './comment/CommentQueryModel'
 export { PaginatorCommentModel } from './comment/PaginatorCommentModel'
+export { URIParamsCommentIdModel } from './comment/URIParamsCommentIdModel'
 
 export { CommentatorInfoModel } from './post/CommentatorInfoModel'
 export { CreatePostByBlogIdModel } from './post/CreatePostByBlogIdModel'

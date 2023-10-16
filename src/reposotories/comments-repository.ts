@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb'
+
 import { commentsCollection } from '../db/db'
 import {
   CommentQueryModel,
@@ -55,11 +57,41 @@ export const commentsRepository = {
     }
   },
 
+  async getCommentById(id: string): Promise<MappedCommentModel | null> {
+    const comment = await commentsCollection.findOne({ _id: new ObjectId(id) })
+
+    if (!comment) return null
+
+    return commentMapper(comment)
+  },
+
+  async updateComment(
+    id: string,
+    content: string,
+  ): Promise<MappedCommentModel | null> {
+    const comment = await commentsCollection.findOneAndUpdate(
+      { _id: new ObjectId(id) },
+      { $set: { content } },
+    )
+
+    if (!comment) return null
+
+    return commentMapper(comment)
+  },
+
   async deleteAllComments() {
     try {
       await commentsCollection.deleteMany({})
     } catch (e) {
       console.error('Error deleting documents:', e)
     }
+  },
+
+  async deleteComment(id: string): Promise<boolean> {
+    const isCommentDeleted = await commentsCollection.deleteOne({
+      _id: new ObjectId(id),
+    })
+
+    return isCommentDeleted.deletedCount === 1
   },
 }
