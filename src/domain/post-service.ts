@@ -1,10 +1,13 @@
 import { ObjectId } from 'mongodb'
 
 import {
+  CommentQueryModel,
   CommentViewModel,
   CommentatorInfoModel,
   CreateCommentModel,
   CreatePostModel,
+  MappedCommentModel,
+  PaginatorCommentModel,
   PaginatorPostModel,
   PostOutputModel,
   PostQueryModel,
@@ -13,7 +16,7 @@ import {
 import { blogsRepository } from '../reposotories/blogs-repository'
 import { commentsRepository } from '../reposotories/comments-repository'
 import { postsRepository } from '../reposotories/posts-repository'
-import { queryPostValidator } from '../shared'
+import { queryCommentValidator, queryPostValidator } from '../shared'
 
 export const postsService = {
   async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null> {
@@ -24,6 +27,15 @@ export const postsService = {
 
   async getPostById(id: string): Promise<PostOutputModel | null> {
     return postsRepository.getPostById(id)
+  },
+
+  async getCommentsByPostId(
+    postId: string,
+    data: CommentQueryModel,
+  ): Promise<PaginatorCommentModel | null> {
+    const queryData = queryCommentValidator(data)
+
+    return await commentsRepository.getCommentsByPostId(postId, queryData)
   },
 
   async createPost(data: CreatePostModel): Promise<PostViewModel> {
@@ -45,7 +57,7 @@ export const postsService = {
     postId: string,
     userInfo: CommentatorInfoModel,
     data: CreateCommentModel,
-  ): Promise<any | null> {
+  ): Promise<MappedCommentModel | null> {
     const newComment: CommentViewModel = {
       _id: new ObjectId(),
       postId,

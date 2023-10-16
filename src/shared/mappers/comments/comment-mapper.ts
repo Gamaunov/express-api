@@ -1,7 +1,9 @@
+import { WithId } from 'mongodb'
+
 import { CommentViewModel, MappedCommentModel } from '../../../models'
 
 export const commentMapper = (
-  comment: CommentViewModel,
+  comment: WithId<CommentViewModel>,
 ): MappedCommentModel => {
   return {
     id: comment._id.toHexString(),

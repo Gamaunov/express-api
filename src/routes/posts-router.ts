@@ -2,9 +2,11 @@ import express, { Request, Response } from 'express'
 
 import { postsService } from '../domain/post-service'
 import {
+  CommentErrorsValidation,
   FindPostMiddleware,
   PostErrorsValidation,
   PostValidation,
+  ValidateComment,
   authGuardMiddleware,
   authMiddleware,
   validateObjectId,
@@ -51,27 +53,33 @@ export const postsRouter = () => {
     },
   )
 
-  // router.get(
-  //     `/:blogId/posts`,
-  //     FindBlogMiddleware,
-  //     async (req: Request, res: Response) => {
-  //       const blogId = req.params.blogId
-  //
-  //       const data = req.query
-  //
-  //       const postsByBlogId = await blogsService.getPostsByBlogId(blogId, data)
-  //
-  //       return res.status(200).send(postsByBlogId)
-  //     },
-  // )
+  router.get(
+    `/:postId/comments`,
+    FindPostMiddleware,
+    async (req: Request, res: Response) => {
+      const postId = req.params.postId
+
+      const data = req.query
+
+      const commentsByPostId = await postsService.getCommentsByPostId(
+        postId,
+        data,
+      )
+
+      return res.status(200).send(commentsByPostId)
+    },
+  )
 
   router.post(
     `/:postId/comments`,
     authMiddleware,
     FindPostMiddleware,
+    ValidateComment(),
+    CommentErrorsValidation,
     async (req: Request, res: Response) => {
+      const postId = req.params.postId
+
       const data = req.body
-      const { postId } = req.params
 
       const userInfo = {
         //@ts-ignore

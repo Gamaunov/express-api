@@ -1,6 +1,11 @@
-import { blogsCollection, commentsCollection } from '../db/db'
-import { CommentViewModel, MappedCommentModel } from '../models'
-import { commentMapper } from '../shared'
+import { commentsCollection } from '../db/db'
+import {
+  CommentQueryModel,
+  CommentViewModel,
+  MappedCommentModel,
+  PaginatorCommentModel,
+} from '../models'
+import { commentMapper, skipFn } from '../shared'
 
 export const commentsRepository = {
   async createComment(
@@ -11,9 +16,48 @@ export const commentsRepository = {
     return commentMapper({ ...newComment, _id: res.insertedId })
   },
 
+  async getCommentsByPostId(
+    postId: string,
+    queryData: CommentQueryModel,
+  ): Promise<PaginatorCommentModel | null> {
+    try {
+      const filter = { postId: postId }
+
+      const sortCriteria: { [key: string]: any } = {
+        [queryData.sortBy as string]: queryData.sortDirection,
+      }
+
+      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
+
+      const limit = queryData.pageSize
+
+      const comments = await commentsCollection
+        .find(filter)
+        .sort(sortCriteria)
+        .skip(skip)
+        .limit(limit!)
+        .toArray()
+
+      const commentItems = comments.map((c) => commentMapper(c))
+
+      const totalCount = await commentsCollection.countDocuments(filter)
+
+      return {
+        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        page: queryData.pageNumber!,
+        pageSize: queryData.pageSize!,
+        totalCount: totalCount,
+        items: commentItems,
+      }
+    } catch (e) {
+      console.log(e)
+      return null
+    }
+  },
+
   async deleteAllComments() {
     try {
-      await blogsCollection.deleteMany({})
+      await commentsCollection.deleteMany({})
     } catch (e) {
       console.error('Error deleting documents:', e)
     }

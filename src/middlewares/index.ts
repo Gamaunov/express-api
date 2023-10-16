@@ -8,6 +8,9 @@ export { AuthErrorsValidation } from './auth/authValidationMiddleware'
 export { ValidateBlog } from './blogs/blogValidationMiddleware'
 export { BlogErrorsValidation } from './blogs/blogValidationMiddleware'
 
+export { ValidateComment } from './comments/commentValidationMiddleware'
+export { CommentErrorsValidation } from './comments/commentValidationMiddleware'
+
 export { FindPostMiddleware } from './posts/findPostMiddleware'
 export { PostValidation } from './posts/postValidationMiddleware'
 export { PostErrorsValidation } from './posts/postValidationMiddleware'

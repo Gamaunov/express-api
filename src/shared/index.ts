@@ -11,6 +11,7 @@ export { HS } from './enums/common/httpStatuses'
 export { SortDirections } from './enums/common/sortDirections'
 export { SortBlogFields } from './enums/blogs/sortBlogFields'
 export { SortPostFields } from './enums/posts/sortPostFields'
+export { SortCommentFields } from './enums/comments/sortCommentFields'
 
 export { loginEmailFilter } from './filters/users/loginEmailFilter'
 
@@ -22,3 +23,4 @@ export { userMapper } from './mappers/users/user-mapper'
 export { queryBlogValidator } from './validators/blogs/queryBlogValidator'
 export { queryPostValidator } from './validators/posts/queryPostValidator'
 export { queryUserValidator } from './validators/users/queryUserValidator'
+export { queryCommentValidator } from './validators/comments/queryCommentValidator'

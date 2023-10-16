@@ -17,8 +17,7 @@ export const authMiddleware = async (
 
   if (userId) {
     const user = await usersService.getUserById(userId)
-    if (user !== null) {
-      //@ts-ignore
+    if (!user) {
       req.user = user
       return next()
     }

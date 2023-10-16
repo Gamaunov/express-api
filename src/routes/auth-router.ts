@@ -33,18 +33,18 @@ export const authRouter = () => {
   )
 
   router.get('/me', authMiddleware, async (req: Request, res: Response) => {
-    const userInfo = {
-      //@ts-ignore
-      email: req.user.email,
-      //@ts-ignore
+    if (req.user) {
+      const userInfo = {
+        email: req.user.email,
 
-      login: req.user.login,
-      //@ts-ignore
+        login: req.user.login,
 
-      userId: req.user._id,
+        userId: req.user._id,
+      }
+      res.status(200).send(userInfo)
     }
-    //@ts-ignore
-    req.user ? res.status(200).send(userInfo) : res.sendStatus(401)
+
+    res.sendStatus(401)
   })
 
   return router

@@ -12,6 +12,8 @@ export { URIParamsBlogIdModel } from './blog/URIParamsBlogModel'
 export { CommentViewModel } from './comment/CommentViewModel'
 export { CreateCommentModel } from './comment/CreateCommentModel'
 export { MappedCommentModel } from './comment/MappedCommentModel'
+export { CommentQueryModel } from './comment/CommentQueryModel'
+export { PaginatorCommentModel } from './comment/PaginatorCommentModel'
 
 export { CommentatorInfoModel } from './post/CommentatorInfoModel'
 export { CreatePostByBlogIdModel } from './post/CreatePostByBlogIdModel'

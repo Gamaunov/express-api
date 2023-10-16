@@ -1,4 +1,4 @@
-import { UserDBTypeModel } from '../../features/users'
+import { UserDBTypeModel } from '../../models'
 
 declare global {
   namespace Express {
