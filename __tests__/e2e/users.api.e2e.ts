@@ -1,7 +1,14 @@
 import request from 'supertest'
 
-import { CreateUserModel } from '../../src/features/users'
-import { EmptyOutput } from './blogs.api.e2e'
+import { CreateUserModel } from '../../src/models'
+
+const EmptyOutput = {
+  pagesCount: 0,
+  page: 1,
+  pageSize: 10,
+  totalCount: 0,
+  items: [],
+}
 
 const getRequest = () => {
   return request('http://localhost:5000/')

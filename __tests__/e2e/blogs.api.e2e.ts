@@ -1,6 +1,6 @@
 import request from 'supertest'
 
-import { CreateBlogModel } from '../../src/features/blogs'
+import { CreateBlogModel } from '../../src/models'
 
 const getRequest = () => {
   return request('http://localhost:5000/')
@@ -12,7 +12,7 @@ function encodeCredentials(username: string, password: string) {
   return `Basic ${encodedCredentials}`
 }
 
-export const EmptyOutput = {
+const EmptyOutput = {
   pagesCount: 0,
   page: 1,
   pageSize: 10,
