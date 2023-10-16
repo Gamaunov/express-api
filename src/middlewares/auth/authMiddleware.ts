@@ -17,11 +17,13 @@ export const authMiddleware = async (
 
   if (userId) {
     const user = await usersService.getUserById(userId)
-    if (!user) {
+   
+    if (user) {
       req.user = user
+
       return next()
     }
   }
-
+  
   return res.sendStatus(401)
 }

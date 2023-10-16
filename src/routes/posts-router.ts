@@ -81,20 +81,22 @@ export const postsRouter = () => {
 
       const data = req.body
 
-      const userInfo = {
-        //@ts-ignore
-        userId: req.user._id,
-        //@ts-ignore
-        userLogin: req.user.login,
+      if (req.user) {
+        const userInfo = {
+          userId: req.user._id,
+          userLogin: req.user.login,
+        }
+
+        const createdCommentByPostId = await postsService.createCommentByPostId(
+          postId,
+          userInfo,
+          data,
+        )
+
+        return res.status(201).send(createdCommentByPostId)
+      } else {
+        return res.sendStatus(401)
       }
-
-      const createdCommentByPostId = await postsService.createCommentByPostId(
-        postId,
-        userInfo,
-        data,
-      )
-
-      return res.status(201).send(createdCommentByPostId)
     },
   )
 
