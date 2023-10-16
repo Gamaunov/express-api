@@ -17,7 +17,7 @@ export const authGuardMiddleware = (
   const decodedHeader = Buffer.from(encodedHeader, 'base64').toString('utf-8')
 
   if (decodedHeader !== expectedAuthHeader) {
-    return res.status(403).send('encodedHeader')
+    return res.status(401).send('encodedHeader')
   }
 
   return next()
