@@ -200,7 +200,7 @@ describe('users', () => {
       .expect(200)
 
     const userBySearchLoginTerm = usersWithPaging.body
-
+    const user = userBySearchLoginTerm.items[0]
     expect(userBySearchLoginTerm).toEqual({
       pagesCount: 1,
       page: 1,
@@ -208,12 +208,10 @@ describe('users', () => {
       totalCount: 1,
       items: [
         {
-          id: userBySearchLoginTerm.items.map((i: any) => i.id)[0],
-          email: userBySearchLoginTerm.items.map((i: any) => i.email)[0],
-          login: userBySearchLoginTerm.items.map((i: any) => i.login)[0],
-          createdAt: userBySearchLoginTerm.items.map(
-            (i: any) => i.createdAt,
-          )[0],
+          id: user.id,
+          email: user.email,
+          login: user.login,
+          createdAt: user.createdAt,
         },
       ],
     })
