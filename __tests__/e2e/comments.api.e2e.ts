@@ -25,22 +25,15 @@ describe('comments', () => {
   let createdBlog: any = null
   let createdPost: any = null
   let createdUser: any = null
-  let createdComment: any = null
+  let BearerUserToken: any = null
   let commentId: any = null
-  it(`should create user with correct input data +
-    should login user to the system +
-    should create blog with correct input data +
-    should create post with correct input data +
-  should create comment with correct input data + 
-  should return comments for specified post + 
-  should update existing comment by id with input model +
-  should return comment by id +
-  should delete comment by id
-  `, async () => {
-    const username = 'admin'
-    const password = 'qwerty'
-    const authHeader = encodeCredentials(username, password)
+  let userToken: any = null
 
+  const username = 'admin'
+  const password = 'qwerty'
+  const authHeader = encodeCredentials(username, password)
+
+  beforeEach(async () => {
     //creating user
     const createUserData: CreateUserModel = {
       login: 'login123',
@@ -74,7 +67,7 @@ describe('comments', () => {
       .send(loginData)
       .expect(200)
 
-    const userToken = loggedUser.body.accessToken
+    userToken = loggedUser.body.accessToken
 
     // creating blog
     const blogData: CreateBlogModel = {
@@ -131,15 +124,45 @@ describe('comments', () => {
       content: 'stringstringstringst',
     }
 
-    const updatedAuthHeader = `Bearer ${userToken}`
+    BearerUserToken = `Bearer ${userToken}`
     const createCommentRequest = await getRequest()
       .post(`posts/${createdPost.id}/comments`)
-      .set('Authorization', updatedAuthHeader)
+      .set('Authorization', BearerUserToken)
       .send(commentBody)
       .expect(201)
 
     commentId = createCommentRequest.body.id
+  })
 
+  it(`shouldn't create comment with incorrect content length`, async () => {
+    //creating new comment
+    const commentBody: CreateCommentModel = {
+      content: 'string',
+    }
+
+    BearerUserToken = `Bearer ${userToken}`
+    const createCommentRequest = await getRequest()
+      .post(`posts/${createdPost.id}/comments`)
+      .set('Authorization', BearerUserToken)
+      .send(commentBody)
+      .expect(400)
+  })
+
+  it(`shouldn't create comment with incorrect Authorization`, async () => {
+    //creating new comment
+    const commentBody: CreateCommentModel = {
+      content: 'string',
+    }
+
+    BearerUserToken = `Bearer ${userToken}`
+    const createCommentRequest = await getRequest()
+      .post(`posts/${createdPost.id}/comments`)
+      .set('Authorization', BearerUserToken + '1')
+      .send(commentBody)
+      .expect(401)
+  })
+
+  it('should return comments for specified post', async () => {
     //return comments for specified post
     const queryCommentsParams = {
       pageNumber: 1,
@@ -172,41 +195,50 @@ describe('comments', () => {
         },
       ],
     })
+  })
 
-    //update existing comment by id with input model
-    const updatedCommentData = {
-      content: 'updatedupdatedupdatedupdated',
-    }
+  it(
+    'should update existing comment by id with input model' +
+      ' + should return comment by id',
+    async () => {
+      //update existing comment by id with input model
+      const updatedCommentData = {
+        content: 'updatedupdatedupdatedupdated',
+      }
 
-    const updatedComment = await getRequest()
-      .put(`comments/${commentId}`)
-      .set('Authorization', updatedAuthHeader)
-      .send(updatedCommentData)
-      .expect(204)
+      const updatedComment = await getRequest()
+        .put(`comments/${commentId}`)
+        .set('Authorization', BearerUserToken)
+        .send(updatedCommentData)
+        .expect(204)
 
-    //return existing comment by id with changed content
-    const commentById = await getRequest()
-      .get(`comments/${commentId}`)
-      .expect(200)
+      //return existing comment by id with changed content
+      const commentById = await getRequest()
+        .get(`comments/${commentId}`)
+        .expect(200)
 
-    const updatedCommentResult = commentById.body
+      const updatedCommentResult = commentById.body
 
-    expect(updatedCommentResult).toEqual({
-      id: updatedCommentResult.id,
-      content: updatedCommentData.content, //changed field from test above
-      commentatorInfo: {
-        userId: updatedCommentResult.commentatorInfo.userId,
-        userLogin: updatedCommentResult.commentatorInfo.userLogin,
-      },
-      createdAt: updatedCommentResult.createdAt,
-    })
+      expect(updatedCommentResult).toEqual({
+        id: updatedCommentResult.id,
+        content: updatedCommentData.content, //changed field from test above
+        commentatorInfo: {
+          userId: updatedCommentResult.commentatorInfo.userId,
+          userLogin: updatedCommentResult.commentatorInfo.userLogin,
+        },
+        createdAt: updatedCommentResult.createdAt,
+      })
+    },
+  )
 
+  it(`should delete comment by id`, async () => {
     //delete comment by id
     const deletedComment = await getRequest()
       .delete(`comments/${commentId}`)
-      .set('Authorization', updatedAuthHeader)
+      .set('Authorization', BearerUserToken)
       .expect(204)
   })
+
   afterAll((done) => {
     done()
   })
