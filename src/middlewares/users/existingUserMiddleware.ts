@@ -14,7 +14,7 @@ export const ExistingUserMiddleware = async (
       errorsMessages: [
         {
           message: 'User already exist',
-          field: 'Email',
+          field: 'email',
         },
       ],
     }

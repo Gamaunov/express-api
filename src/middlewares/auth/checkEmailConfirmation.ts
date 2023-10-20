@@ -16,7 +16,7 @@ export const CheckEmailConfirmation = async (
       errorsMessages: [
         {
           message: 'Email already activated',
-          field: 'Email',
+          field: 'email',
         },
       ],
     }
