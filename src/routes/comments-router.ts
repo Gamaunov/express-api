@@ -52,7 +52,9 @@ export const commentsRouter = () => {
 
       if (comment?.commentatorInfo.userId.toString() === req.user._id.toString()) {
         const { content } = req.body
-
+        // console.log(comment?.commentatorInfo.userId.toString() === req.user._id.toString(),'===');
+        // console.log(comment?.commentatorInfo.userId.toString(),'=commentatorInfo.userId==');
+        // console.log(req.user._id.toString(),'==req.user=');
         await commentsService.updateComment(req.params.id, content)
 
         return res.sendStatus(204)
