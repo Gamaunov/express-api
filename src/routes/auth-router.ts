@@ -6,11 +6,11 @@ import { emailManager } from '../managers/email-manager'
 import {
   AuthErrorsValidation,
   AuthValidation,
-  CheckEmailConfirmation,
+  CheckEmail,
+  CheckEmailCode,
+  CheckLoginAndEmail,
   EmailErrorsValidation,
   EmailValidation,
-  ExistingUserMiddleware,
-  FindUserByEmailMiddleware,
   UserErrorsValidation,
   UserValidation,
   authMiddleware,
@@ -31,7 +31,7 @@ export const authRouter = () => {
     '/registration',
     UserValidation(),
     UserErrorsValidation,
-    ExistingUserMiddleware,
+    CheckLoginAndEmail,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
       const user = await authService.createUser(
         req.body.login,
@@ -49,7 +49,7 @@ export const authRouter = () => {
 
   router.post(
     '/registration-confirmation',
-    CheckEmailConfirmation,
+    CheckEmailCode,
     async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
       const result = await authService.confirmEmail(req.body.code)
 
@@ -65,7 +65,7 @@ export const authRouter = () => {
     '/registration-email-resending',
     EmailValidation(),
     EmailErrorsValidation,
-    FindUserByEmailMiddleware,
+    CheckEmail,
     async (req: RequestWithBody<EmailType>, res: Response) => {
       const user = await authService.resendConfirmationCode(req.body.email)
 

@@ -83,6 +83,12 @@ export const usersRepository = {
     })
   },
 
+  async findUserByLogin(login: string): Promise<UserAccountDBModel | null> {
+    return await usersCollection.findOne({
+      'accountData.login': login,
+    })
+  },
+
   async findUserByConfirmationCode(
     code: string,
   ): Promise<UserAccountDBModel | null> {

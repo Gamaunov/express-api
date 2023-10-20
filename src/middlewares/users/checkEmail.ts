@@ -2,18 +2,31 @@ import { NextFunction, Request, Response } from 'express'
 
 import { usersRepository } from '../../reposotories/users-repository'
 
-export const FindUserByEmailMiddleware = async (
+export const CheckEmail = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const exist = await usersRepository.findUserByEmail(req.body.email)
+  const user = await usersRepository.findUserByEmail(req.body.email)
 
-  if (!exist) {
+  if (!user) {
     const message = {
       errorsMessages: [
         {
           message: 'Email doesnt exist',
+          field: 'email',
+        },
+      ],
+    }
+
+    return res.status(400).send(message)
+  }
+
+  if (user.emailConfirmation.isConfirmed) {
+    const message = {
+      errorsMessages: [
+        {
+          message: 'Email already confirmed',
           field: 'email',
         },
       ],

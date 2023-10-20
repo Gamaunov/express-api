@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 import { usersRepository } from '../../reposotories/users-repository'
 
-export const CheckEmailConfirmation = async (
+export const CheckEmailCode = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -15,8 +15,8 @@ export const CheckEmailConfirmation = async (
     const message = {
       errorsMessages: [
         {
-          message: 'Email already activated',
-          field: 'email',
+          message: 'code already confirmed',
+          field: 'code',
         },
       ],
     }
