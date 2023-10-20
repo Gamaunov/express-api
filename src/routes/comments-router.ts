@@ -48,11 +48,9 @@ export const commentsRouter = () => {
       // }
       if (!req.user) return res.sendStatus(401)
 
-      const paramsId = req.params.id
-
       const comment = await commentsRepository.getCommentById(req.params.id)
 
-      if (comment?.commentatorInfo.userId === req.user._id.toString()) {
+      if (comment?.commentatorInfo.userId.toString() === req.user._id.toString()) {
         const { content } = req.body
 
         await commentsService.updateComment(req.params.id, content)
@@ -98,7 +96,7 @@ export const commentsRouter = () => {
 
       const comment = await commentsRepository.getCommentById(req.params.id)
 
-      if (comment?.commentatorInfo.userId === req.user._id.toString()) {
+      if (comment?.commentatorInfo.userId.toString() === req.user._id.toString()) {
         await commentsService.deleteComment(req.params.id)
 
         return res.sendStatus(204)
