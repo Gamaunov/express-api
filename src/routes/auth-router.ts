@@ -10,6 +10,7 @@ import {
   EmailErrorsValidation,
   EmailValidation,
   ExistingUserMiddleware,
+  FindUserByEmailMiddleware,
   UserErrorsValidation,
   UserValidation,
   authMiddleware,
@@ -64,6 +65,7 @@ export const authRouter = () => {
     '/registration-email-resending',
     EmailValidation(),
     EmailErrorsValidation,
+    FindUserByEmailMiddleware,
     async (req: RequestWithBody<EmailType>, res: Response) => {
       const user = await authService.resendConfirmationCode(req.body.email)
 
