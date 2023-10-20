@@ -1,3 +1,3 @@
 export type PostIdType = {
-    postId: string
+  postId: string
 }

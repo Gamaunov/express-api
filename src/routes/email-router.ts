@@ -2,8 +2,8 @@ import dotenv from 'dotenv'
 import { Router } from 'express'
 
 import { emailService } from '../domain/email-service'
-import {RequestWithBody} from "../shared";
-import {EmailViewModel} from "../models";
+import { EmailViewModel } from '../models'
+import { RequestWithBody } from '../shared'
 
 dotenv.config()
 

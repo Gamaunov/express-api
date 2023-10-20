@@ -7,19 +7,22 @@ import {
   authGuardMiddleware,
   validateObjectId,
 } from '../middlewares'
-import {CreateUserModel, URIParamsUserModel, UserQueryModel} from '../models'
-import {RequestWithBody, RequestWithParams, RequestWithQuery} from '../shared'
+import { CreateUserModel, URIParamsUserModel, UserQueryModel } from '../models'
+import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
 
 export const usersRouter = () => {
   const router = express.Router()
 
-  router.get(`/`, async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
-    const data = req.query
+  router.get(
+    `/`,
+    async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
+      const data = req.query
 
-    const users = await usersService.getAllUsers(data)
+      const users = await usersService.getAllUsers(data)
 
-    return res.status(200).send(users)
-  })
+      return res.status(200).send(users)
+    },
+  )
 
   router.post(
     `/`,
