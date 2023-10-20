@@ -3,6 +3,14 @@ export { RequestWithQuery } from './types/types'
 export { RequestWithParams } from './types/types'
 export { RequestWithParamsAndBody } from './types/types'
 
+export { ConfirmCodeType } from './types/auth/auth-types'
+export { EmailType } from './types/auth/auth-types'
+export { LoginOrEmailType } from './types/auth/auth-types'
+export { LoginType } from './types/auth/auth-types'
+export { UserInfoType } from './types/auth/auth-types'
+
+export { BlogIdType } from './types/blogs/blogs-types'
+
 export { skipFn } from './utils/skipFn'
 export { pagesCount } from './utils/pagesCount'
 

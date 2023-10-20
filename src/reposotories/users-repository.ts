@@ -1,13 +1,8 @@
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { usersCollection } from '../db/db'
-import {
-  MappedUserModel,
-  PaginatorUserModel,
-  UserDBTypeModel,
-  UserQueryModel,
-  UserViewModel,
-} from '../models'
+import { MappedUserModel, PaginatorUserModel, UserQueryModel } from '../models'
+import { UserAccountDBModel } from '../models'
 import { loginEmailFilter, pagesCount, skipFn, userMapper } from '../shared'
 
 export const usersRepository = {
@@ -28,7 +23,7 @@ export const usersRepository = {
 
       const limit = queryData.pageSize
 
-      const users: WithId<UserViewModel>[] = await usersCollection
+      const users: UserAccountDBModel[] = await usersCollection
         .find(filter)
         .sort(sortCriteria)
         .skip(skip)
@@ -52,28 +47,64 @@ export const usersRepository = {
     }
   },
 
-  async getUserById(id: ObjectId): Promise<UserDBTypeModel | null> {
+  async getUserById(id: ObjectId): Promise<UserAccountDBModel | null> {
     return usersCollection.findOne({ _id: id })
   },
 
-  // async createBlog(newBlog: BlogViewModel): Promise<BlogViewModel> {
-  //   const res = await blogsCollection.insertOne({ ...newBlog })
-  //
-  //   return blogMapper({ ...newBlog, _id: res.insertedId })
-  // },
+  async updateConfirmation(_id: ObjectId): Promise<boolean> {
+    const result = await usersCollection.updateOne(
+      { _id },
+      { $set: { 'emailConfirmation.isConfirmed': true } },
+    )
 
-  async createUser(newPost: UserViewModel): Promise<MappedUserModel> {
-    const res = await usersCollection.insertOne({ ...newPost })
+    return result.modifiedCount === 1
+  },
 
-    return userMapper({ ...newPost, _id: res.insertedId })
+  async createUser(newUser: UserAccountDBModel): Promise<MappedUserModel> {
+    const res = await usersCollection.insertOne(newUser)
+
+    return userMapper({ ...newUser, _id: res.insertedId })
   },
 
   async findLoginOrEmail(
     loginOrEmail: string,
-  ): Promise<UserDBTypeModel | null> {
-    return await usersCollection.findOne({
-      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+  ): Promise<UserAccountDBModel | null> {
+    return usersCollection.findOne({
+      $or: [
+        { 'accountData.login': loginOrEmail },
+        { 'accountData.email': loginOrEmail },
+      ],
     })
+  },
+
+  async findUserByEmail(email: string): Promise<UserAccountDBModel | null> {
+    return await usersCollection.findOne({
+      'accountData.email': email,
+    })
+  },
+
+  async findUserByConfirmationCode(
+    code: string,
+  ): Promise<UserAccountDBModel | null> {
+    return await usersCollection.findOne({
+      'emailConfirmation.confirmationCode': code,
+    })
+  },
+
+  async updateConfirmationCode(
+    userId: ObjectId,
+    code: string,
+  ): Promise<boolean> {
+    const result = await usersCollection.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          'emailConfirmation.confirmationCode': code,
+        },
+      },
+    )
+
+    return result.modifiedCount === 1
   },
 
   async deleteUser(id: string): Promise<boolean> {

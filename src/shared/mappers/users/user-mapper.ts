@@ -1,12 +1,10 @@
-import { WithId } from 'mongodb'
+import { MappedUserModel, UserAccountDBModel } from '../../../models'
 
-import { MappedUserModel, UserViewModel } from '../../../models'
-
-export const userMapper = (user: WithId<UserViewModel>): MappedUserModel => {
+export const userMapper = (user: UserAccountDBModel): MappedUserModel => {
   return {
     id: user._id.toHexString(),
-    login: user.login,
-    email: user.email,
-    createdAt: user.createdAt,
+    login: user.accountData.login,
+    email: user.accountData.email,
+    createdAt: user.accountData.createdAt,
   }
 }

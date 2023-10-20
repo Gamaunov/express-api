@@ -1,15 +1,17 @@
-import bcrypt from 'bcrypt'
+import add from 'date-fns/add'
 import { ObjectId } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
 import {
   CreateUserModel,
   MappedUserModel,
   PaginatorUserModel,
-  UserDBTypeModel,
+  UserAccountDBModel,
   UserQueryModel,
 } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
 import { queryUserValidator } from '../shared'
+import { authService } from './auth-service'
 
 export const usersService = {
   async getAllUsers(data: UserQueryModel): Promise<PaginatorUserModel | null> {
@@ -18,42 +20,32 @@ export const usersService = {
     return await usersRepository.getAllUsers(queryData)
   },
 
-  async getUserById(userId: ObjectId): Promise<UserDBTypeModel | null> {
+  async getUserById(userId: ObjectId): Promise<UserAccountDBModel | null> {
     return await usersRepository.getUserById(userId)
   },
 
   async createUser(data: CreateUserModel): Promise<MappedUserModel> {
-    const passwordSalt = await bcrypt.genSalt(10)
-    const passwordHash = await this._generateHash(data.password, passwordSalt)
+    const passwordHash = await authService._generateHash(data.password)
 
-    const newUser = {
-      login: data.login,
-      email: data.email,
-      passwordHash,
-      passwordSalt,
-      createdAt: new Date().toISOString(),
+    const newUser: UserAccountDBModel = {
+      _id: new ObjectId(),
+      accountData: {
+        login: data.login,
+        email: data.email,
+        passwordHash,
+        createdAt: new Date(),
+      },
+      emailConfirmation: {
+        confirmationCode: uuidv4(),
+        expirationDate: add(new Date(), {
+          hours: 8,
+          minutes: 30,
+        }),
+        isConfirmed: false,
+      },
     }
 
     return await usersRepository.createUser(newUser)
-  },
-
-  async checkCredentials(loginOrEmail: string, password: string) {
-    const user = await usersRepository.findLoginOrEmail(loginOrEmail)
-
-    if (!user) return false
-
-    const passwordHash = await this._generateHash(password, user.passwordSalt)
-
-    // return user.passwordHash === passwordHash
-    if (user.passwordHash === passwordHash) {
-      return user
-    } else {
-      return false
-    }
-  },
-
-  async _generateHash(password: string, salt: string) {
-    return await bcrypt.hash(password, salt)
   },
 
   async deleteUser(id: string): Promise<boolean> {

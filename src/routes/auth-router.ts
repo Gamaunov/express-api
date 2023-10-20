@@ -1,51 +1,126 @@
-import express, { Request, Response } from 'express'
+import express, { Response } from 'express'
 
 import { jwtService } from '../application/jwtService'
-import { usersService } from '../domain/users-service'
+import { authService } from '../domain/auth-service'
+import { emailManager } from '../managers/email-manager'
 import {
   AuthErrorsValidation,
   AuthValidation,
+  CheckEmailConfirmation,
+  EmailErrorsValidation,
+  EmailValidation,
+  ExistingUserMiddleware,
+  UserErrorsValidation,
+  UserValidation,
   authMiddleware,
 } from '../middlewares'
-import { UserDBTypeModel } from '../models'
+import { CreateUserModel, UserAccountDBModel } from '../models'
+import {
+  ConfirmCodeType,
+  EmailType,
+  LoginOrEmailType,
+  RequestWithBody,
+  UserInfoType,
+} from '../shared'
 
 export const authRouter = () => {
   const router = express.Router()
 
   router.post(
+    '/registration',
+    UserValidation(),
+    UserErrorsValidation,
+    ExistingUserMiddleware,
+    async (req: RequestWithBody<CreateUserModel>, res: Response) => {
+      const user = await authService.createUser(
+        req.body.login,
+        req.body.email,
+        req.body.password,
+      )
+
+      if (!user) {
+        return res.sendStatus(400)
+      } else {
+        return res.sendStatus(204)
+      }
+    },
+  )
+
+  router.post(
+    '/registration-confirmation',
+    CheckEmailConfirmation,
+    async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
+      const result = await authService.confirmEmail(req.body.code)
+
+      if (!result) {
+        return res.sendStatus(400)
+      } else {
+        return res.sendStatus(204)
+      }
+    },
+  )
+
+  router.post(
+    '/registration-email-resending',
+    EmailValidation(),
+    EmailErrorsValidation,
+    async (req: RequestWithBody<EmailType>, res: Response) => {
+      const user = await authService.resendConfirmationCode(req.body.email)
+
+      if (user) {
+        try {
+          await emailManager.sendEmailConfirmationMessage(
+            req.body.email,
+            user.emailConfirmation.confirmationCode,
+          )
+        } catch (e) {
+          return null
+        }
+
+        return res.sendStatus(204)
+      }
+      return res.sendStatus(400)
+    },
+  )
+
+  router.post(
     '/login',
     AuthValidation(),
     AuthErrorsValidation,
-    async (req: Request, res: Response) => {
-      const user: boolean | UserDBTypeModel =
-        await usersService.checkCredentials(
+    async (req: RequestWithBody<LoginOrEmailType>, res: Response) => {
+      const user: UserAccountDBModel | null =
+        await authService.checkCredentials(
           req.body.loginOrEmail,
           req.body.password,
         )
 
       if (user) {
         const token = await jwtService.createJWT(user)
-        res.status(200).send({ accessToken: token })
+
+        return res.status(200).send({ accessToken: token })
       } else {
-        res.sendStatus(401)
+        return res.sendStatus(401)
       }
     },
   )
 
-  router.get('/me', authMiddleware, async (req: Request, res: Response) => {
-    if (req.user) {
-      const userInfo = {
-        email: req.user.email,
+  router.get(
+    '/me',
+    authMiddleware,
+    async (req: RequestWithBody<UserInfoType>, res: Response) => {
+      if (req.user) {
+        const userInfo = {
+          email: req.user.accountData.email,
+          login: req.user.accountData.login,
+          userId: req.user._id,
+        }
 
-        login: req.user.login,
-
-        userId: req.user._id,
+        return res.status(200).send(userInfo)
       }
-      res.status(200).send(userInfo)
-    }
 
-    res.sendStatus(401)
-  })
+      return res.sendStatus(401)
+    },
+  )
 
   return router
 }

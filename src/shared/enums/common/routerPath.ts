@@ -5,5 +5,6 @@ export enum RouterPath {
   posts = '/posts',
   users = '/users',
   comments = '/comments',
+  email = '/email',
   testing = '/testing',
 }

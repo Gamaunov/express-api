@@ -84,7 +84,7 @@ export const postsRouter = () => {
       if (req.user) {
         const userInfo = {
           userId: req.user._id,
-          userLogin: req.user.login,
+          userLogin: req.user.accountData.login,
         }
 
         const createdCommentByPostId = await postsService.createCommentByPostId(

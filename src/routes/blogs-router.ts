@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Response } from 'express'
 
 import { blogsService } from '../domain/blogs-service'
 import {
@@ -10,8 +10,14 @@ import {
   validateObjectId,
 } from '../middlewares'
 import { FindBlogMiddleware } from '../middlewares/blogs/findBlogMiddleware'
-import { CreateBlogModel, URIParamsBlogIdModel } from '../models'
 import {
+  BlogQueryModel,
+  CreateBlogModel,
+  CreatePostByBlogIdModel,
+  URIParamsBlogIdModel,
+} from '../models'
+import {
+  BlogIdType,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
@@ -20,13 +26,16 @@ import {
 export const blogsRouter = () => {
   const router = express.Router()
 
-  router.get(`/`, async (req: Request, res: Response) => {
-    const data = req.query
+  router.get(
+    `/`,
+    async (req: RequestWithParams<BlogQueryModel>, res: Response) => {
+      const data = req.query
 
-    const blogs = await blogsService.getAllBlogs(data)
+      const blogs = await blogsService.getAllBlogs(data)
 
-    return res.status(200).send(blogs)
-  })
+      return res.status(200).send(blogs)
+    },
+  )
 
   router.get(
     `/:id`,
@@ -55,7 +64,7 @@ export const blogsRouter = () => {
   router.get(
     `/:blogId/posts`,
     FindBlogMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: RequestWithParams<BlogIdType>, res: Response) => {
       const blogId = req.params.blogId
 
       const data = req.query
@@ -72,7 +81,10 @@ export const blogsRouter = () => {
     FindBlogMiddleware,
     PostValidation(),
     PostErrorsValidation,
-    async (req: Request, res: Response) => {
+    async (
+      req: RequestWithParamsAndBody<BlogIdType, CreatePostByBlogIdModel>,
+      res: Response,
+    ) => {
       const blogId = req.params.blogId
 
       const data = req.body
