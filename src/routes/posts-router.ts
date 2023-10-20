@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Response } from 'express'
 
 import { postsService } from '../domain/post-service'
 import {
@@ -11,17 +11,18 @@ import {
   authMiddleware,
   validateObjectId,
 } from '../middlewares'
-import { CreatePostModel, URIParamsPostModel } from '../models'
+import {CommentQueryModel, CreateCommentModel, CreatePostModel, PostQueryModel, URIParamsPostModel} from '../models'
 import {
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody,
+    PostIdType,
+    RequestWithBody,
+    RequestWithParams,
+    RequestWithParamsAndBody, RequestWithQuery,
 } from '../shared'
 
 export const postsRouter = () => {
   const router = express.Router()
 
-  router.get(`/`, async (req: Request, res: Response) => {
+  router.get(`/`, async (req: RequestWithQuery<PostQueryModel>, res: Response) => {
     const data = req.query
 
     const posts = await postsService.getAllPosts(data)
@@ -56,7 +57,7 @@ export const postsRouter = () => {
   router.get(
     `/:postId/comments`,
     FindPostMiddleware,
-    async (req: Request, res: Response) => {
+    async (req: RequestWithParamsAndBody<PostIdType, CommentQueryModel>, res: Response) => {
       const postId = req.params.postId
 
       const data = req.query
@@ -76,7 +77,7 @@ export const postsRouter = () => {
     FindPostMiddleware,
     ValidateComment(),
     CommentErrorsValidation,
-    async (req: Request, res: Response) => {
+    async (req: RequestWithParamsAndBody<PostIdType, CreateCommentModel>, res: Response) => {
       const postId = req.params.postId
 
       const data = req.body

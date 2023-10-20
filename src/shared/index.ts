@@ -11,6 +11,8 @@ export { UserInfoType } from './types/auth/auth-types'
 
 export { BlogIdType } from './types/blogs/blogs-types'
 
+export { PostIdType } from './types/posts/posts-types'
+
 export { skipFn } from './utils/skipFn'
 export { pagesCount } from './utils/pagesCount'
 

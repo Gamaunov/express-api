@@ -39,3 +39,4 @@ export { UserAccountDBModel } from './user/UserAccountDBModel'
 export { UserAccountModel } from './user/UserAccountModel'
 
 export { EmailConfirmationModel } from './email/EmailConfirmationModel'
+export { EmailViewModel } from './email/EmailViewModel'

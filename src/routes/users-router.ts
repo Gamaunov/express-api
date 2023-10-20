@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express'
+import express, { Response } from 'express'
 
 import { usersService } from '../domain/users-service'
 import {
@@ -7,13 +7,13 @@ import {
   authGuardMiddleware,
   validateObjectId,
 } from '../middlewares'
-import { CreateUserModel, URIParamsUserModel } from '../models'
-import { RequestWithBody, RequestWithParams } from '../shared'
+import {CreateUserModel, URIParamsUserModel, UserQueryModel} from '../models'
+import {RequestWithBody, RequestWithParams, RequestWithQuery} from '../shared'
 
 export const usersRouter = () => {
   const router = express.Router()
 
-  router.get(`/`, async (req: Request, res: Response) => {
+  router.get(`/`, async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
     const data = req.query
 
     const users = await usersService.getAllUsers(data)
