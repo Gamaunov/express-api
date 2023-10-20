@@ -29,7 +29,7 @@ export const CheckEmailConfirmation = async (
       errorsMessages: [
         {
           message: 'Confirmation code is incorrect',
-          field: 'Confirmation code',
+          field: 'code',
         },
       ],
     }
@@ -45,7 +45,7 @@ export const CheckEmailConfirmation = async (
       errorsMessages: [
         {
           message: 'Confirmation code is expired',
-          field: 'Confirmation code',
+          field: 'code',
         },
       ],
     }
