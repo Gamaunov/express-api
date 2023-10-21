@@ -29,32 +29,15 @@ export const commentsRouter = () => {
       req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreateCommentModel>,
       res: Response,
     ) => {
-      // if (req.user) {
-      //   const paramsId = req.params.id
-
-      //   const comment = await commentsRepository.getCommentById(paramsId)
-
-      // if (comment?.commentatorInfo.userId === req.user._id.toString()) {
-      //   const { content } = req.body
-
-      //   await commentsService.updateComment(paramsId, content)
-
-      //   return res.sendStatus(204)
-      // } else {
-      //   return res.sendStatus(403)
-      // }
-      // } else {
-      //   return res.sendStatus(401)
-      // }
       if (!req.user) return res.sendStatus(401)
 
       const comment = await commentsRepository.getCommentById(req.params.id)
 
-      if (comment?.commentatorInfo.userId.toString() === req.user._id.toString()) {
+      if (
+        comment?.commentatorInfo.userId.toString() === req.user._id.toString()
+      ) {
         const { content } = req.body
-        // console.log(comment?.commentatorInfo.userId.toString() === req.user._id.toString(),'===');
-        // console.log(comment?.commentatorInfo.userId.toString(),'=commentatorInfo.userId==');
-        // console.log(req.user._id.toString(),'==req.user=');
+
         await commentsService.updateComment(req.params.id, content)
 
         return res.sendStatus(204)
@@ -79,26 +62,13 @@ export const commentsRouter = () => {
     FindCommentMiddleware,
     authMiddleware,
     async (req: RequestWithParams<URIParamsCommentIdModel>, res: Response) => {
-      // if (req.user) {
-      // const paramsId = req.params.id
-
-      // const comment = await commentsRepository.getCommentById(paramsId)
-
-      // if (comment?.commentatorInfo.userId === req.user._id.toString()) {
-      //   await commentsService.deleteComment(req.params.id)
-
-      //   return res.sendStatus(204)
-      // } else {
-      //   return res.sendStatus(403)
-      // }
-      // } else {
-      //   return res.sendStatus(401)
-      // }
       if (!req.user) return res.sendStatus(401)
 
       const comment = await commentsRepository.getCommentById(req.params.id)
 
-      if (comment?.commentatorInfo.userId.toString() === req.user._id.toString()) {
+      if (
+        comment?.commentatorInfo.userId.toString() === req.user._id.toString()
+      ) {
         await commentsService.deleteComment(req.params.id)
 
         return res.sendStatus(204)
