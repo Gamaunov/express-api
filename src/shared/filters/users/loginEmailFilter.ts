@@ -4,14 +4,14 @@ export const loginEmailFilter = (login?: string, email?: string): {} => {
   if (login && email) {
     filter = {
       $or: [
-        { login: { $regex: login, $options: 'i' } },
-        { email: { $regex: email, $options: 'i' } },
+        { 'accountData.login': { $regex: login, $options: 'i' } },
+        { 'accountData.email': { $regex: email, $options: 'i' } },
       ],
     }
   } else if (login) {
-    filter = { login: { $regex: login, $options: 'i' } }
+    filter = { 'accountData.login': { $regex: login, $options: 'i' } }
   } else if (email) {
-    filter = { email: { $regex: email, $options: 'i' } }
+    filter = { 'accountData.email': { $regex: email, $options: 'i' } }
   }
 
   return filter
