@@ -6,4 +6,5 @@ import { UserAccountModel } from './UserAccountModel'
 export type UserAccountDBModel = WithId<{
   accountData: UserAccountModel
   emailConfirmation: EmailConfirmationModel
+  refreshTokenBlackList: string[]
 }>

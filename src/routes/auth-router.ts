@@ -1,6 +1,8 @@
-import express, { Response } from 'express'
+import express, { Request, Response } from 'express'
+import { ObjectId } from 'mongodb'
 
 import { jwtService } from '../application/jwtService'
+import { usersCollection } from '../db/db'
 import { authService } from '../domain/auth-service'
 import { emailManager } from '../managers/email-manager'
 import {
@@ -9,6 +11,7 @@ import {
   CheckEmail,
   CheckEmailCode,
   CheckLoginAndEmail,
+  CheckRefreshToken,
   EmailErrorsValidation,
   EmailValidation,
   UserErrorsValidation,
@@ -81,7 +84,28 @@ export const authRouter = () => {
 
         return res.sendStatus(204)
       }
+
       return res.sendStatus(400)
+    },
+  )
+
+  router.post(
+    '/refresh-token',
+    CheckRefreshToken,
+    async (req: Request, res: Response) => {
+      const tokens = await authService.refreshTokens(req.userId)
+
+      await usersCollection.updateOne(
+        { _id: req.userId },
+        { $push: { refreshTokenBlackList: req.cookies.refreshToken } },
+      )
+
+      res.cookie('refreshToken', tokens.newRefreshToken, {
+        httpOnly: true,
+        secure: true,
+      })
+
+      return res.status(200).send({ accessToken: tokens.accessToken })
     },
   )
 
@@ -96,14 +120,33 @@ export const authRouter = () => {
           req.body.password,
         )
 
-      if (user) {
-        const token = await jwtService.createJWT(user)
+      if (!user) return res.sendStatus(401)
 
-        return res.status(200).send({ accessToken: token })
-      } else {
-        return res.sendStatus(401)
-      }
+      const token = await jwtService.createJWT(user)
+
+      const refreshToken = await jwtService.createRefreshToken(user)
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: true,
+      })
+
+      return res.status(200).send({ accessToken: token })
     },
+
+    router.post(
+      '/logout',
+      CheckRefreshToken,
+      async (req: Request, res: Response) => {
+        await usersCollection.updateOne(
+          { _id: new ObjectId(req.userId) },
+          { $push: { refreshTokenBlackList: req.cookies.refreshToken } },
+        )
+
+        res.clearCookie('refreshToken', { httpOnly: true, secure: true })
+        res.sendStatus(204)
+      },
+    ),
   )
 
   router.get(

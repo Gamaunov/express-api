@@ -7,6 +7,7 @@ export { AuthErrorsValidation } from './auth/authValidationMiddleware'
 export { CheckEmailCode } from './auth/checkEmailCode'
 export { EmailValidation } from './auth/emailValidationMiddleware'
 export { EmailErrorsValidation } from './auth/emailValidationMiddleware'
+export { CheckRefreshToken } from './auth/checkRefreshToken'
 
 export { ValidateBlog } from './blogs/blogValidationMiddleware'
 export { BlogErrorsValidation } from './blogs/blogValidationMiddleware'

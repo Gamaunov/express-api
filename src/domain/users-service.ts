@@ -43,6 +43,7 @@ export const usersService = {
         }),
         isConfirmed: true,
       },
+      refreshTokenBlackList: [],
     }
 
     return await usersRepository.createUser(newUser)

@@ -47,8 +47,8 @@ export const usersRepository = {
     }
   },
 
-  async getUserById(id: ObjectId): Promise<UserAccountDBModel | null> {
-    return usersCollection.findOne({ _id: id })
+  async getUserById(id: ObjectId | string): Promise<UserAccountDBModel | null> {
+    return usersCollection.findOne({ _id: new ObjectId(id) })
   },
 
   async updateConfirmation(_id: ObjectId): Promise<boolean> {

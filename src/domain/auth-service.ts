@@ -1,12 +1,15 @@
 import bcrypt from 'bcrypt'
 import add from 'date-fns/add'
+import Jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
+import { usersCollection } from '../db/db'
 import { emailManager } from '../managers/email-manager'
 import { UserAccountDBModel } from '../models'
 import { MappedUserModel } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
+import { settings } from '../settings'
 
 export const authService = {
   async createUser(
@@ -32,6 +35,7 @@ export const authService = {
         }),
         isConfirmed: false,
       },
+      refreshTokenBlackList: [],
     }
 
     const createResult = await usersRepository.createUser(newUser)
@@ -62,11 +66,7 @@ export const authService = {
       user.accountData.passwordHash,
     )
 
-    if (isHashesEquals) {
-      return user
-    } else {
-      return null
-    }
+    return isHashesEquals ? user : null
   },
 
   async _generateHash(password: string) {
@@ -75,6 +75,49 @@ export const authService = {
 
   async _isPasswordCorrect(password: string, hash: string) {
     return bcrypt.compare(password, hash)
+  },
+
+  async checkRefreshToken(token: string) {
+    try {
+      return Jwt.verify(token, settings.JWT_SECRET) as {
+        userId: string
+        iat: number
+        exp: number
+      }
+    } catch (e) {
+      console.log(e)
+      return null
+    }
+  },
+
+  async findTokenInBlackList(
+    userId: ObjectId,
+    token: string,
+  ): Promise<boolean> {
+    const result = await usersCollection.findOne({
+      _id: userId,
+      refreshTokenBlackList: { $in: [token] },
+    })
+
+    return !!result
+  },
+
+  async refreshTokens(
+    userId: ObjectId,
+  ): Promise<{ accessToken: string; newRefreshToken: string }> {
+    try {
+      const accessToken = Jwt.sign({ userId }, settings.JWT_SECRET, {
+        expiresIn: '10s',
+      })
+
+      const newRefreshToken = Jwt.sign({ userId }, settings.JWT_SECRET, {
+        expiresIn: '20s',
+      })
+
+      return { accessToken, newRefreshToken }
+    } catch (error) {
+      throw new Error('Failed to refresh tokens')
+    }
   },
 
   async checkAndFindUserByToken(token: string) {},
