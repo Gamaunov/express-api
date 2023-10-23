@@ -10,6 +10,7 @@ import { UserAccountDBModel } from '../models'
 import { MappedUserModel } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
 import { settings } from '../settings'
+import { ITokenData } from '../shared'
 
 export const authService = {
   async createUser(
@@ -79,11 +80,7 @@ export const authService = {
 
   async checkRefreshToken(token: string) {
     try {
-      return Jwt.verify(token, settings.JWT_SECRET) as {
-        userId: string
-        iat: number
-        exp: number
-      }
+      return Jwt.verify(token, settings.JWT_SECRET) as ITokenData
     } catch (e) {
       console.log(e)
       return null

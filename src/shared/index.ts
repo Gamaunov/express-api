@@ -5,6 +5,7 @@ export { RequestWithParamsAndBody } from './types/types'
 
 export { ConfirmCodeType } from './types/auth/auth-types'
 export { EmailType } from './types/auth/auth-types'
+export { ITokenData } from './types/auth/auth-types'
 export { LoginOrEmailType } from './types/auth/auth-types'
 export { LoginType } from './types/auth/auth-types'
 export { UserInfoType } from './types/auth/auth-types'

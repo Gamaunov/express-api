@@ -22,3 +22,9 @@ export type UserInfoType = {
   login: string
   userId: ObjectId
 }
+
+export interface ITokenData {
+  userId: string
+  iat: number
+  exp: number
+}

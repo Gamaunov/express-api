@@ -32,7 +32,7 @@ export const CheckRefreshToken = async (
 
   if (isTokenInvalid) return res.sendStatus(401)
 
-  req.userId = new ObjectId(user._id)
+  req.userId = user._id
 
   return next()
 }

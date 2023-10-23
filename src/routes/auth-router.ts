@@ -42,11 +42,7 @@ export const authRouter = () => {
         req.body.password,
       )
 
-      if (!user) {
-        return res.sendStatus(400)
-      } else {
-        return res.sendStatus(204)
-      }
+      return !user ? res.sendStatus(400) : res.sendStatus(204)
     },
   )
 
@@ -56,11 +52,7 @@ export const authRouter = () => {
     async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
       const result = await authService.confirmEmail(req.body.code)
 
-      if (!result) {
-        return res.sendStatus(400)
-      } else {
-        return res.sendStatus(204)
-      }
+      return !result ? res.sendStatus(400) : res.sendStatus(204)
     },
   )
 

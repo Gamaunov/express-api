@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 
 import { UserAccountDBModel } from '../models'
 import { settings } from '../settings'
+import { ITokenData } from '../shared'
 
 export const jwtService = {
   async createJWT(user: UserAccountDBModel) {
@@ -13,7 +14,7 @@ export const jwtService = {
 
   async getUserIdByToken(token: string) {
     try {
-      const result: any = jwt.verify(token, settings.JWT_SECRET)
+      const result = jwt.verify(token, settings.JWT_SECRET) as ITokenData
 
       return new ObjectId(result.userId)
     } catch (e) {
