@@ -27,24 +27,27 @@ describe('users', () => {
   const username = 'admin'
   const password = 'qwerty'
   const authHeader = encodeCredentials(username, password)
+
   let superUser: any
   let superUserToken: any
+  let refreshedSuperUserToken: any
   let createdBlog: any = null
   let createdPost: any = null
   let commentId: any = null
 
+  const dataSUser: CreateUserModel = {
+    login: 'login12345',
+    password: 'password123',
+    email: 'gamaunov1911@gmail.com',
+  }
+
   beforeEach(async () => {
     //should create super user with field - isConfirmed: true
-    const data: CreateUserModel = {
-      login: 'login12345',
-      password: 'password123',
-      email: 'gamaunov1911@gmail.com',
-    }
 
     const superUserReq = await getRequest()
       .post(`users`)
       .set('Authorization', authHeader)
-      .send(data)
+      .send(dataSUser)
       .expect(201)
 
     superUser = superUserReq.body
@@ -85,7 +88,7 @@ describe('users', () => {
       isMembership: false,
     })
 
-    // //creating posts
+    //creating posts
     const postData: CreatePostModel = {
       title: 'string',
       shortDescription: 'string',
@@ -140,6 +143,70 @@ describe('users', () => {
     })
   })
 
+  it(`should return accessToken in body & refreshToken in cookie`, async () => {
+    const data: LoginOrEmailType = {
+      loginOrEmail: dataSUser.login,
+      password: dataSUser.password,
+    }
+
+    const createTokensReq = await getRequest()
+      .post(`auth/login`)
+      .send(data)
+      .expect(200)
+
+    const userInfo = createTokensReq.body
+
+    expect(userInfo).toEqual({
+      accessToken: expect.any(String),
+    })
+
+    const refreshTokenCookie = createTokensReq.header['set-cookie'].find(
+      (cookie: string) => cookie.startsWith('refreshToken='),
+    )
+
+    expect(refreshTokenCookie).toBeDefined()
+  })
+
+  it(`should generate new pair of access and refresh tokens`, async () => {
+    const generateTokensReq = await getRequest()
+      .post(`auth/refresh-token`)
+      .set('Cookie', `refreshToken=${superUserToken}`)
+      .expect(200)
+
+    const userInfo = generateTokensReq.body
+
+    expect(userInfo).toEqual({
+      accessToken: expect.any(String),
+    })
+
+    const refreshTokenCookie = generateTokensReq.header['set-cookie'].find(
+      (cookie: string) => cookie.startsWith('refreshToken='),
+    )
+
+    refreshedSuperUserToken = refreshTokenCookie.split('refreshToken=')[1]
+
+    expect(refreshTokenCookie).toBeDefined()
+
+    //case already invalid token
+    await getRequest()
+      .post(`auth/refresh-token`)
+      .set('Cookie', `refreshToken=${superUserToken}`)
+      .expect(401)
+  })
+
+  it(`should revoke correct refreshToken`, async () => {
+    const generateTokensReq = await getRequest()
+      .post(`auth/logout`)
+      .set('Cookie', `refreshToken=${refreshedSuperUserToken}`)
+      .expect(204)
+
+    // case already invalid token
+    await getRequest()
+      .post(`auth/refresh-token`)
+      .set('Cookie', `refreshToken=${refreshedSuperUserToken}`)
+      .expect(401)
+  })
+
   it(`user should be able to update your own comment`, async () => {
     const updateCommentBody: CreateCommentModel = {
       content: 'stringstringstringst',
@@ -170,8 +237,8 @@ describe('users', () => {
   })
 
   it(`should register user +
-    confirm registration + 
-    login user +
+    should confirm registration + 
+    should login user +
     should return information about current user`, async () => {
     //case register user
     const registerBody: CreateUserModel = {
