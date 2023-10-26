@@ -65,6 +65,19 @@ export const securityDevicesRepository = {
     return null
   },
 
+  async updateIssuedDate(userId: string, deviceId: string): Promise<boolean> {
+    const result = await devicesCollection.updateOne(
+      { userId: userId, deviceId: deviceId },
+      {
+        $set: {
+          issuedAt: 0,
+          expirationAt: 0,
+        },
+      },
+    )
+    return result.modifiedCount === 1
+  },
+
   async deleteAllDevices() {
     try {
       await devicesCollection.deleteMany({})

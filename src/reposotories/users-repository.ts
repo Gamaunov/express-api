@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb'
+import { ObjectId, UpdateResult } from 'mongodb'
 
 import { usersCollection } from '../db/db'
 import { MappedUserModel, PaginatorUserModel, UserQueryModel } from '../models'
@@ -49,6 +49,13 @@ export const usersRepository = {
 
   async getUserById(id: ObjectId | string): Promise<UserAccountDBModel | null> {
     return usersCollection.findOne({ _id: new ObjectId(id) })
+  },
+
+  async updateBlackList(id: ObjectId, token: string): Promise<UpdateResult> {
+    return await usersCollection.updateOne(
+      { _id: id },
+      { $push: { refreshTokenBlackList: token } },
+    )
   },
 
   async updateConfirmation(_id: ObjectId): Promise<boolean> {

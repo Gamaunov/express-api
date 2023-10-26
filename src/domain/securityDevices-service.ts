@@ -16,7 +16,11 @@ export const securityDevicesService = {
     )
   },
 
-  async terminateSession(deviceId: string) {
+  async terminateSession(deviceId: string): Promise<boolean> {
     return await securityDevicesRepository.terminateSession(deviceId)
+  },
+
+  async updateIssuedDate(userId: string, deviceId: string): Promise<boolean> {
+    return await securityDevicesRepository.updateIssuedDate(userId, deviceId)
   },
 }

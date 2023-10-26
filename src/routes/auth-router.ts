@@ -3,8 +3,8 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
 import { jwtService } from '../application/jwtService'
-import { usersCollection } from '../db/db'
 import { authService } from '../domain/auth-service'
+import { securityDevicesService } from '../domain/securityDevices-service'
 import { usersService } from '../domain/users-service'
 import { emailManager } from '../managers/email-manager'
 import {
@@ -192,9 +192,21 @@ export const authRouter = () => {
       '/logout',
       CheckRefreshToken,
       async (req: Request, res: Response) => {
-        await usersCollection.updateOne(
-          { _id: new ObjectId(req.userId) },
-          { $push: { refreshTokenBlackList: req.cookies.refreshToken } },
+        await usersService.updateBlackList(
+          new ObjectId(req.userId),
+          req.cookies.refreshToken,
+        )
+
+        const user = await jwtService.getUserInfoByRT(req.cookies.refreshToken)
+
+        if (!user) {
+          res.sendStatus(401)
+          return
+        }
+
+        await securityDevicesService.updateIssuedDate(
+          user.userId,
+          user.deviceId,
         )
 
         res.clearCookie('refreshToken', { httpOnly: true, secure: true })

@@ -1,5 +1,5 @@
 import add from 'date-fns/add'
-import { ObjectId } from 'mongodb'
+import { ObjectId, UpdateResult } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
 import {
@@ -22,6 +22,13 @@ export const usersService = {
 
   async getUserById(userId: ObjectId): Promise<UserAccountDBModel | null> {
     return await usersRepository.getUserById(userId)
+  },
+
+  async updateBlackList(
+    userId: ObjectId,
+    token: string,
+  ): Promise<UpdateResult> {
+    return await usersRepository.updateBlackList(userId, token)
   },
 
   async createUser(data: CreateUserModel): Promise<MappedUserModel> {
