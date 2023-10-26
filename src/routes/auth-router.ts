@@ -53,8 +53,8 @@ export const authRouter = () => {
 
   router.post(
     '/registration-confirmation',
-    CheckEmailCode,
     CountOfLoginAttempts,
+    CheckEmailCode,
     async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
       const result = await authService.confirmEmail(req.body.code)
 
