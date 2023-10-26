@@ -9,10 +9,14 @@ export { ITokenData } from './types/auth/auth-types'
 export { LoginOrEmailType } from './types/auth/auth-types'
 export { LoginType } from './types/auth/auth-types'
 export { UserInfoType } from './types/auth/auth-types'
+export { IRTokenInfo } from './types/auth/auth-types'
 
 export { BlogIdType } from './types/blogs/blogs-types'
 
 export { PostIdType } from './types/posts/posts-types'
+
+export { IRTInfo } from './types/devices/devices-types'
+export { DeviceIdType } from './types/devices/devices-types'
 
 export { skipFn } from './utils/skipFn'
 export { pagesCount } from './utils/pagesCount'
@@ -30,6 +34,7 @@ export { blogMapper } from './mappers/blogs/blog-mapper'
 export { commentMapper } from './mappers/comments/comment-mapper'
 export { postMapper } from './mappers/posts/post-mapper'
 export { userMapper } from './mappers/users/user-mapper'
+export { sessionMapper } from './mappers/devices/devices-mapper'
 
 export { queryBlogValidator } from './validators/blogs/queryBlogValidator'
 export { queryPostValidator } from './validators/posts/queryPostValidator'

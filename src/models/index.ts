@@ -40,3 +40,9 @@ export { UserAccountModel } from './user/UserAccountModel'
 
 export { EmailConfirmationModel } from './email/EmailConfirmationModel'
 export { EmailViewModel } from './email/EmailViewModel'
+
+export { DeviceDBModel } from './device/DeviceDBModel'
+export { DeviceInfoModel } from './device/DeviceInfoModel'
+export { DeviceViewModel } from './device/DeviceViewModel'
+
+export { LoginAttemptViewModel } from './loginAttempt/LoginAttemptViewModel'

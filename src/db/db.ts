@@ -4,6 +4,8 @@ import { MongoClient } from 'mongodb'
 import {
   BlogViewModel,
   CommentViewModel,
+  DeviceDBModel,
+  LoginAttemptViewModel,
   PostViewModel,
   UserAccountDBModel,
 } from '../models'
@@ -17,13 +19,24 @@ if (!mongoURI) throw new Error('mongoURI not found')
 const client = new MongoClient(mongoURI)
 
 export const blogsCollection = client.db().collection<BlogViewModel>('blogs')
+
 export const postsCollection = client.db().collection<PostViewModel>('posts')
+
 export const usersCollection = client
   .db()
   .collection<UserAccountDBModel>('users')
+
 export const commentsCollection = client
   .db()
   .collection<CommentViewModel>('comments')
+
+export const devicesCollection = client
+  .db()
+  .collection<DeviceDBModel>('devices')
+
+export const loginAttemptsCollection = client
+  .db()
+  .collection<LoginAttemptViewModel>('loginAttempts')
 
 export async function runDb() {
   try {

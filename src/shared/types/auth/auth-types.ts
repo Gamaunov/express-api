@@ -28,3 +28,10 @@ export interface ITokenData {
   iat: number
   exp: number
 }
+
+export interface IRTokenInfo {
+  userId: string
+  deviceId: string
+  iat: number
+  exp: number
+}

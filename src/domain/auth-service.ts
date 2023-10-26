@@ -4,10 +4,12 @@ import Jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
-import { usersCollection } from '../db/db'
+import { jwtService } from '../application/jwtService'
+import { devicesCollection, usersCollection } from '../db/db'
 import { emailManager } from '../managers/email-manager'
-import { UserAccountDBModel } from '../models'
+import { DeviceDBModel, UserAccountDBModel } from '../models'
 import { MappedUserModel } from '../models'
+import { DeviceInfoModel } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
 import { settings } from '../settings'
 import { ITokenData } from '../shared'
@@ -39,7 +41,7 @@ export const authService = {
       refreshTokenBlackList: [],
     }
 
-    const createResult = await usersRepository.createUser(newUser)
+    const createdUser = await usersRepository.createUser(newUser)
 
     try {
       await emailManager.sendEmailConfirmationMessage(
@@ -52,7 +54,7 @@ export const authService = {
       return null
     }
 
-    return createResult
+    return createdUser
   },
 
   async checkCredentials(loginOrEmail: string, password: string) {
@@ -117,8 +119,6 @@ export const authService = {
     }
   },
 
-  async checkAndFindUserByToken(token: string) {},
-
   async confirmEmail(code: string) {
     let user = await usersRepository.findUserByConfirmationCode(code)
 
@@ -150,5 +150,54 @@ export const authService = {
     )
 
     return isUpdated ? await usersRepository.findUserByEmail(email) : null
+  },
+
+  async createOrUpdateRT(RTInfo: DeviceDBModel): Promise<Boolean> {
+    const filter = {
+      userId: RTInfo.userId,
+      deviceId: RTInfo.deviceId,
+    }
+
+    const user = await devicesCollection.findOne(filter)
+
+    if (user) {
+      const newRefreshToken = await devicesCollection.updateOne(filter, {
+        $set: {
+          issuedAt: RTInfo.issuedAt,
+          expirationAt: RTInfo.expirationAt,
+          ip: RTInfo.ip,
+          deviceName: RTInfo.deviceName,
+        },
+      })
+
+      return newRefreshToken.matchedCount === 1
+    } else {
+      try {
+        await devicesCollection.insertOne({ ...RTInfo })
+
+        return true
+      } catch (e) {
+        return false
+      }
+    }
+  },
+
+  async addDeviceInfo(deviceInfo: DeviceInfoModel): Promise<Boolean> {
+    const getInfoFromRefreshToken = await jwtService.getUserInfoByRT(
+      deviceInfo.refreshToken,
+    )
+
+    if (!getInfoFromRefreshToken) return false
+
+    const token: DeviceDBModel = {
+      userId: deviceInfo.userId,
+      issuedAt: getInfoFromRefreshToken.iat,
+      expirationAt: getInfoFromRefreshToken.exp,
+      deviceId: deviceInfo.deviceId,
+      ip: deviceInfo.ip,
+      deviceName: deviceInfo.deviceName,
+    }
+
+    return await this.createOrUpdateRT(token)
   },
 }

@@ -1,9 +1,11 @@
 import express, { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
 import { jwtService } from '../application/jwtService'
 import { usersCollection } from '../db/db'
 import { authService } from '../domain/auth-service'
+import { usersService } from '../domain/users-service'
 import { emailManager } from '../managers/email-manager'
 import {
   AuthErrorsValidation,
@@ -11,14 +13,16 @@ import {
   CheckEmail,
   CheckEmailCode,
   CheckLoginAndEmail,
+  CheckRTMiddleware,
   CheckRefreshToken,
+  CountOfLoginAttempts,
   EmailErrorsValidation,
   EmailValidation,
   UserErrorsValidation,
   UserValidation,
   authMiddleware,
 } from '../middlewares'
-import { CreateUserModel, UserAccountDBModel } from '../models'
+import { CreateUserModel, DeviceInfoModel, UserAccountDBModel } from '../models'
 import {
   ConfirmCodeType,
   EmailType,
@@ -32,6 +36,7 @@ export const authRouter = () => {
 
   router.post(
     '/registration',
+    CountOfLoginAttempts,
     UserValidation(),
     UserErrorsValidation,
     CheckLoginAndEmail,
@@ -49,6 +54,7 @@ export const authRouter = () => {
   router.post(
     '/registration-confirmation',
     CheckEmailCode,
+    CountOfLoginAttempts,
     async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
       const result = await authService.confirmEmail(req.body.code)
 
@@ -58,6 +64,7 @@ export const authRouter = () => {
 
   router.post(
     '/registration-email-resending',
+    CountOfLoginAttempts,
     EmailValidation(),
     EmailErrorsValidation,
     CheckEmail,
@@ -83,26 +90,60 @@ export const authRouter = () => {
 
   router.post(
     '/refresh-token',
-    CheckRefreshToken,
+    CheckRTMiddleware,
     async (req: Request, res: Response) => {
-      const tokens = await authService.refreshTokens(req.userId)
+      const client = await jwtService.getUserInfoByRT(req.cookies.refreshToken)
 
-      await usersCollection.updateOne(
-        { _id: req.userId },
-        { $push: { refreshTokenBlackList: req.cookies.refreshToken } },
-      )
+      if (!client) return res.sendStatus(401)
 
-      res.cookie('refreshToken', tokens.newRefreshToken, {
-        httpOnly: true,
-        secure: true,
-      })
+      const userId = client.userId
+      const deviceId = client.deviceId
 
-      return res.status(200).send({ accessToken: tokens.accessToken })
+      const user = await usersService.getUserById(new ObjectId(userId))
+
+      if (!user) return res.sendStatus(401)
+
+      if (user) {
+        const newAccessToken = await jwtService.createJWT(user)
+        const newRefreshToken = await jwtService.createRefreshToken(
+          user,
+          deviceId,
+        )
+
+        const deviceInfo: DeviceInfoModel = {
+          userId: userId,
+          deviceId: deviceId,
+          refreshToken: newRefreshToken,
+          deviceName: req.headers['user-agent']
+            ? req.headers['user-agent'].toString()
+            : 'unknown',
+          ip: req.ip,
+        }
+
+        try {
+          await authService.addDeviceInfo(deviceInfo)
+        } catch (e) {
+          console.log('unsuccessful attempt at adding a device: ', e)
+          return null
+        }
+
+        return res
+          .cookie('refreshToken', newRefreshToken, {
+            httpOnly: true,
+            secure: true,
+          })
+          .header('accessToken', newAccessToken)
+          .status(200)
+          .send({ accessToken: newAccessToken })
+      }
+
+      return res.sendStatus(401)
     },
   )
 
   router.post(
     '/login',
+    CountOfLoginAttempts,
     AuthValidation(),
     AuthErrorsValidation,
     async (req: RequestWithBody<LoginOrEmailType>, res: Response) => {
@@ -116,12 +157,33 @@ export const authRouter = () => {
 
       const token = await jwtService.createJWT(user)
 
-      const refreshToken = await jwtService.createRefreshToken(user)
+      const deviceId = uuidv4()
+
+      const refreshToken = await jwtService.createRefreshToken(user, deviceId)
+
+      const deviceInfo: DeviceInfoModel = {
+        userId: user._id.toString(),
+        deviceId: deviceId,
+        refreshToken: refreshToken,
+        deviceName: req.headers['user-agent']
+          ? req.headers['user-agent']
+          : 'unknown',
+        ip: req.ip,
+      }
+
+      try {
+        await authService.addDeviceInfo(deviceInfo)
+      } catch (e) {
+        console.log('unsuccessful attempt at adding a device: ', e)
+        return null
+      }
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: true,
       })
+
+      res.header('accessToken', token)
 
       return res.status(200).send({ accessToken: token })
     },
