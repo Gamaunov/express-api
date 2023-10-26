@@ -115,7 +115,7 @@ export const authRouter = () => {
           deviceId: deviceId,
           refreshToken: newRefreshToken,
           deviceName: req.headers['user-agent']
-            ? req.headers['user-agent'].toString()
+            ? req.headers['user-agent']
             : 'unknown',
           ip: req.ip,
         }
