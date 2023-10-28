@@ -13,7 +13,7 @@ function encodeCredentials(username: string, password: string) {
   return `Basic ${encodedCredentials}`
 }
 
-describe('posts', () => {
+describe('authGuardMiddleware', () => {
   beforeAll(async () => {
     await getRequest().delete(`${RouterPath}/all-data`)
   })
