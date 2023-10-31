@@ -1,14 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { blogsRepository } from '../../reposotories/blogs-repository'
+import { BlogOutputModel } from '../../models'
+import { blogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
 
 export const FindBlogMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const blogId = req.params.blogId
-  const blog = await blogsRepository.getBlogById(blogId)
+  const blog: BlogOutputModel | null = await blogsQueryRepository.getBlogById(
+    req.params.blogId,
+  )
 
   if (!blog) return res.sendStatus(404)
 

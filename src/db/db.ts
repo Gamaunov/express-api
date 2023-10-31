@@ -1,52 +1,21 @@
 import dotenv from 'dotenv'
-import { MongoClient } from 'mongodb'
-
-import {
-  BlogViewModel,
-  CommentViewModel,
-  DeviceDBModel,
-  LoginAttemptViewModel,
-  PostViewModel,
-  UserAccountDBModel,
-} from '../models'
+import mongoose from 'mongoose'
 
 dotenv.config()
 
-const mongoURI = process.env.MONGO_URI
+const dbName = 'test'
+
+const mongoURI: string =
+  process.env.MONGO_URI || `mongodb://0.0.0.0:27017/${dbName}`
 
 if (!mongoURI) throw new Error('mongoURI not found')
 
-const client = new MongoClient(mongoURI)
-
-export const blogsCollection = client.db().collection<BlogViewModel>('blogs')
-
-export const postsCollection = client.db().collection<PostViewModel>('posts')
-
-export const usersCollection = client
-  .db()
-  .collection<UserAccountDBModel>('users')
-
-export const commentsCollection = client
-  .db()
-  .collection<CommentViewModel>('comments')
-
-export const devicesCollection = client
-  .db()
-  .collection<DeviceDBModel>('devices')
-
-export const loginAttemptsCollection = client
-  .db()
-  .collection<LoginAttemptViewModel>('loginAttempts')
-
-export async function runDb() {
+export async function runDb(): Promise<void> {
   try {
-    await client.connect()
-
-    await client.db('routes').command({ ping: 1 })
-
+    await mongoose.connect(mongoURI)
     console.log('mongoDb successfully connected ✔ ☺ ✌ ✅')
   } catch {
-    console.log("Smth went wrong, can't connect to mongoDb ✘ ❌ ✘")
-    await client.close()
+    console.log('houston we have a problem:: db connection ✘ ❌ ✘')
+    await mongoose.disconnect()
   }
 }

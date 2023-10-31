@@ -1,6 +1,18 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
+import { usersService } from '../../domain/users-service'
+import { UserDBModel } from '../../models'
+
+const uniqueLoginOrEmail = async (loginOrEmail: string) => {
+  const foundLoginOrEmail: UserDBModel | null =
+    await usersService.findUserByLoginOrEmail(loginOrEmail)
+
+  if (foundLoginOrEmail) {
+    return Promise.reject(`Invalid ${loginOrEmail}`)
+  }
+}
+
 export const UserValidation = () => {
   return [
     body('login')
@@ -9,6 +21,9 @@ export const UserValidation = () => {
       .trim()
       .isLength({ min: 3, max: 10 })
       .matches(/^[a-zA-Z0-9_-]*$/)
+      .custom(async (login: string): Promise<void> => {
+        await uniqueLoginOrEmail(login)
+      })
       .withMessage('Invalid login'),
 
     body('password')
@@ -24,6 +39,9 @@ export const UserValidation = () => {
       .trim()
       .isLength({ min: 1, max: 200 })
       .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+      .custom(async (email: string): Promise<void> => {
+        await uniqueLoginOrEmail(email)
+      })
       .withMessage('Invalid email'),
   ]
 }

@@ -4,15 +4,13 @@ import Jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
-import { jwtService } from '../application/jwtService'
-import { devicesCollection, usersCollection } from '../db/db'
 import { emailManager } from '../managers/email-manager'
-import { DeviceDBModel, UserAccountDBModel } from '../models'
+import { UserDBModel, UserViewModel } from '../models'
 import { MappedUserModel } from '../models'
-import { DeviceInfoModel } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
 import { settings } from '../settings'
-import { ITokenData } from '../shared'
+import { ITokenPayload } from '../shared'
+import { usersService } from './users-service'
 
 export const authService = {
   async createUser(
@@ -20,15 +18,16 @@ export const authService = {
     email: string,
     password: string,
   ): Promise<MappedUserModel | null> {
-    const passwordHash = await this._generateHash(password)
+    const passwordHash: string = await this._generateHash(password)
 
-    const newUser: UserAccountDBModel = {
+    const newUser: UserDBModel = {
       _id: new ObjectId(),
       accountData: {
         login,
         email,
         passwordHash,
-        createdAt: new Date(),
+        isMembership: false,
+        createdAt: new Date().toISOString(),
       },
       emailConfirmation: {
         confirmationCode: uuidv4(),
@@ -38,33 +37,40 @@ export const authService = {
         }),
         isConfirmed: false,
       },
-      refreshTokenBlackList: [],
+      passwordRecovery: {
+        recoveryCode: null,
+        expirationDate: null,
+      },
     }
 
-    const createdUser = await usersRepository.createUser(newUser)
+    const createdUser: UserViewModel = await usersRepository.createUser(newUser)
 
     try {
       await emailManager.sendEmailConfirmationMessage(
         newUser.accountData.email,
-        newUser.emailConfirmation.confirmationCode,
+        newUser.emailConfirmation.confirmationCode!,
       )
     } catch (e) {
       console.error(e)
-      await usersRepository.deleteUser(newUser._id.toHexString())
+      await usersRepository.deleteUser(new ObjectId(newUser._id))
       return null
     }
 
     return createdUser
   },
 
-  async checkCredentials(loginOrEmail: string, password: string) {
-    const user = await usersRepository.findLoginOrEmail(loginOrEmail)
+  async checkCredentials(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<UserDBModel | null> {
+    const user: UserDBModel | null =
+      await usersService.findUserByLoginOrEmail(loginOrEmail)
 
     if (!user) return null
 
     if (!user.emailConfirmation.isConfirmed) return null
 
-    const isHashesEquals = await this._isPasswordCorrect(
+    const isHashesEquals: boolean = await this._isPasswordCorrect(
       password,
       user.accountData.passwordHash,
     )
@@ -72,132 +78,101 @@ export const authService = {
     return isHashesEquals ? user : null
   },
 
-  async _generateHash(password: string) {
+  async _generateHash(password: string): Promise<string> {
     return await bcrypt.hash(password, 10)
   },
 
-  async _isPasswordCorrect(password: string, hash: string) {
+  async _isPasswordCorrect(password: string, hash: string): Promise<boolean> {
     return bcrypt.compare(password, hash)
   },
 
-  async checkRefreshToken(token: string) {
+  async checkRefreshToken(token: string): Promise<ITokenPayload | null> {
     try {
-      return Jwt.verify(token, settings.JWT_SECRET) as ITokenData
+      return Jwt.verify(token, settings.JWT_SECRET) as ITokenPayload
     } catch (e) {
       console.log(e)
       return null
     }
   },
 
-  async findTokenInBlackList(
-    userId: ObjectId,
-    token: string,
-  ): Promise<boolean> {
-    const result = await usersCollection.findOne({
-      _id: userId,
-      refreshTokenBlackList: { $in: [token] },
+  async sendPasswordRecoveryCode(email: string): Promise<boolean> {
+    const user: UserDBModel | null =
+      await usersService.findUserByLoginOrEmail(email)
+
+    if (!user) return false
+
+    const recoveryCode: string = uuidv4()
+    const expirationDate: Date = add(new Date(), {
+      hours: 1,
     })
 
-    return !!result
-  },
+    const updatedPassword: boolean =
+      await usersRepository.updatePasswordRecovery(
+        user._id,
+        recoveryCode,
+        expirationDate,
+      )
 
-  async refreshTokens(
-    userId: ObjectId,
-  ): Promise<{ accessToken: string; newRefreshToken: string }> {
     try {
-      const accessToken = Jwt.sign({ userId }, settings.JWT_SECRET, {
-        expiresIn: '10s',
-      })
-
-      const newRefreshToken = Jwt.sign({ userId }, settings.JWT_SECRET, {
-        expiresIn: '20s',
-      })
-
-      return { accessToken, newRefreshToken }
-    } catch (error) {
-      throw new Error('Failed to refresh tokens')
+      await emailManager.sendPasswordRecoveryMessage(
+        email,
+        'Password recovery',
+        recoveryCode,
+      )
+    } catch (e) {
+      console.error(e)
+      return false
     }
+    return updatedPassword
   },
 
-  async confirmEmail(code: string) {
-    let user = await usersRepository.findUserByConfirmationCode(code)
+  async confirmEmail(code: string): Promise<boolean> {
+    const user: UserDBModel | null =
+      await usersService.findUserByEmailConfirmationCode(code)
 
     if (!user) return false
 
     if (user.emailConfirmation.isConfirmed) return false
 
-    if (user.emailConfirmation.expirationDate < new Date()) return false
+    if (user.emailConfirmation.expirationDate! < new Date()) return false
 
-    return await usersRepository.updateConfirmation(user._id)
+    return await usersRepository.updateEmailConfirmationStatus(user._id)
   },
 
-  async findUserByEmail(email: string): Promise<UserAccountDBModel | null> {
+  async findUserByEmail(email: string): Promise<UserDBModel | null> {
     return await usersRepository.findUserByEmail(email)
   },
 
-  async resendConfirmationCode(
-    email: string,
-  ): Promise<UserAccountDBModel | null> {
-    const user = await this.findUserByEmail(email)
+  async resendConfirmationCode(email: string): Promise<boolean | null> {
+    const user: UserDBModel | null = await this.findUserByEmail(email)
 
     if (!user) return null
 
-    const newCode = uuidv4()
+    const newCode: string = uuidv4()
 
-    const isUpdated = await usersRepository.updateConfirmationCode(
-      user._id,
-      newCode,
-    )
+    try {
+      await emailManager.sendEmailConfirmationMessage(
+        user.accountData.email,
+        newCode,
+      )
+    } catch (e) {
+      return null
+    }
 
-    return isUpdated ? await usersRepository.findUserByEmail(email) : null
+    return usersRepository.updateConfirmationCode(user._id, newCode)
   },
 
-  async createOrUpdateRT(RTInfo: DeviceDBModel): Promise<Boolean> {
-    const filter = {
-      userId: RTInfo.userId,
-      deviceId: RTInfo.deviceId,
-    }
+  async changePassword(
+    recoveryCode: string,
+    password: string,
+  ): Promise<boolean> {
+    const user: UserDBModel | null =
+      await usersService.findUserByPasswordRecoveryCode(recoveryCode)
 
-    const user = await devicesCollection.findOne(filter)
+    if (!user) return false
 
-    if (user) {
-      const newRefreshToken = await devicesCollection.updateOne(filter, {
-        $set: {
-          issuedAt: RTInfo.issuedAt,
-          expirationAt: RTInfo.expirationAt,
-          ip: RTInfo.ip,
-          deviceName: RTInfo.deviceName,
-        },
-      })
+    const passwordHash: string = await this._generateHash(password)
 
-      return newRefreshToken.matchedCount === 1
-    } else {
-      try {
-        await devicesCollection.insertOne({ ...RTInfo })
-
-        return true
-      } catch (e) {
-        return false
-      }
-    }
-  },
-
-  async addDeviceInfo(deviceInfo: DeviceInfoModel): Promise<Boolean> {
-    const getInfoFromRefreshToken = await jwtService.getUserInfoByRT(
-      deviceInfo.refreshToken,
-    )
-
-    if (!getInfoFromRefreshToken) return false
-
-    const token: DeviceDBModel = {
-      userId: deviceInfo.userId,
-      issuedAt: getInfoFromRefreshToken.iat,
-      expirationAt: getInfoFromRefreshToken.exp,
-      deviceId: deviceInfo.deviceId,
-      ip: deviceInfo.ip,
-      deviceName: deviceInfo.deviceName,
-    }
-
-    return await this.createOrUpdateRT(token)
+    return usersRepository.updatePassword(user._id, passwordHash)
   },
 }

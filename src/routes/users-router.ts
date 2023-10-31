@@ -1,13 +1,19 @@
-import express, { Response } from 'express'
+import express, { Request, Response } from 'express'
 
 import { usersService } from '../domain/users-service'
 import {
   UserErrorsValidation,
   UserValidation,
-  authGuardMiddleware,
+  authBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
-import { CreateUserModel, URIParamsUserModel, UserQueryModel } from '../models'
+import {
+  CreateUserModel,
+  URIParamsUserModel,
+  UserQueryModel,
+  UserViewModel,
+} from '../models'
+import { usersQueryRepository } from '../reposotories/query-repositories/users-query-repository'
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
 
 export const usersRouter = () => {
@@ -15,10 +21,11 @@ export const usersRouter = () => {
 
   router.get(
     `/`,
+    authBasicMiddleware,
     async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
       const data = req.query
 
-      const users = await usersService.getAllUsers(data)
+      const users = await usersQueryRepository.getAllUsers(data)
 
       return res.status(200).send(users)
     },
@@ -26,13 +33,13 @@ export const usersRouter = () => {
 
   router.post(
     `/`,
-    authGuardMiddleware,
+    authBasicMiddleware,
     UserValidation(),
     UserErrorsValidation,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
-      const data = req.body
+      const data: CreateUserModel = req.body
 
-      const newUser = await usersService.createUser(data)
+      const newUser: UserViewModel = await usersService.createUser(data)
 
       return res.status(201).send(newUser)
     },
@@ -40,10 +47,21 @@ export const usersRouter = () => {
 
   router.delete(
     `/:id`,
-    authGuardMiddleware,
+    authBasicMiddleware,
     validateObjectId,
     async (req: RequestWithParams<URIParamsUserModel>, res) => {
-      const isDeleted = await usersService.deleteUser(req.params.id)
+      const isDeleted: boolean = await usersService.deleteUser(req.params.id)
+
+      isDeleted ? res.sendStatus(204) : res.sendStatus(404)
+    },
+  )
+
+  router.delete(
+    `/`,
+    authBasicMiddleware,
+    validateObjectId,
+    async (req: Request, res): Promise<void> => {
+      const isDeleted: boolean = await usersService.deleteUser(req.params.id)
 
       isDeleted ? res.sendStatus(204) : res.sendStatus(404)
     },

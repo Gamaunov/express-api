@@ -1,75 +1,57 @@
 import { ObjectId } from 'mongodb'
 
 import {
-  CommentQueryModel,
-  CommentViewModel,
-  CommentatorInfoModel,
-  CreateCommentModel,
+  BlogOutputModel,
+  CreatePostByBlogIdModel,
   CreatePostModel,
-  MappedCommentModel,
-  PaginatorCommentModel,
-  PaginatorPostModel,
   PostOutputModel,
-  PostQueryModel,
   PostViewModel,
+  UpdatePostModel,
 } from '../models'
-import { blogsRepository } from '../reposotories/blogs-repository'
-import { commentsRepository } from '../reposotories/comments-repository'
 import { postsRepository } from '../reposotories/posts-repository'
-import { queryCommentValidator, queryPostValidator } from '../shared'
+import { blogsQueryRepository } from '../reposotories/query-repositories/blogs-query-repository'
 
 export const postsService = {
-  async getAllPosts(data: PostQueryModel): Promise<PaginatorPostModel | null> {
-    const queryData = queryPostValidator(data)
+  async createPost(data: CreatePostModel): Promise<PostViewModel | null> {
+    const blog: BlogOutputModel | null = await blogsQueryRepository.getBlogById(
+      data.blogId,
+    )
 
-    return await postsRepository.getAllPosts(queryData)
-  },
-
-  async getPostById(id: string): Promise<PostOutputModel | null> {
-    return postsRepository.getPostById(id)
-  },
-
-  async getCommentsByPostId(
-    postId: string,
-    data: CommentQueryModel,
-  ): Promise<PaginatorCommentModel | null> {
-    const queryData = queryCommentValidator(data)
-
-    return await commentsRepository.getCommentsByPostId(postId, queryData)
-  },
-
-  async createPost(data: CreatePostModel): Promise<PostViewModel> {
-    const blogName = await blogsRepository.getBlogById(data.blogId)
+    if (!blog) return null
 
     const newPost = {
+      _id: new ObjectId(),
       title: data.title,
       shortDescription: data.shortDescription,
       content: data.content,
       blogId: data.blogId,
-      blogName: blogName!.name,
+      blogName: blog!.name,
       createdAt: new Date().toISOString(),
     }
 
     return await postsRepository.createPost(newPost)
   },
 
-  async createCommentByPostId(
-    postId: string,
-    userInfo: CommentatorInfoModel,
-    data: CreateCommentModel,
-  ): Promise<MappedCommentModel | null> {
-    const newComment: CommentViewModel = {
+  async createPostByBlogId(
+    blogId: string,
+    data: CreatePostByBlogIdModel,
+  ): Promise<PostViewModel | null> {
+    const searchedBlog: BlogOutputModel | null =
+      await blogsQueryRepository.getBlogById(blogId)
+
+    if (!searchedBlog) return null
+
+    const newPost = {
       _id: new ObjectId(),
-      postId,
+      title: data.title,
+      shortDescription: data.shortDescription,
       content: data.content,
-      commentatorInfo: {
-        userId: userInfo.userId,
-        userLogin: userInfo.userLogin,
-      },
+      blogId: blogId,
+      blogName: searchedBlog.name,
       createdAt: new Date().toISOString(),
     }
 
-    return await commentsRepository.createComment(newComment)
+    return await postsRepository.createPost(newPost)
   },
 
   async updatePost(
@@ -80,7 +62,7 @@ export const postsService = {
     blogId: string,
   ): Promise<PostOutputModel | null> {
     const postId = id
-    const postData = {
+    const postData: UpdatePostModel = {
       title,
       shortDescription,
       content,
@@ -94,7 +76,7 @@ export const postsService = {
     return postsRepository.deletePost(id)
   },
 
-  async deleteAllPosts() {
+  async deleteAllPosts(): Promise<void> {
     try {
       await postsRepository.deleteAllPosts()
     } catch (e) {

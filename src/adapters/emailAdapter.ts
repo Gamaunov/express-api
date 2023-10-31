@@ -4,7 +4,11 @@ import nodemailer from 'nodemailer'
 dotenv.config()
 
 export const emailAdapter = {
-  async sendEmail(email: string, subject: string, message: string) {
+  async sendEmail(
+    email: string,
+    subject: string,
+    message: string,
+  ): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {

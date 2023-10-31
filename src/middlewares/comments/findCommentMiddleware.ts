@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { commentsRepository } from '../../reposotories/comments-repository'
+import { MappedCommentModel } from '../../models'
+import { commentsQueryRepository } from '../../reposotories/query-repositories/comments-query-repository'
 
 export const FindCommentMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const commentId = req.params.id
-
-  const comment = await commentsRepository.getCommentById(commentId)
+  const comment: MappedCommentModel | null =
+    await commentsQueryRepository.getCommentById(req.params.id)
 
   if (!comment) return res.sendStatus(404)
 

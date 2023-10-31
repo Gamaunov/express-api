@@ -1,16 +1,16 @@
 export { authGuardMiddleware } from './common/authGuardMiddleware'
 export { validateObjectId } from './common/objectIdMiddleware'
 
-export { authMiddleware } from './auth/authMiddleware'
+export { authBearerMiddleware } from './auth/authBearerMiddleware'
 export { AuthValidation } from './auth/authValidationMiddleware'
 export { AuthErrorsValidation } from './auth/authValidationMiddleware'
 export { CheckEmailCode } from './auth/checkEmailCode'
 export { EmailValidation } from './auth/emailValidationMiddleware'
 export { EmailErrorsValidation } from './auth/emailValidationMiddleware'
 export { CheckRefreshToken } from './auth/checkRefreshToken'
-export { CountOfLoginAttempts } from './auth/countOfLoginAttempts'
 export { CheckRTMiddleware } from './auth/checkRTMiddleware'
 export { DeviceIdMiddleware } from './auth/deviceIdMiddleware'
+export { authBasicMiddleware } from './auth/authBasicMiddleware'
 
 export { ValidateBlog } from './blogs/blogValidationMiddleware'
 export { BlogErrorsValidation } from './blogs/blogValidationMiddleware'

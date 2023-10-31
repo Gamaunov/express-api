@@ -1,46 +1,33 @@
 import jwt from 'jsonwebtoken'
-import { ObjectId } from 'mongodb'
+import { v4 as uuidv4 } from 'uuid'
 
-import { UserAccountDBModel } from '../models'
+import { UserDBModel } from '../models'
 import { settings } from '../settings'
-import { ITokenData } from '../shared'
-import { IRTokenInfo } from '../shared'
+import { ITokenPayload } from '../shared'
 
 export const jwtService = {
-  async createJWT(user: UserAccountDBModel): Promise<string> {
-    return jwt.sign({ userId: user._id }, settings.JWT_SECRET, {
+  async createAccessToken(
+    user: UserDBModel,
+    deviceId: string = uuidv4(),
+  ): Promise<string> {
+    return jwt.sign({ userId: user._id, deviceId }, settings.JWT_SECRET, {
       expiresIn: '10s',
     })
   },
 
-  async getUserIdByToken(token: string): Promise<ObjectId | null> {
-    try {
-      const result = jwt.verify(token, settings.JWT_SECRET) as ITokenData
-
-      return new ObjectId(result.userId)
-    } catch (e) {
-      return null
-    }
-  },
-
   async createRefreshToken(
-    user: UserAccountDBModel,
-    deviceId: string,
+    user: UserDBModel,
+    deviceId: string = uuidv4(),
   ): Promise<string> {
-    return jwt.sign(
-      { userId: user._id, deviceId: deviceId },
-      settings.JWT_SECRET,
-      {
-        expiresIn: '20s',
-      },
-    )
+    return jwt.sign({ userId: user._id, deviceId }, settings.JWT_SECRET, {
+      expiresIn: '20s',
+    })
   },
 
-  async getUserInfoByRT(token: string): Promise<IRTokenInfo | null> {
+  async verifyToken(token: string): Promise<ITokenPayload | null> {
     try {
-      return jwt.verify(token, settings.JWT_SECRET) as IRTokenInfo
-    } catch (e) {
-      console.log(e)
+      return jwt.verify(token, settings.JWT_SECRET) as ITokenPayload
+    } catch (error) {
       return null
     }
   },

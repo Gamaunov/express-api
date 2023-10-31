@@ -10,11 +10,14 @@ export const emailManager = {
     email: string,
     subject: string,
     message: string,
-  ) {
+  ): Promise<void> {
     return await emailAdapter.sendEmail(email, subject, message)
   },
 
-  async sendEmailConfirmationMessage(email: string, confirmationCode: string) {
+  async sendEmailConfirmationMessage(
+    email: string,
+    confirmationCode: string,
+  ): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {

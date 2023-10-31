@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
-import { blogsRepository } from '../../reposotories/blogs-repository'
+import { BlogOutputModel } from '../../models'
+import { blogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
 
-const validateBlogId = async (blogId: string) => {
-  const blog = await blogsRepository.getBlogById(blogId)
+const validateBlogId = async (blogId: string): Promise<boolean> => {
+  const blog: BlogOutputModel | null =
+    await blogsQueryRepository.getBlogById(blogId)
   if (!blog) {
     throw new Error()
   }

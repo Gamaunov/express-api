@@ -1,14 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { postsRepository } from '../../reposotories/posts-repository'
+import { PostOutputModel } from '../../models'
+import { postsQueryRepository } from '../../reposotories/query-repositories/posts-query-repository'
 
 export const FindPostMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const postId = req.params.postId
-  const post = await postsRepository.getPostById(postId)
+  const post: PostOutputModel | null = await postsQueryRepository.getPostById(
+    req.params.postId,
+  )
 
   if (!post) return res.sendStatus(404)
 
