@@ -6,9 +6,7 @@ export function validateObjectId(
   res: Response,
   next: NextFunction,
 ) {
-  const { id } = req.params
-
-  if (!ObjectId.isValid(id)) {
+  if (!ObjectId.isValid(req.params.id)) {
     return res.sendStatus(404)
   }
 

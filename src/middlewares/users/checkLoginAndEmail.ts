@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
+import { UserDBModel } from '../../models'
 import { usersRepository } from '../../reposotories/users-repository'
 
 export const CheckLoginAndEmail = async (
@@ -7,8 +8,10 @@ export const CheckLoginAndEmail = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const login = await usersRepository.findUserByLogin(req.body.login)
-  const email = await usersRepository.findUserByEmail(req.body.email)
+  const login: UserDBModel | null =
+    await usersRepository.findUserByLoginOrEmail(req.body.login)
+  const email: UserDBModel | null =
+    await usersRepository.findUserByLoginOrEmail(req.body.email)
 
   if (login) {
     const message = {

@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
-import { ObjectId } from 'mongodb'
 
 import { authService } from '../../domain/auth-service'
-import { usersRepository } from '../../reposotories/users-repository'
+import { securityDevicesService } from '../../domain/security-devices-service'
+import { DeviceDBModel } from '../../models'
+import { ITokenPayload } from '../../shared'
 
 export const CheckRefreshToken = async (
   req: Request,
@@ -13,26 +14,19 @@ export const CheckRefreshToken = async (
     return res.status(401).send({ message: 'Refresh token not found' })
   }
 
-  const verifiedToken = await authService.checkRefreshToken(
-    req.cookies.refreshToken,
-  )
+  const verifiedToken: ITokenPayload | null =
+    await authService.checkRefreshToken(req.cookies.refreshToken)
 
   if (!verifiedToken) {
     return res.status(401).send({ message: 'Invalid refresh token' })
   }
 
-  const user = await usersRepository.getUserById(verifiedToken.userId)
+  const device: DeviceDBModel | null =
+    await securityDevicesService.findDeviceById(verifiedToken.deviceId)
 
-  if (!user) return res.sendStatus(401)
+  if (!device) return res.sendStatus(401)
 
-  const isTokenInvalid = await authService.findTokenInBlackList(
-    new ObjectId(user._id),
-    req.cookies.refreshToken,
-  )
-
-  if (isTokenInvalid) return res.sendStatus(401)
-
-  req.userId = user._id
+  if (verifiedToken.iat < device.lastActiveDate) return res.sendStatus(401)
 
   return next()
 }

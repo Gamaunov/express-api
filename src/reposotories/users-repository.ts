@@ -1,82 +1,90 @@
-import { ObjectId, UpdateResult } from 'mongodb'
+import { DeleteResult, ObjectId } from 'mongodb'
+import { UpdateWriteOpResult } from 'mongoose'
 
-import { usersCollection } from '../db/db'
-import { MappedUserModel, PaginatorUserModel, UserQueryModel } from '../models'
-import { UserAccountDBModel } from '../models'
-import { loginEmailFilter, pagesCount, skipFn, userMapper } from '../shared'
+import { UserDBModel, UserViewModel } from '../models'
+import { Users } from '../schemas/userSchema'
 
 export const usersRepository = {
-  async getAllUsers(
-    queryData: UserQueryModel,
-  ): Promise<PaginatorUserModel | null> {
-    try {
-      const filter = loginEmailFilter(
-        queryData.searchLoginTerm,
-        queryData.searchEmailTerm,
-      )
+  async getUserById(_id: ObjectId): Promise<UserDBModel | null> {
+    const foundUser = await Users.findOne({ _id })
 
-      const sortCriteria: { [key: string]: any } = {
-        [queryData.sortBy as string]: queryData.sortDirection,
-      }
-
-      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
-
-      const limit = queryData.pageSize
-
-      const users: UserAccountDBModel[] = await usersCollection
-        .find(filter)
-        .sort(sortCriteria)
-        .skip(skip)
-        .limit(limit!)
-        .toArray()
-
-      const userItems = users.map((u) => userMapper(u))
-
-      const totalCount = await usersCollection.countDocuments(filter)
-
-      return {
-        pagesCount: pagesCount(totalCount, queryData.pageSize!),
-        page: queryData.pageNumber!,
-        pageSize: queryData.pageSize!,
-        totalCount: totalCount,
-        items: userItems,
-      }
-    } catch (e) {
-      console.log(e)
-      return null
-    }
+    return foundUser ? foundUser : null
   },
 
-  async getUserById(id: ObjectId | string): Promise<UserAccountDBModel | null> {
-    return usersCollection.findOne({ _id: new ObjectId(id) })
+  async findUserByEmailConfirmationCode(
+    code: string,
+  ): Promise<UserDBModel | null> {
+    const foundUser = await Users.findOne({
+      'emailConfirmation.confirmationCode': code,
+    })
+
+    return foundUser ? foundUser : null
   },
 
-  async updateBlackList(id: ObjectId, token: string): Promise<UpdateResult> {
-    return await usersCollection.updateOne(
-      { _id: id },
-      { $push: { refreshTokenBlackList: token } },
-    )
+  async findUserByPasswordRecoveryCode(
+    code: string,
+  ): Promise<UserDBModel | null> {
+    const foundUser = await Users.findOne({
+      'passwordRecovery.recoveryCode': code,
+    })
+
+    return foundUser ? foundUser : null
   },
 
-  async updateConfirmation(_id: ObjectId): Promise<boolean> {
-    const result = await usersCollection.updateOne(
+  async updatePasswordRecovery(
+    _id: ObjectId,
+    recoveryCode: string,
+    expirationDate: Date,
+  ): Promise<boolean> {
+    const result: UpdateWriteOpResult = await Users.updateOne(
       { _id },
-      { $set: { 'emailConfirmation.isConfirmed': true } },
+      {
+        $set: {
+          'passwordRecovery.recoveryCode': recoveryCode,
+          'passwordRecovery.expirationDate': expirationDate,
+        },
+      },
     )
-
     return result.modifiedCount === 1
   },
 
-  async createUser(newUser: UserAccountDBModel): Promise<MappedUserModel> {
-    const res = await usersCollection.insertOne(newUser)
-
-    return userMapper({ ...newUser, _id: res.insertedId })
+  async updatePassword(_id: ObjectId, passwordHash: string): Promise<boolean> {
+    const result: UpdateWriteOpResult = await Users.updateOne(
+      { _id },
+      {
+        $set: {
+          'accountData.password': passwordHash,
+          'passwordRecovery.recoveryCode': null,
+          'passwordRecovery.expirationDate': null,
+        },
+      },
+    )
+    return result.modifiedCount === 1
   },
 
-  async findLoginOrEmail(
+  async updateEmailConfirmationStatus(_id: ObjectId): Promise<boolean> {
+    const result: UpdateWriteOpResult = await Users.updateOne(
+      { _id },
+      { $set: { 'emailConfirmation.isConfirmed': true } },
+    )
+    return result.modifiedCount === 1
+  },
+
+  async createUser(newUser: UserDBModel): Promise<UserViewModel> {
+    const user = await Users.create(newUser)
+
+    return {
+      id: user._id.toString(),
+      login: user.accountData.login,
+      email: user.accountData.email,
+      createdAt: user.accountData.createdAt,
+    }
+  },
+
+  async findUserByLoginOrEmail(
     loginOrEmail: string,
-  ): Promise<UserAccountDBModel | null> {
-    return usersCollection.findOne({
+  ): Promise<UserDBModel | null> {
+    return Users.findOne({
       $or: [
         { 'accountData.login': loginOrEmail },
         { 'accountData.email': loginOrEmail },
@@ -84,31 +92,27 @@ export const usersRepository = {
     })
   },
 
-  async findUserByEmail(email: string): Promise<UserAccountDBModel | null> {
-    return await usersCollection.findOne({
+  async findUserByEmail(email: string): Promise<UserDBModel | null> {
+    const user = await Users.findOne({
       'accountData.email': email,
     })
+
+    return user ? user : null
   },
 
-  async findUserByLogin(login: string): Promise<UserAccountDBModel | null> {
-    return await usersCollection.findOne({
+  async findUserByLogin(login: string): Promise<UserDBModel | null> {
+    const user = await Users.findOne({
       'accountData.login': login,
     })
-  },
 
-  async findUserByConfirmationCode(
-    code: string,
-  ): Promise<UserAccountDBModel | null> {
-    return await usersCollection.findOne({
-      'emailConfirmation.confirmationCode': code,
-    })
+    return user ? user : null
   },
 
   async updateConfirmationCode(
     userId: ObjectId,
     code: string,
   ): Promise<boolean> {
-    const result = await usersCollection.updateOne(
+    const result: UpdateWriteOpResult = await Users.updateOne(
       { _id: userId },
       {
         $set: {
@@ -120,17 +124,15 @@ export const usersRepository = {
     return result.modifiedCount === 1
   },
 
-  async deleteUser(id: string): Promise<boolean> {
-    const isUserDeleted = await usersCollection.deleteOne({
-      _id: new ObjectId(id),
-    })
+  async deleteUser(_id: ObjectId): Promise<boolean> {
+    const result: DeleteResult = await Users.deleteOne({ _id })
 
-    return isUserDeleted.deletedCount === 1
+    return result.deletedCount === 1
   },
 
-  async deleteAllUsers() {
+  async deleteAllUsers(): Promise<void> {
     try {
-      await usersCollection.deleteMany({})
+      await Users.deleteMany({})
     } catch (e) {
       console.error('Error deleting documents:', e)
     }

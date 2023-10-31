@@ -1,5 +1,6 @@
 import express, { Response } from 'express'
 
+import { commentsService } from '../domain/comments-service'
 import { postsService } from '../domain/post-service'
 import {
   CommentErrorsValidation,
@@ -7,17 +8,24 @@ import {
   PostErrorsValidation,
   PostValidation,
   ValidateComment,
+  authBasicMiddleware,
   authGuardMiddleware,
-  authMiddleware,
   validateObjectId,
 } from '../middlewares'
 import {
   CommentQueryModel,
   CreateCommentModel,
   CreatePostModel,
+  MappedCommentModel,
+  PaginatorCommentModel,
+  PaginatorPostModel,
+  PostOutputModel,
   PostQueryModel,
+  PostViewModel,
   URIParamsPostModel,
 } from '../models'
+import { commentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
+import { postsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
 import {
   PostIdType,
   RequestWithBody,
@@ -32,9 +40,10 @@ export const postsRouter = () => {
   router.get(
     `/`,
     async (req: RequestWithQuery<PostQueryModel>, res: Response) => {
-      const data = req.query
+      const data: PostQueryModel = req.query
 
-      const posts = await postsService.getAllPosts(data)
+      const posts: PaginatorPostModel | null =
+        await postsQueryRepository.getAllPosts(data)
 
       return res.status(200).send(posts)
     },
@@ -43,24 +52,28 @@ export const postsRouter = () => {
   router.get(
     `/:id`,
     validateObjectId,
-    async (req: RequestWithParams<URIParamsPostModel>, res: Response) => {
-      const blog = await postsService.getPostById(req.params.id)
+    async (
+      req: RequestWithParams<URIParamsPostModel>,
+      res: Response,
+    ): Promise<void> => {
+      const post: PostOutputModel | null =
+        await postsQueryRepository.getPostById(req.params.id)
 
-      blog ? res.status(200).send(blog) : res.sendStatus(404)
+      post ? res.status(200).send(post) : res.sendStatus(404)
     },
   )
 
   router.post(
     `/`,
-    authGuardMiddleware,
+    authBasicMiddleware,
     PostValidation(),
     PostErrorsValidation,
     async (req: RequestWithBody<CreatePostModel>, res: Response) => {
-      const data = req.body
+      const data: CreatePostModel = req.body
 
-      const newPost = await postsService.createPost(data)
+      const newPost: PostViewModel | null = await postsService.createPost(data)
 
-      return res.status(201).send(newPost)
+      return newPost ? res.status(201).send(newPost) : res.sendStatus(404)
     },
   )
 
@@ -71,14 +84,13 @@ export const postsRouter = () => {
       req: RequestWithParamsAndBody<PostIdType, CommentQueryModel>,
       res: Response,
     ) => {
-      const postId = req.params.postId
-
       const data = req.query
 
-      const commentsByPostId = await postsService.getCommentsByPostId(
-        postId,
-        data,
-      )
+      const commentsByPostId: PaginatorCommentModel | null =
+        await commentsQueryRepository.getCommentsByPostId(
+          req.params.postId,
+          data,
+        )
 
       return res.status(200).send(commentsByPostId)
     },
@@ -86,7 +98,7 @@ export const postsRouter = () => {
 
   router.post(
     `/:postId/comments`,
-    authMiddleware,
+    authBasicMiddleware,
     FindPostMiddleware,
     ValidateComment(),
     CommentErrorsValidation,
@@ -94,45 +106,40 @@ export const postsRouter = () => {
       req: RequestWithParamsAndBody<PostIdType, CreateCommentModel>,
       res: Response,
     ) => {
-      const postId = req.params.postId
+      const data: CreateCommentModel = req.body
 
-      const data = req.body
+      if (!req.user) return res.sendStatus(401)
 
-      if (req.user) {
-        const userInfo = {
-          userId: req.user._id,
-          userLogin: req.user.accountData.login,
-        }
+      const userInfo = {
+        userId: req.user._id,
+        userLogin: req.user.accountData.login,
+      }
 
-        const createdCommentByPostId = await postsService.createCommentByPostId(
-          postId,
+      const createdCommentByPostId: MappedCommentModel =
+        await commentsService.createCommentByPostId(
+          req.params.postId,
           userInfo,
           data,
         )
 
-        return res.status(201).send(createdCommentByPostId)
-      } else {
-        return res.sendStatus(401)
-      }
+      return res.status(201).send(createdCommentByPostId)
     },
   )
 
   router.put(
     `/:id`,
     validateObjectId,
-    authGuardMiddleware,
+    authBasicMiddleware,
     PostValidation(),
     PostErrorsValidation,
     async (
       req: RequestWithParamsAndBody<URIParamsPostModel, CreatePostModel>,
       res: Response,
-    ) => {
+    ): Promise<void> => {
       const { blogId, content, shortDescription, title } = req.body
 
-      const { id } = req.params
-
-      const isUpdated = await postsService.updatePost(
-        id,
+      const isUpdated: PostOutputModel | null = await postsService.updatePost(
+        req.params.id,
         title,
         shortDescription,
         content,
@@ -148,7 +155,7 @@ export const postsRouter = () => {
     validateObjectId,
     authGuardMiddleware,
     async (req: RequestWithParams<URIParamsPostModel>, res) => {
-      const isDeleted = await postsService.deletePost(req.params.id)
+      const isDeleted: boolean = await postsService.deletePost(req.params.id)
 
       isDeleted ? res.sendStatus(204) : res.sendStatus(404)
     },

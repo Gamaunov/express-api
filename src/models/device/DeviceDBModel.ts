@@ -1,8 +1,8 @@
 export type DeviceDBModel = {
-  userId: string
-  issuedAt: number
-  expirationAt: number
-  deviceId: string
   ip: string
-  deviceName: string
+  title: string
+  userId: string
+  deviceId: string
+  lastActiveDate: number
+  expirationDate: number
 }

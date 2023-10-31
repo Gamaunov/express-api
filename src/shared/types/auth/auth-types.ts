@@ -17,14 +17,20 @@ export type LoginOrEmailType = {
   password: string
 }
 
+export type NewPasswordRecoveryInputType = {
+  newPassword: 'string'
+  recoveryCode: 'string'
+}
+
 export type UserInfoType = {
   email: string
   login: string
   userId: ObjectId
 }
 
-export interface ITokenData {
-  userId: string
+export interface ITokenPayload {
+  userId: number
+  deviceId: string
   iat: number
   exp: number
 }

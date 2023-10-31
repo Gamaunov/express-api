@@ -1,5 +1,20 @@
 import { WithId } from 'mongodb'
 
-import { UserViewModel } from './UserViewModel'
-
-export type UserDBModel = WithId<UserViewModel>
+export type UserDBModel = WithId<{
+  accountData: {
+    login: string
+    passwordHash: string
+    email: string
+    createdAt: string
+    isMembership: boolean
+  }
+  emailConfirmation: {
+    confirmationCode: string | null
+    expirationDate: Date | null
+    isConfirmed: boolean
+  }
+  passwordRecovery: {
+    recoveryCode: string | null
+    expirationDate: Date | null
+  }
+}>

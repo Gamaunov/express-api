@@ -1,66 +1,63 @@
-import add from 'date-fns/add'
-import { ObjectId, UpdateResult } from 'mongodb'
-import { v4 as uuidv4 } from 'uuid'
+import { ObjectId } from 'mongodb'
 
-import {
-  CreateUserModel,
-  MappedUserModel,
-  PaginatorUserModel,
-  UserAccountDBModel,
-  UserQueryModel,
-} from '../models'
+import { CreateUserModel, UserDBModel, UserViewModel } from '../models'
 import { usersRepository } from '../reposotories/users-repository'
-import { queryUserValidator } from '../shared'
 import { authService } from './auth-service'
 
 export const usersService = {
-  async getAllUsers(data: UserQueryModel): Promise<PaginatorUserModel | null> {
-    const queryData = queryUserValidator(data)
-
-    return await usersRepository.getAllUsers(queryData)
+  async getUserById(_id: ObjectId): Promise<UserDBModel | null> {
+    return await usersRepository.getUserById(_id)
   },
 
-  async getUserById(userId: ObjectId): Promise<UserAccountDBModel | null> {
-    return await usersRepository.getUserById(userId)
+  async findUserByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<UserDBModel | null> {
+    return await usersRepository.findUserByLoginOrEmail(loginOrEmail)
   },
 
-  async updateBlackList(
-    userId: ObjectId,
-    token: string,
-  ): Promise<UpdateResult> {
-    return await usersRepository.updateBlackList(userId, token)
-  },
+  async createUser(data: CreateUserModel): Promise<UserViewModel> {
+    const passwordHash: string = await authService._generateHash(data.password)
 
-  async createUser(data: CreateUserModel): Promise<MappedUserModel> {
-    const passwordHash = await authService._generateHash(data.password)
-
-    const newUser: UserAccountDBModel = {
+    const newUser: UserDBModel = {
       _id: new ObjectId(),
       accountData: {
         login: data.login,
-        email: data.email,
         passwordHash,
-        createdAt: new Date(),
+        email: data.email,
+        createdAt: new Date().toISOString(),
+        isMembership: false,
       },
       emailConfirmation: {
-        confirmationCode: uuidv4(),
-        expirationDate: add(new Date(), {
-          hours: 8,
-          minutes: 30,
-        }),
+        confirmationCode: null,
+        expirationDate: null,
         isConfirmed: true,
       },
-      refreshTokenBlackList: [],
+      passwordRecovery: {
+        recoveryCode: null,
+        expirationDate: null,
+      },
     }
 
     return await usersRepository.createUser(newUser)
   },
 
-  async deleteUser(id: string): Promise<boolean> {
-    return usersRepository.deleteUser(id)
+  async findUserByEmailConfirmationCode(
+    code: string,
+  ): Promise<UserDBModel | null> {
+    return usersRepository.findUserByEmailConfirmationCode(code)
   },
 
-  async deleteAllUsers() {
+  async findUserByPasswordRecoveryCode(
+    code: string,
+  ): Promise<UserDBModel | null> {
+    return usersRepository.findUserByPasswordRecoveryCode(code)
+  },
+
+  async deleteUser(id: string): Promise<boolean> {
+    return usersRepository.deleteUser(new ObjectId(id))
+  },
+
+  async deleteAllUsers(): Promise<void> {
     try {
       await usersRepository.deleteAllUsers()
     } catch (e) {

@@ -2,10 +2,10 @@ import { ObjectId } from 'mongodb'
 
 export type CommentViewModel = {
   _id: ObjectId
-  postId: string | ObjectId
+  postId: string
   content: string
   commentatorInfo: {
-    userId: string | ObjectId
+    userId: string
     userLogin: string
   }
   createdAt: string

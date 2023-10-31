@@ -1,71 +1,21 @@
-import { ObjectId, WithId } from 'mongodb'
+import { DeleteResult, ObjectId } from 'mongodb'
 
-import { postsCollection } from '../db/db'
-import {
-  PaginatorPostModel,
-  PostOutputModel,
-  PostQueryModel,
-  PostViewModel,
-  UpdatePostModel,
-} from '../models'
-import { pagesCount, postMapper, skipFn } from '../shared'
+import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
+import { Posts } from '../schemas/postSchema'
+import { postMapper } from '../shared'
 
 export const postsRepository = {
-  async getAllPosts(
-    queryData: PostQueryModel,
-  ): Promise<PaginatorPostModel | null> {
-    try {
-      const sortCriteria: { [key: string]: any } = {
-        [queryData.sortBy as string]: queryData.sortDirection,
-      }
-
-      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
-
-      const limit = queryData.pageSize
-
-      const posts: WithId<PostViewModel>[] = await postsCollection
-        .find()
-        .sort(sortCriteria)
-        .skip(skip)
-        .limit(limit!)
-        .toArray()
-
-      const postItems = posts.map((p) => postMapper(p))
-
-      const totalCount = await postsCollection.countDocuments()
-
-      return {
-        pagesCount: pagesCount(totalCount, queryData.pageSize!),
-        page: queryData.pageNumber!,
-        pageSize: queryData.pageSize!,
-        totalCount: totalCount,
-        items: postItems,
-      }
-    } catch (e) {
-      console.log(e)
-      return null
-    }
-  },
-
-  async getPostById(id: string): Promise<PostOutputModel | null> {
-    const post = await postsCollection.findOne({ _id: new ObjectId(id) })
-
-    if (!post) return null
+  async createPost(newPost: PostDBModel): Promise<PostOutputModel> {
+    const post = await Posts.create(newPost)
 
     return postMapper(post)
-  },
-
-  async createPost(newPost: PostViewModel): Promise<PostViewModel> {
-    const res = await postsCollection.insertOne({ ...newPost })
-
-    return postMapper({ ...newPost, _id: res.insertedId })
   },
 
   async updatePost(
     postId: string,
     postData: UpdatePostModel,
   ): Promise<PostOutputModel | null> {
-    let post = await postsCollection.findOneAndUpdate(
+    const post = await Posts.findOneAndUpdate(
       { _id: new ObjectId(postId) },
       {
         $set: {
@@ -83,16 +33,16 @@ export const postsRepository = {
   },
 
   async deletePost(id: string): Promise<boolean> {
-    const isPostDeleted = await postsCollection.deleteOne({
+    const isPostDeleted: DeleteResult = await Posts.deleteOne({
       _id: new ObjectId(id),
     })
 
     return isPostDeleted.deletedCount === 1
   },
 
-  async deleteAllPosts() {
+  async deleteAllPosts(): Promise<void> {
     try {
-      await postsCollection.deleteMany({})
+      await Posts.deleteMany({})
     } catch (e) {
       console.error('Error deleting documents:', e)
     }

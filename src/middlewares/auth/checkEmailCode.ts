@@ -1,15 +1,20 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { usersRepository } from '../../reposotories/users-repository'
+import { usersService } from '../../domain/users-service'
+import { UserDBModel } from '../../models'
 
 export const CheckEmailCode = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const foundUser = await usersRepository.findUserByConfirmationCode(
-    req.body.code,
-  )
+  const foundUser: UserDBModel | null =
+    await usersService.findUserByEmailConfirmationCode(req.body.code)
+
+  if (!foundUser) {
+    res.sendStatus(404)
+    return
+  }
 
   if (foundUser?.emailConfirmation.isConfirmed) {
     const message = {
@@ -37,20 +42,19 @@ export const CheckEmailCode = async (
     return res.status(400).send(message)
   }
 
-  if (
-    foundUser !== null &&
-    foundUser.emailConfirmation.expirationDate < new Date()
-  ) {
-    const message = {
-      errorsMessages: [
-        {
-          message: 'Confirmation code is expired',
-          field: 'code',
-        },
-      ],
-    }
+  if (foundUser.emailConfirmation.expirationDate) {
+    if (foundUser.emailConfirmation.expirationDate < new Date()) {
+      const message = {
+        errorsMessages: [
+          {
+            message: 'Confirmation code is expired',
+            field: 'code',
+          },
+        ],
+      }
 
-    return res.status(400).send(message)
+      return res.status(400).send(message)
+    }
   }
 
   return next()

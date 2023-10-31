@@ -3,26 +3,39 @@ import express, { Response } from 'express'
 import { commentsService } from '../domain/comments-service'
 import {
   CommentErrorsValidation,
-  FindCommentMiddleware,
   ValidateComment,
-  authMiddleware,
+  authBearerMiddleware,
   validateObjectId,
 } from '../middlewares'
 import {
   CreateCommentModel,
+  MappedCommentModel,
   URIParamsBlogIdModel,
   URIParamsCommentIdModel,
 } from '../models'
-import { commentsRepository } from '../reposotories/comments-repository'
+import { commentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
 import { RequestWithParams, RequestWithParamsAndBody } from '../shared'
 
 export const commentsRouter = () => {
   const router = express.Router()
 
+  router.get(
+    `/:id`,
+    validateObjectId,
+    async (
+      req: RequestWithParams<URIParamsCommentIdModel>,
+      res: Response,
+    ): Promise<void> => {
+      const comment: MappedCommentModel | null =
+        await commentsQueryRepository.getCommentById(req.params.id)
+
+      comment ? res.status(200).send(comment) : res.sendStatus(404)
+    },
+  )
+
   router.put(
     `/:id`,
-    FindCommentMiddleware,
-    authMiddleware,
+    authBearerMiddleware,
     ValidateComment(),
     CommentErrorsValidation,
     async (
@@ -31,47 +44,45 @@ export const commentsRouter = () => {
     ) => {
       if (!req.user) return res.sendStatus(401)
 
-      const comment = await commentsRepository.getCommentById(req.params.id)
+      const comment: MappedCommentModel | null =
+        await commentsQueryRepository.getCommentById(req.params.id)
+
+      if (!comment) return res.sendStatus(404)
 
       if (
         comment?.commentatorInfo.userId.toString() === req.user._id.toString()
       ) {
-        const { content } = req.body
+        const isUpdated: boolean = await commentsService.updateComment(
+          req.params.id,
+          req.body.content,
+        )
 
-        await commentsService.updateComment(req.params.id, content)
-
-        return res.sendStatus(204)
+        return isUpdated ? res.sendStatus(204) : res.sendStatus(404)
       } else {
         return res.sendStatus(403)
       }
     },
   )
 
-  router.get(
-    `/:id`,
-    validateObjectId,
-    async (req: RequestWithParams<URIParamsCommentIdModel>, res: Response) => {
-      const comment = await commentsService.getCommentById(req.params.id)
-
-      comment ? res.status(200).send(comment) : res.sendStatus(404)
-    },
-  )
-
   router.delete(
     `/:id`,
-    FindCommentMiddleware,
-    authMiddleware,
+    authBearerMiddleware,
     async (req: RequestWithParams<URIParamsCommentIdModel>, res: Response) => {
       if (!req.user) return res.sendStatus(401)
 
-      const comment = await commentsRepository.getCommentById(req.params.id)
+      const comment: MappedCommentModel | null =
+        await commentsQueryRepository.getCommentById(req.params.id)
+
+      if (!comment) return res.sendStatus(404)
 
       if (
-        comment?.commentatorInfo.userId.toString() === req.user._id.toString()
+        comment.commentatorInfo.userId.toString() === req.user._id.toString()
       ) {
-        await commentsService.deleteComment(req.params.id)
+        const isDeleted: boolean = await commentsService.deleteComment(
+          req.params.id,
+        )
 
-        return res.sendStatus(204)
+        return isDeleted ? res.sendStatus(204) : res.sendStatus(404)
       } else {
         return res.sendStatus(403)
       }
