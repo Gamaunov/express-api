@@ -116,7 +116,6 @@ export const authService = {
     try {
       await emailManager.sendPasswordRecoveryMessage(
         email,
-        'Password recovery',
         recoveryCode,
       )
     } catch (e) {

@@ -43,7 +43,7 @@ export const rateLimitsRepository = {
     return result.deletedCount === 1
   },
 
-  async deleteAll(): Promise<boolean> {
+  async deleteAllRateLimits(): Promise<boolean> {
     await RateLimits.deleteMany({})
     return (await RateLimits.countDocuments()) === 0
   },

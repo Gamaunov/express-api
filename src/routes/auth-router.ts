@@ -6,16 +6,16 @@ import { authService } from '../domain/auth-service'
 import { securityDevicesService } from '../domain/security-devices-service'
 import { usersService } from '../domain/users-service'
 import {
+  CheckEmail,
+  authBearerMiddleware,
   authErrorsValidation,
   authValidation,
-  CheckEmail,
   checkEmailCode,
   checkRefreshToken,
   emailErrorsValidation,
   emailValidation,
   userErrorsValidation,
   userValidation,
-  authBearerMiddleware,
 } from '../middlewares'
 import { rateLimitMiddleware } from '../middlewares/auth/rateLimitMiddleware'
 import {
@@ -166,7 +166,7 @@ export const authRouter = () => {
     async (
       req: RequestWithBody<NewPasswordRecoveryInputType>,
       res: Response,
-    ): Promise<any> => {
+    ) => {
       const user: UserDBModel | null =
         await usersService.findUserByPasswordRecoveryCode(req.body.recoveryCode)
 
@@ -178,7 +178,8 @@ export const authRouter = () => {
         req.body.recoveryCode,
         req.body.newPassword,
       )
-      res.sendStatus(204)
+
+      return res.sendStatus(204)
     },
   )
 

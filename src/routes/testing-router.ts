@@ -16,7 +16,7 @@ export const getTestingRouter = () => {
     await usersRepository.deleteAllUsers()
     await commentsRepository.deleteAllComments()
     await securityDevicesRepository.deleteAllDevices()
-    await rateLimitsRepository.deleteAll()
+    await rateLimitsRepository.deleteAllRateLimits()
 
     return res.sendStatus(204)
   })
