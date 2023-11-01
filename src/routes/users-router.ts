@@ -4,14 +4,14 @@ import { usersService } from '../domain/users-service'
 import {
   UserErrorsValidation,
   UserValidation,
-  authBasicMiddleware,
+  checkBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
 import {
-  CreateUserModel,
-  URIParamsUserModel,
-  UserQueryModel,
-  UserViewModel,
+    CreateUserModel, PaginatorUserModel,
+    URIParamsUserModel,
+    UserQueryModel,
+    UserViewModel,
 } from '../models'
 import { usersQueryRepository } from '../reposotories/query-repositories/users-query-repository'
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
@@ -21,11 +21,11 @@ export const usersRouter = () => {
 
   router.get(
     `/`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
-      const data = req.query
+      const data: UserQueryModel = req.query
 
-      const users = await usersQueryRepository.getAllUsers(data)
+      const users: PaginatorUserModel | null = await usersQueryRepository.getAllUsers(data)
 
       return res.status(200).send(users)
     },
@@ -33,7 +33,7 @@ export const usersRouter = () => {
 
   router.post(
     `/`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     UserValidation(),
     UserErrorsValidation,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
@@ -47,7 +47,7 @@ export const usersRouter = () => {
 
   router.delete(
     `/:id`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     validateObjectId,
     async (req: RequestWithParams<URIParamsUserModel>, res) => {
       const isDeleted: boolean = await usersService.deleteUser(req.params.id)
@@ -58,7 +58,7 @@ export const usersRouter = () => {
 
   router.delete(
     `/`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     validateObjectId,
     async (req: Request, res): Promise<void> => {
       const isDeleted: boolean = await usersService.deleteUser(req.params.id)

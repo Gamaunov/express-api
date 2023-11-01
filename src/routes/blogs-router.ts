@@ -7,7 +7,7 @@ import {
   PostErrorsValidation,
   PostValidation,
   ValidateBlog,
-  authBasicMiddleware,
+  checkBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
 import { FindBlogMiddleware } from '../middlewares/blogs/findBlogMiddleware'
@@ -73,7 +73,7 @@ export const blogsRouter = () => {
 
   router.post(
     `/`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     ValidateBlog(),
     BlogErrorsValidation,
     async (req: RequestWithBody<CreateBlogModel>, res: Response) => {
@@ -85,7 +85,7 @@ export const blogsRouter = () => {
 
   router.post(
     `/:blogId/posts`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     FindBlogMiddleware,
     PostValidation(),
     PostErrorsValidation,
@@ -105,7 +105,7 @@ export const blogsRouter = () => {
   router.put(
     `/:id`,
     validateObjectId,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     ValidateBlog(),
     BlogErrorsValidation,
     async (
@@ -124,7 +124,7 @@ export const blogsRouter = () => {
   router.delete(
     `/:id`,
     validateObjectId,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     async (
       req: RequestWithParams<URIParamsBlogIdModel>,
       res: Response,
