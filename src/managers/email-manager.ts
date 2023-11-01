@@ -8,6 +8,14 @@ dotenv.config()
 export const emailManager = {
   async sendPasswordRecoveryMessage(
     email: string,
+    subject: string,
+    message: string,
+  ) {
+    return await emailAdapter.sendEmail(email, subject, message)
+  },
+
+  async sendRecoveryPasswordMessage(
+    email: string,
     recoveryCode: string,
   ): Promise<void> {
     const subject = 'Password recovery'

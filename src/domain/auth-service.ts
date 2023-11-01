@@ -114,7 +114,7 @@ export const authService = {
       )
 
     try {
-      await emailManager.sendPasswordRecoveryMessage(
+      await emailManager.sendRecoveryPasswordMessage(
         email,
         recoveryCode,
       )
