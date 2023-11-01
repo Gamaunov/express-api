@@ -171,7 +171,7 @@ export const authRouter = () => {
         await usersService.findUserByPasswordRecoveryCode(req.body.recoveryCode)
 
       if (!user || user.passwordRecovery.expirationDate! < new Date()) {
-        return res.sendStatus(400)
+        return res.status(400).send({ errorsMessages: [{ message: 'recoveryCode is incorrect', field: "recoveryCode" }] })
       }
 
       await authService.changePassword(
