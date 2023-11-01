@@ -13,8 +13,8 @@ import {
   checkRefreshToken,
   emailErrorsValidation,
   emailValidation,
-  UserErrorsValidation,
-  UserValidation,
+  userErrorsValidation,
+  userValidation,
   authBearerMiddleware,
 } from '../middlewares'
 import { rateLimitMiddleware } from '../middlewares/auth/rateLimitMiddleware'
@@ -108,8 +108,8 @@ export const authRouter = () => {
   router.post(
     '/registration',
     rateLimitMiddleware,
-    UserValidation(),
-    UserErrorsValidation,
+    userValidation(),
+    userErrorsValidation,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
       const user: MappedUserModel | null = await authService.createUser(
         req.body.login,

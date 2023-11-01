@@ -13,7 +13,7 @@ const uniqueLoginOrEmail = async (loginOrEmail: string) => {
   }
 }
 
-export const UserValidation = () => {
+export const userValidation = () => {
   return [
     body('login')
       .notEmpty()
@@ -46,7 +46,7 @@ export const UserValidation = () => {
   ]
 }
 
-export const UserErrorsValidation = (
+export const userErrorsValidation = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -55,7 +55,7 @@ export const UserErrorsValidation = (
   if (!errors.isEmpty()) {
     const errorsMessages = errors
       .array({ onlyFirstError: true })
-      .map((e) => ErrorsFormatter(e))
+      .map((e) => errorsFormatter(e))
 
     const responseData = {
       errorsMessages: errorsMessages,
@@ -69,7 +69,7 @@ export const UserErrorsValidation = (
   next()
 }
 
-const ErrorsFormatter = (e: ValidationError) => {
+const errorsFormatter = (e: ValidationError) => {
   switch (e.type) {
     case 'field':
       return {

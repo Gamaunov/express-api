@@ -2,8 +2,8 @@ import express, { Request, Response } from 'express'
 
 import { usersService } from '../domain/users-service'
 import {
-  UserErrorsValidation,
-  UserValidation,
+  userErrorsValidation,
+  userValidation,
   checkBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
@@ -34,8 +34,8 @@ export const usersRouter = () => {
   router.post(
     `/`,
     checkBasicMiddleware,
-    UserValidation(),
-    UserErrorsValidation,
+    userValidation(),
+    userErrorsValidation,
     async (req: RequestWithBody<CreateUserModel>, res: Response) => {
       const data: CreateUserModel = req.body
 
