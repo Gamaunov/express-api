@@ -93,11 +93,9 @@ export const usersRepository = {
   },
 
   async findUserByEmail(email: string): Promise<UserDBModel | null> {
-    const user = await Users.findOne({
+   return await Users.findOne({
       'accountData.email': email,
     })
-
-    return user ? user : null
   },
 
   async findUserByLogin(login: string): Promise<UserDBModel | null> {

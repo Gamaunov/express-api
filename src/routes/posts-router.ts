@@ -8,7 +8,7 @@ import {
   PostErrorsValidation,
   PostValidation,
   ValidateComment,
-  authBasicMiddleware,
+  checkBasicMiddleware,
   authGuardMiddleware,
   validateObjectId,
 } from '../middlewares'
@@ -65,7 +65,7 @@ export const postsRouter = () => {
 
   router.post(
     `/`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     PostValidation(),
     PostErrorsValidation,
     async (req: RequestWithBody<CreatePostModel>, res: Response) => {
@@ -98,7 +98,7 @@ export const postsRouter = () => {
 
   router.post(
     `/:postId/comments`,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     FindPostMiddleware,
     ValidateComment(),
     CommentErrorsValidation,
@@ -129,7 +129,7 @@ export const postsRouter = () => {
   router.put(
     `/:id`,
     validateObjectId,
-    authBasicMiddleware,
+    checkBasicMiddleware,
     PostValidation(),
     PostErrorsValidation,
     async (

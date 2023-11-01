@@ -10,7 +10,7 @@ export { EmailErrorsValidation } from './auth/emailValidationMiddleware'
 export { CheckRefreshToken } from './auth/checkRefreshToken'
 export { CheckRTMiddleware } from './auth/checkRTMiddleware'
 export { DeviceIdMiddleware } from './auth/deviceIdMiddleware'
-export { authBasicMiddleware } from './auth/authBasicMiddleware'
+export { checkBasicMiddleware } from './auth/checkBasicMiddleware'
 
 export { ValidateBlog } from './blogs/blogValidationMiddleware'
 export { BlogErrorsValidation } from './blogs/blogValidationMiddleware'
