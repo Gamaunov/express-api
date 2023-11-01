@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
-export const RecoveryInputValidation = () => {
+export const recoveryInputValidation = () => {
   return [
     body('newPassword')
       .notEmpty()
@@ -19,7 +19,7 @@ export const RecoveryInputValidation = () => {
   ]
 }
 
-export const RecoveryInputErrorsValidation = (
+export const recoveryInputErrorsValidation = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -29,7 +29,7 @@ export const RecoveryInputErrorsValidation = (
   if (!errors.isEmpty()) {
     const errorsMessages = errors
       .array({ onlyFirstError: true })
-      .map((e) => ErrorsFormatter(e))
+      .map((e) => errorsFormatter(e))
 
     const responseData = {
       errorsMessages: errorsMessages,
@@ -41,7 +41,7 @@ export const RecoveryInputErrorsValidation = (
   return next()
 }
 
-const ErrorsFormatter = (e: ValidationError) => {
+const errorsFormatter = (e: ValidationError) => {
   switch (e.type) {
     case 'field':
       return {

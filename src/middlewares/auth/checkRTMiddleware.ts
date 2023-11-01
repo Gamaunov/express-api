@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-export const CheckRTMiddleware = async (
+export const checkRTMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,

@@ -5,7 +5,7 @@ import { securityDevicesService } from '../../domain/security-devices-service'
 import { DeviceDBModel } from '../../models'
 import { ITokenPayload } from '../../shared'
 
-export const DeviceIdMiddleware = async (
+export const deviceIdMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,

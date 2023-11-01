@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
-export const EmailValidation = () => {
+export const emailValidation = () => {
   return [
     body('email')
       .notEmpty()
@@ -13,7 +13,7 @@ export const EmailValidation = () => {
   ]
 }
 
-export const EmailErrorsValidation = (
+export const emailErrorsValidation = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -23,7 +23,7 @@ export const EmailErrorsValidation = (
   if (!errors.isEmpty()) {
     const errorsMessages = errors
       .array({ onlyFirstError: true })
-      .map((e) => ErrorsFormatter(e))
+      .map((e) => errorsFormatter(e))
 
     const responseData = {
       errorsMessages: errorsMessages,
@@ -35,7 +35,7 @@ export const EmailErrorsValidation = (
   return next()
 }
 
-const ErrorsFormatter = (e: ValidationError) => {
+const errorsFormatter = (e: ValidationError) => {
   switch (e.type) {
     case 'field':
       return {

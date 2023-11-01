@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 import { usersService } from '../../domain/users-service'
 import { UserDBModel } from '../../models'
 
-export const CheckEmailCode = async (
+export const checkEmailCode = async (
   req: Request,
   res: Response,
   next: NextFunction,

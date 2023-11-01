@@ -5,7 +5,7 @@ import { securityDevicesService } from '../../domain/security-devices-service'
 import { DeviceDBModel } from '../../models'
 import { ITokenPayload } from '../../shared'
 
-export const CheckRefreshToken = async (
+export const checkRefreshToken = async (
   req: Request,
   res: Response,
   next: NextFunction,

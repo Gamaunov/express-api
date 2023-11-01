@@ -6,21 +6,21 @@ import { authService } from '../domain/auth-service'
 import { securityDevicesService } from '../domain/security-devices-service'
 import { usersService } from '../domain/users-service'
 import {
-  AuthErrorsValidation,
-  AuthValidation,
+  authErrorsValidation,
+  authValidation,
   CheckEmail,
-  CheckEmailCode,
-  CheckRefreshToken,
-  EmailErrorsValidation,
-  EmailValidation,
+  checkEmailCode,
+  checkRefreshToken,
+  emailErrorsValidation,
+  emailValidation,
   UserErrorsValidation,
   UserValidation,
   authBearerMiddleware,
 } from '../middlewares'
 import { rateLimitMiddleware } from '../middlewares/auth/rateLimitMiddleware'
 import {
-  RecoveryInputErrorsValidation,
-  RecoveryInputValidation,
+  recoveryInputErrorsValidation,
+  recoveryInputValidation,
 } from '../middlewares/auth/recoveryInputValidation'
 import { CreateUserModel, MappedUserModel, UserDBModel } from '../models'
 import {
@@ -55,8 +55,8 @@ export const authRouter = () => {
   router.post(
     '/login',
     rateLimitMiddleware,
-    AuthValidation(),
-    AuthErrorsValidation,
+    authValidation(),
+    authErrorsValidation,
     async (req: RequestWithBody<LoginOrEmailType>, res: Response) => {
       const user: UserDBModel | null = await authService.checkCredentials(
         req.body.loginOrEmail,
@@ -124,7 +124,7 @@ export const authRouter = () => {
   router.post(
     '/registration-confirmation',
     rateLimitMiddleware,
-    CheckEmailCode,
+    checkEmailCode,
     async (req: RequestWithBody<ConfirmCodeType>, res: Response) => {
       const result: boolean = await authService.confirmEmail(req.body.code)
 
@@ -135,8 +135,8 @@ export const authRouter = () => {
   router.post(
     '/registration-email-resending',
     rateLimitMiddleware,
-    EmailValidation(),
-    EmailErrorsValidation,
+    emailValidation(),
+    emailErrorsValidation,
     CheckEmail,
     async (req: RequestWithBody<EmailType>, res: Response) => {
       const result: boolean | null = await authService.resendConfirmationCode(
@@ -150,8 +150,8 @@ export const authRouter = () => {
   router.post(
     '/password-recovery',
     rateLimitMiddleware,
-    EmailValidation(),
-    EmailErrorsValidation,
+    emailValidation(),
+    emailErrorsValidation,
     async (req: RequestWithBody<EmailType>, res: Response): Promise<void> => {
       await authService.sendPasswordRecoveryCode(req.body.email)
       res.sendStatus(204)
@@ -161,8 +161,8 @@ export const authRouter = () => {
   router.post(
     '/new-password',
     rateLimitMiddleware,
-    RecoveryInputValidation(),
-    RecoveryInputErrorsValidation,
+    recoveryInputValidation(),
+    recoveryInputErrorsValidation,
     async (
       req: RequestWithBody<NewPasswordRecoveryInputType>,
       res: Response,
@@ -184,7 +184,7 @@ export const authRouter = () => {
 
   router.post(
     '/refresh-token',
-    CheckRefreshToken,
+    checkRefreshToken,
     async (req: Request, res: Response) => {
       const verifiedToken: ITokenPayload | null = await jwtService.verifyToken(
         req.cookies.refreshToken,

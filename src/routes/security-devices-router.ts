@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 
 import { jwtService } from '../application/jwtService'
 import { securityDevicesService } from '../domain/security-devices-service'
-import { CheckRTMiddleware, DeviceIdMiddleware } from '../middlewares'
+import { checkRTMiddleware, deviceIdMiddleware } from '../middlewares'
 import { DeviceViewModel } from '../models'
 import { securityDevicesQueryRepository } from '../reposotories/query-repositories/security-devices-query-repository'
 import { DeviceIdType, ITokenPayload, RequestWithParams } from '../shared'
@@ -11,7 +11,7 @@ import { DeviceIdType, ITokenPayload, RequestWithParams } from '../shared'
 export const securityDevicesRouter = () => {
   const router = express.Router()
 
-  router.get('/', CheckRTMiddleware, async (req: Request, res: Response) => {
+  router.get('/', checkRTMiddleware, async (req: Request, res: Response) => {
     const verifiedToken: ITokenPayload | null = await jwtService.verifyToken(
       req.cookies.refreshToken,
     )
@@ -27,8 +27,8 @@ export const securityDevicesRouter = () => {
 
   router.delete(
     '/:deviceId',
-    CheckRTMiddleware,
-    DeviceIdMiddleware,
+    checkRTMiddleware,
+    deviceIdMiddleware,
     async (
       req: RequestWithParams<DeviceIdType>,
       res: Response,
@@ -41,7 +41,7 @@ export const securityDevicesRouter = () => {
     },
   )
 
-  router.delete('/', CheckRTMiddleware, async (req: Request, res: Response) => {
+  router.delete('/', checkRTMiddleware, async (req: Request, res: Response) => {
     const verifiedToken: ITokenPayload | null = await jwtService.verifyToken(
       req.cookies.refreshToken,
     )
