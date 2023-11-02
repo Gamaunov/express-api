@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 
 import { jwtService } from '../application/jwtService'
 import { securityDevicesService } from '../domain/security-devices-service'
-import { checkRTMiddleware, deviceIdMiddleware } from '../middlewares'
+import { checkForRefreshToken, deviceIdMiddleware } from '../middlewares'
 import { DeviceViewModel } from '../models'
 import { securityDevicesQueryRepository } from '../reposotories/query-repositories/security-devices-query-repository'
 import { DeviceIdType, ITokenPayload, RequestWithParams } from '../shared'
@@ -11,10 +11,11 @@ import { DeviceIdType, ITokenPayload, RequestWithParams } from '../shared'
 export const securityDevicesRouter = () => {
   const router = express.Router()
 
-  router.get('/', checkRTMiddleware, async (req: Request, res: Response) => {
+  router.get('/', checkForRefreshToken, async (req: Request, res: Response) => {
     const verifiedToken: ITokenPayload | null = await jwtService.verifyToken(
       req.cookies.refreshToken,
     )
+
     if (!verifiedToken) return null
 
     const foundSessions: DeviceViewModel[] =
@@ -27,7 +28,6 @@ export const securityDevicesRouter = () => {
 
   router.delete(
     '/:deviceId',
-    checkRTMiddleware,
     deviceIdMiddleware,
     async (
       req: RequestWithParams<DeviceIdType>,
@@ -41,7 +41,7 @@ export const securityDevicesRouter = () => {
     },
   )
 
-  router.delete('/', checkRTMiddleware, async (req: Request, res: Response) => {
+  router.delete('/', checkForRefreshToken, async (req: Request, res: Response) => {
     const verifiedToken: ITokenPayload | null = await jwtService.verifyToken(
       req.cookies.refreshToken,
     )
@@ -50,7 +50,7 @@ export const securityDevicesRouter = () => {
 
     const isDeleted: boolean =
       await securityDevicesService.removeOutdatedDevices(
-        req.cookies.refreshToken,
+        verifiedToken.deviceId,
       )
 
     if (!isDeleted) return res.sendStatus(401)

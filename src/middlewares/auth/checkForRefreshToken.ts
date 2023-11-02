@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-export const checkRTMiddleware = async (
+export const checkForRefreshToken = async (
   req: Request,
   res: Response,
   next: NextFunction,

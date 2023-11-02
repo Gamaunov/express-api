@@ -8,7 +8,7 @@ export { checkEmailCode } from './auth/checkEmailCode'
 export { emailValidation } from './auth/emailValidationMiddleware'
 export { emailErrorsValidation } from './auth/emailValidationMiddleware'
 export { checkRefreshToken } from './auth/checkRefreshToken'
-export { checkRTMiddleware } from './auth/checkRTMiddleware'
+export { checkForRefreshToken } from './auth/checkForRefreshToken'
 export { deviceIdMiddleware } from './auth/deviceIdMiddleware'
 export { checkBasicMiddleware } from './auth/checkBasicMiddleware'
 
