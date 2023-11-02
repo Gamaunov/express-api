@@ -8,8 +8,8 @@ import {
   PostErrorsValidation,
   PostValidation,
   ValidateComment,
-  checkBasicMiddleware,
   authGuardMiddleware,
+  checkBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
 import {

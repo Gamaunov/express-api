@@ -170,8 +170,27 @@ export const authRouter = () => {
       const user: UserDBModel | null =
         await usersService.findUserByPasswordRecoveryCode(req.body.recoveryCode)
 
+      if (!user) return res.sendStatus(400)
+
+      const isNewPasswordEqualToOldPassword: UserDBModel | null =
+        await authService.checkCredentials(
+          user.accountData.email,
+          req.body.newPassword,
+        )
+
+      if (isNewPasswordEqualToOldPassword) {
+        res.sendStatus(401)
+        return
+      }
+
       if (!user || user.passwordRecovery.expirationDate! < new Date()) {
-        return res.status(400).send({ errorsMessages: [{ message: 'recoveryCode is incorrect', field: "recoveryCode" }] })
+        return res
+          .status(400)
+          .send({
+            errorsMessages: [
+              { message: 'recoveryCode is incorrect', field: 'recoveryCode' },
+            ],
+          })
       }
 
       await authService.changePassword(

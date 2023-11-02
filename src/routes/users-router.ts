@@ -2,16 +2,17 @@ import express, { Request, Response } from 'express'
 
 import { usersService } from '../domain/users-service'
 import {
+  checkBasicMiddleware,
   userErrorsValidation,
   userValidation,
-  checkBasicMiddleware,
   validateObjectId,
 } from '../middlewares'
 import {
-    CreateUserModel, PaginatorUserModel,
-    URIParamsUserModel,
-    UserQueryModel,
-    UserViewModel,
+  CreateUserModel,
+  PaginatorUserModel,
+  URIParamsUserModel,
+  UserQueryModel,
+  UserViewModel,
 } from '../models'
 import { usersQueryRepository } from '../reposotories/query-repositories/users-query-repository'
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
@@ -25,7 +26,8 @@ export const usersRouter = () => {
     async (req: RequestWithQuery<UserQueryModel>, res: Response) => {
       const data: UserQueryModel = req.query
 
-      const users: PaginatorUserModel | null = await usersQueryRepository.getAllUsers(data)
+      const users: PaginatorUserModel | null =
+        await usersQueryRepository.getAllUsers(data)
 
       return res.status(200).send(users)
     },

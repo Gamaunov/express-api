@@ -53,7 +53,7 @@ export const usersRepository = {
       { _id },
       {
         $set: {
-          'accountData.password': passwordHash,
+          'accountData.passwordHash': passwordHash,
           'passwordRecovery.recoveryCode': null,
           'passwordRecovery.expirationDate': null,
         },
