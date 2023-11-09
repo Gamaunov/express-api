@@ -1,9 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { authService } from '../../domain/auth-service'
-import { securityDevicesService } from '../../domain/security-devices-service'
+import { AuthService } from '../../application/auth-service'
+import { SecurityDevicesService } from '../../application/security-devices-service'
+import { container } from '../../composition-root'
 import { DeviceDBModel } from '../../models'
 import { ITokenPayload } from '../../shared'
+
+const authService = container.resolve(AuthService)
+const securityDevicesService = container.resolve(SecurityDevicesService)
 
 export const checkRefreshToken = async (
   req: Request,

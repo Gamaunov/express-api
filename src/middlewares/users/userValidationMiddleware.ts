@@ -1,16 +1,19 @@
 import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
-import { usersService } from '../../domain/users-service'
-import { UserDBModel } from '../../models'
+import { UsersService } from '../../application/users-service'
+import { container } from '../../composition-root'
+import { UserModel } from '../../models'
 
+const usersService = container.resolve(UsersService)
 const uniqueLoginOrEmail = async (loginOrEmail: string) => {
-  const foundLoginOrEmail: UserDBModel | null =
+  const foundLoginOrEmail: UserModel | null =
     await usersService.findUserByLoginOrEmail(loginOrEmail)
 
   if (foundLoginOrEmail) {
     return Promise.reject(`Invalid ${loginOrEmail}`)
   }
+  return
 }
 
 export const userValidation = () => {

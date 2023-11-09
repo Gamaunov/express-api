@@ -1,10 +1,13 @@
+import { injectable } from 'inversify'
+
+import { SecurityDeviceMongooseModel } from '../../domain/SecurityDeviceSchema'
 import { DeviceViewModel } from '../../models'
-import { Devices } from '../../schemas/deviceSchema'
 import { securityDevicesMapper } from '../../shared'
 
-export const securityDevicesQueryRepository = {
+@injectable()
+export class SecurityDevicesQueryRepository {
   async getSessions(userId: string): Promise<DeviceViewModel[]> {
-    const foundDevices = await Devices.find({ userId })
+    const foundDevices = await SecurityDeviceMongooseModel.find({ userId })
     return foundDevices.map((d) => securityDevicesMapper(d))
-  },
+  }
 }

@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 
-import { BlogViewModel } from '../models'
+import { BlogDBModel } from '../models'
 
-const blogSchema = new mongoose.Schema<BlogViewModel>({
+const blogSchema = new mongoose.Schema<BlogDBModel>({
   name: { type: String, required: true },
   description: { type: String, required: true },
   websiteUrl: { type: String, required: true },
@@ -10,4 +10,4 @@ const blogSchema = new mongoose.Schema<BlogViewModel>({
   isMembership: { type: Boolean, required: true },
 })
 
-export const Blogs = mongoose.model('blogs', blogSchema)
+export const BlogMongooseModel = mongoose.model('blogs', blogSchema)

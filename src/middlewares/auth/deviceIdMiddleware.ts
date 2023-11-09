@@ -1,10 +1,13 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { jwtService } from '../../application/jwtService'
-import { securityDevicesService } from '../../domain/security-devices-service'
+import { JwtService } from '../../application/jwtService'
+import { SecurityDevicesService } from '../../application/security-devices-service'
+import { container } from '../../composition-root'
 import { DeviceDBModel } from '../../models'
 import { ITokenPayload } from '../../shared'
 
+const jwtService = container.resolve(JwtService)
+const securityDevicesService = container.resolve(SecurityDevicesService)
 export const deviceIdMiddleware = async (
   req: Request,
   res: Response,

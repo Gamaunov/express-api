@@ -1,93 +1,52 @@
-import express, { Response } from 'express'
+import { Router } from 'express'
 
-import { commentsService } from '../domain/comments-service'
+import { container } from '../composition-root'
+import { CommentsController } from '../controllers/CommentsController'
 import {
-  CommentErrorsValidation,
-  ValidateComment,
   authBearerMiddleware,
+  checkBasicMiddleware,
+  commentErrorsValidation,
+  findCommentByCommentIdFromParams,
+  likesErrorsValidation,
+  likesValidation,
+  validateComment,
   validateObjectId,
 } from '../middlewares'
-import {
-  CreateCommentModel,
-  MappedCommentModel,
-  URIParamsBlogIdModel,
-  URIParamsCommentIdModel,
-} from '../models'
-import { commentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
-import { RequestWithParams, RequestWithParamsAndBody } from '../shared'
 
-export const commentsRouter = () => {
-  const router = express.Router()
+export const commentsRouter = Router({})
+const commentsController = container.resolve(CommentsController)
 
-  router.get(
-    `/:id`,
-    validateObjectId,
-    async (
-      req: RequestWithParams<URIParamsCommentIdModel>,
-      res: Response,
-    ): Promise<void> => {
-      const comment: MappedCommentModel | null =
-        await commentsQueryRepository.getCommentById(req.params.id)
+commentsRouter.get(
+  `/:id`,
+  validateObjectId,
+  commentsController.getComment.bind(commentsController),
+)
 
-      comment ? res.status(200).send(comment) : res.sendStatus(404)
-    },
-  )
+commentsRouter.put(
+  `/:id`,
+  authBearerMiddleware,
+  validateComment(),
+  commentErrorsValidation,
+  commentsController.updateComment.bind(commentsController),
+)
 
-  router.put(
-    `/:id`,
-    authBearerMiddleware,
-    ValidateComment(),
-    CommentErrorsValidation,
-    async (
-      req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreateCommentModel>,
-      res: Response,
-    ) => {
-      if (!req.user) return res.sendStatus(401)
+commentsRouter.put(
+  '/:commentId/like-status',
+  authBearerMiddleware,
+  findCommentByCommentIdFromParams,
+  likesValidation(),
+  likesErrorsValidation,
+  commentsController.updateLikeStatus.bind(commentsController),
+)
 
-      const comment: MappedCommentModel | null =
-        await commentsQueryRepository.getCommentById(req.params.id)
+commentsRouter.delete(
+  `/:id`,
+  authBearerMiddleware,
+  commentsController.deleteComment.bind(commentsController),
+)
 
-      if (!comment) return res.sendStatus(404)
-
-      if (
-        comment?.commentatorInfo.userId.toString() === req.user._id.toString()
-      ) {
-        const isUpdated: boolean = await commentsService.updateComment(
-          req.params.id,
-          req.body.content,
-        )
-
-        return isUpdated ? res.sendStatus(204) : res.sendStatus(404)
-      } else {
-        return res.sendStatus(403)
-      }
-    },
-  )
-
-  router.delete(
-    `/:id`,
-    authBearerMiddleware,
-    async (req: RequestWithParams<URIParamsCommentIdModel>, res: Response) => {
-      if (!req.user) return res.sendStatus(401)
-
-      const comment: MappedCommentModel | null =
-        await commentsQueryRepository.getCommentById(req.params.id)
-
-      if (!comment) return res.sendStatus(404)
-
-      if (
-        comment.commentatorInfo.userId.toString() === req.user._id.toString()
-      ) {
-        const isDeleted: boolean = await commentsService.deleteComment(
-          req.params.id,
-        )
-
-        return isDeleted ? res.sendStatus(204) : res.sendStatus(404)
-      } else {
-        return res.sendStatus(403)
-      }
-    },
-  )
-
-  return router
-}
+commentsRouter.delete(
+  '/',
+  checkBasicMiddleware,
+  commentsController.deleteAllComments.bind(commentsController),
+)

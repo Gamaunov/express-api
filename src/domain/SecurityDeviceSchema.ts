@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 import { DeviceDBModel } from '../models'
 
-const deviceSchema = new mongoose.Schema<DeviceDBModel>({
+const securityDeviceSchema = new mongoose.Schema<DeviceDBModel>({
   ip: { type: String, required: true },
   title: { type: String, required: true },
   userId: { type: String, required: true },
@@ -11,4 +11,7 @@ const deviceSchema = new mongoose.Schema<DeviceDBModel>({
   expirationDate: { type: Number, required: true },
 })
 
-export const Devices = mongoose.model('devices', deviceSchema)
+export const SecurityDeviceMongooseModel = mongoose.model(
+  'securityDevices',
+  securityDeviceSchema,
+)

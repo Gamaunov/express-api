@@ -1,15 +1,21 @@
+import { inject, injectable } from 'inversify'
 import { ObjectId, WithId } from 'mongodb'
 
+import { PostMongooseModel } from '../../domain/PostSchema'
 import {
   PaginatorPostModel,
   PostOutputModel,
   PostQueryModel,
   PostViewModel,
 } from '../../models'
-import { Posts } from '../../schemas/postSchema'
 import { pagesCount, postMapper, skipFn } from '../../shared'
+import { PostsRepository } from '../posts-repository'
 
-export const postsQueryRepository = {
+@injectable()
+export class PostsQueryRepository {
+  constructor(
+    @inject(PostsRepository) protected postsRepository: PostsRepository,
+  ) {}
   async getAllPosts(
     queryData: PostQueryModel,
   ): Promise<PaginatorPostModel | null> {
@@ -22,7 +28,7 @@ export const postsQueryRepository = {
 
       const limit = queryData.pageSize
 
-      const posts: WithId<PostViewModel>[] = await Posts.find()
+      const posts: WithId<PostViewModel>[] = await PostMongooseModel.find()
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
@@ -31,7 +37,7 @@ export const postsQueryRepository = {
         (p: WithId<PostViewModel>) => postMapper(p),
       )
 
-      const totalCount: number = await Posts.countDocuments()
+      const totalCount: number = await PostMongooseModel.countDocuments()
 
       return {
         pagesCount: pagesCount(totalCount, queryData.pageSize!),
@@ -44,13 +50,13 @@ export const postsQueryRepository = {
       console.log(e)
       return null
     }
-  },
+  }
 
   async getPostById(id: string): Promise<PostOutputModel | null> {
-    const post = await Posts.findOne({ _id: new ObjectId(id) })
+    const post = await PostMongooseModel.findOne({ _id: new ObjectId(id) })
 
     if (!post) return null
 
     return postMapper(post)
-  },
+  }
 }

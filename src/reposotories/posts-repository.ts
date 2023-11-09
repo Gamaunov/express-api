@@ -1,21 +1,23 @@
+import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
 
+import { PostMongooseModel } from '../domain/PostSchema'
 import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
-import { Posts } from '../schemas/postSchema'
 import { postMapper } from '../shared'
 
-export const postsRepository = {
+@injectable()
+export class PostsRepository {
   async createPost(newPost: PostDBModel): Promise<PostOutputModel> {
-    const post = await Posts.create(newPost)
+    const post = await PostMongooseModel.create(newPost)
 
     return postMapper(post)
-  },
+  }
 
   async updatePost(
     postId: string,
     postData: UpdatePostModel,
   ): Promise<PostOutputModel | null> {
-    const post = await Posts.findOneAndUpdate(
+    const post = await PostMongooseModel.findOneAndUpdate(
       { _id: new ObjectId(postId) },
       {
         $set: {
@@ -30,21 +32,18 @@ export const postsRepository = {
     if (!post) return null
 
     return postMapper(post)
-  },
+  }
 
   async deletePost(id: string): Promise<boolean> {
-    const isPostDeleted: DeleteResult = await Posts.deleteOne({
+    const isPostDeleted: DeleteResult = await PostMongooseModel.deleteOne({
       _id: new ObjectId(id),
     })
 
     return isPostDeleted.deletedCount === 1
-  },
+  }
 
-  async deleteAllPosts(): Promise<void> {
-    try {
-      await Posts.deleteMany({})
-    } catch (e) {
-      console.error('Error deleting documents:', e)
-    }
-  },
+  async deleteAllPosts(): Promise<boolean> {
+    await PostMongooseModel.deleteMany({})
+    return (await PostMongooseModel.countDocuments()) === 0
+  }
 }

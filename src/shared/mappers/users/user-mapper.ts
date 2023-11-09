@@ -1,6 +1,6 @@
-import { MappedUserModel, UserDBModel } from '../../../models'
+import { MappedUserModel, UserModel } from '../../../models'
 
-export const userMapper = (user: UserDBModel): MappedUserModel => {
+export const userMapper = (user: UserModel): MappedUserModel => {
   return {
     id: user._id.toHexString(),
     login: user.accountData.login,

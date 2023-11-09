@@ -1,3 +1,3 @@
 export type URIParamsCommentIdModel = {
-  id: string
+  commentId: string
 }

@@ -1,11 +1,7 @@
-import express from 'express'
+import { Router } from 'express'
 
-export const getHomeRouter = () => {
-  const router = express.Router()
+import { homeController } from '../controllers/HomeController'
 
-  router.get('/', (req, res) => {
-    res.status(200).send('happy testing')
-  })
+export const homeRouter = Router({})
 
-  return router
-}
+homeRouter.get('/', homeController.home.bind(homeController))

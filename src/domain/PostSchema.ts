@@ -11,4 +11,4 @@ const postSchema = new mongoose.Schema<PostDBModel>({
   createdAt: { type: String, required: true },
 })
 
-export const Posts = mongoose.model('posts', postSchema)
+export const PostMongooseModel = mongoose.model('posts', postSchema)

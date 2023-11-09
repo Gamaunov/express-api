@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 
+import { container } from '../../composition-root'
 import { PostOutputModel } from '../../models'
-import { postsQueryRepository } from '../../reposotories/query-repositories/posts-query-repository'
+import { PostsQueryRepository } from '../../reposotories/query-repositories/posts-query-repository'
 
-export const FindPostMiddleware = async (
+const postsQueryRepository = container.resolve(PostsQueryRepository)
+export const findPostMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -12,7 +14,9 @@ export const FindPostMiddleware = async (
     req.params.postId,
   )
 
-  if (!post) return res.sendStatus(404)
+  if (!post) {
+    return res.sendStatus(404)
+  }
 
   return next()
 }

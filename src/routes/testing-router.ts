@@ -1,25 +1,12 @@
-import express from 'express'
+import { Router } from 'express'
 
-import { blogsRepository } from '../reposotories/blogs-repository'
-import { commentsRepository } from '../reposotories/comments-repository'
-import { postsRepository } from '../reposotories/posts-repository'
-import { rateLimitsRepository } from '../reposotories/rate-limits-repository'
-import { securityDevicesRepository } from '../reposotories/security-devices-repository'
-import { usersRepository } from '../reposotories/users-repository'
+import { container } from '../composition-root'
+import { TestingController } from '../controllers/TestingController'
 
-export const getTestingRouter = () => {
-  const router = express.Router()
+export const testingRouter = Router({})
+const testingController = container.resolve(TestingController)
 
-  router.delete('/all-data', async (req, res) => {
-    await blogsRepository.deleteAllBlogs()
-    await postsRepository.deleteAllPosts()
-    await usersRepository.deleteAllUsers()
-    await commentsRepository.deleteAllComments()
-    await securityDevicesRepository.deleteAllDevices()
-    await rateLimitsRepository.deleteAllRateLimits()
-
-    return res.sendStatus(204)
-  })
-
-  return router
-}
+testingRouter.delete(
+  '/all-data',
+  testingController.clearDatabase.bind(testingController),
+)

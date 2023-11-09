@@ -1,11 +1,11 @@
 import { ObjectId } from 'mongodb'
 
-import { UserAccountDBModel } from '../../models'
+import { UserDBModel } from '../../models'
 
 declare global {
   namespace Express {
     export interface Request {
-      user: UserAccountDBModel | null
+      user: UserDBModel | null
       userId: ObjectId
     }
   }

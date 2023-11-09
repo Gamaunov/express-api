@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb'
 
-export type PostDBModel = WithId<{
+export type PostModel = WithId<{
   title: string
   shortDescription: string
   content: string

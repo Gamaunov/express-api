@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { BlogOutputModel } from '../../models'
-import { blogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
+import { BlogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
 
-export const FindBlogMiddleware = async (
+const blogsQueryRepository = new BlogsQueryRepository()
+
+export const findBlogMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,

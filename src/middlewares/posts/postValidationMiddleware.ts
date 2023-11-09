@@ -2,8 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import { ValidationError, body, validationResult } from 'express-validator'
 
 import { BlogOutputModel } from '../../models'
-import { blogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
+import { BlogsQueryRepository } from '../../reposotories/query-repositories/blogs-query-repository'
 
+const blogsQueryRepository = new BlogsQueryRepository()
 const validateBlogId = async (blogId: string): Promise<boolean> => {
   const blog: BlogOutputModel | null =
     await blogsQueryRepository.getBlogById(blogId)
@@ -13,7 +14,7 @@ const validateBlogId = async (blogId: string): Promise<boolean> => {
   return true
 }
 
-export const PostValidation = () => {
+export const postValidation = () => {
   return [
     body('title')
       .notEmpty()
@@ -44,7 +45,7 @@ export const PostValidation = () => {
   ]
 }
 
-export const PostErrorsValidation = (
+export const postErrorsValidation = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -53,7 +54,7 @@ export const PostErrorsValidation = (
   if (!errors.isEmpty()) {
     const errorsMessages = errors
       .array({ onlyFirstError: true })
-      .map((e) => ErrorsFormatter(e))
+      .map((e) => errorsFormatter(e))
 
     const responseData = {
       errorsMessages: errorsMessages,
@@ -66,7 +67,7 @@ export const PostErrorsValidation = (
   next()
 }
 
-const ErrorsFormatter = (e: ValidationError) => {
+const errorsFormatter = (e: ValidationError) => {
   switch (e.type) {
     case 'field':
       return {

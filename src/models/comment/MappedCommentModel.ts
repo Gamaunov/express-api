@@ -6,4 +6,9 @@ export type MappedCommentModel = {
     userLogin: string
   }
   createdAt: string
+  likesInfo: {
+    likesCount: number
+    dislikesCount: number
+    myStatus: string
+  }
 }

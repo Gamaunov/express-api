@@ -5,7 +5,6 @@ export enum RouterPath {
   posts = '/posts',
   users = '/users',
   comments = '/comments',
-  email = '/email',
   security_devices = '/security/devices',
   testing = '/testing',
 }

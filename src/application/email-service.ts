@@ -1,6 +1,6 @@
 import { emailManager } from '../managers/email-manager'
 
-export const emailService = {
+export class EmailService {
   async doOperation(
     email: string,
     subject: string,
@@ -11,5 +11,5 @@ export const emailService = {
       subject,
       message,
     )
-  },
+  }
 }

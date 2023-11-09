@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb'
 
-export type UserDBModel = WithId<{
+export type UserModel = WithId<{
   accountData: {
     login: string
     passwordHash: string

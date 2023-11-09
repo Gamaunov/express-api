@@ -1,42 +1,44 @@
+import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
-import { UpdateWriteOpResult } from 'mongoose'
+import { HydratedDocument, UpdateWriteOpResult } from 'mongoose'
 
-import { UserDBModel, UserViewModel } from '../models'
-import { Users } from '../schemas/userSchema'
+import { IUser, IUserMethods, UserMongooseModel } from '../domain/UserSchema'
+import { UserDBModel, UserModel, UserViewModel } from '../models'
 
-export const usersRepository = {
-  async getUserById(_id: ObjectId): Promise<UserDBModel | null> {
-    const foundUser = await Users.findOne({ _id })
+@injectable()
+export class UsersRepository {
+  async getUserById(
+    _id: ObjectId,
+  ): Promise<HydratedDocument<UserDBModel> | null> {
+    const foundUser = await UserMongooseModel.findOne({ _id })
 
     return foundUser ? foundUser : null
-  },
+  }
 
   async findUserByEmailConfirmationCode(
     code: string,
-  ): Promise<UserDBModel | null> {
-    const foundUser = await Users.findOne({
+  ): Promise<HydratedDocument<IUser, IUserMethods> | null> {
+    return UserMongooseModel.findOne({
       'emailConfirmation.confirmationCode': code,
     })
-
-    return foundUser ? foundUser : null
-  },
+  }
 
   async findUserByPasswordRecoveryCode(
     code: string,
-  ): Promise<UserDBModel | null> {
-    const foundUser = await Users.findOne({
+  ): Promise<HydratedDocument<UserDBModel> | null> {
+    const foundUser = await UserMongooseModel.findOne({
       'passwordRecovery.recoveryCode': code,
     })
 
     return foundUser ? foundUser : null
-  },
+  }
 
   async updatePasswordRecovery(
     _id: ObjectId,
     recoveryCode: string,
     expirationDate: Date,
   ): Promise<boolean> {
-    const result: UpdateWriteOpResult = await Users.updateOne(
+    const result: UpdateWriteOpResult = await UserMongooseModel.updateOne(
       { _id },
       {
         $set: {
@@ -46,10 +48,10 @@ export const usersRepository = {
       },
     )
     return result.modifiedCount === 1
-  },
+  }
 
   async updatePassword(_id: ObjectId, passwordHash: string): Promise<boolean> {
-    const result: UpdateWriteOpResult = await Users.updateOne(
+    const result: UpdateWriteOpResult = await UserMongooseModel.updateOne(
       { _id },
       {
         $set: {
@@ -60,18 +62,19 @@ export const usersRepository = {
       },
     )
     return result.modifiedCount === 1
-  },
+  }
 
   async updateEmailConfirmationStatus(_id: ObjectId): Promise<boolean> {
-    const result: UpdateWriteOpResult = await Users.updateOne(
+    const result: UpdateWriteOpResult = await UserMongooseModel.updateOne(
       { _id },
       { $set: { 'emailConfirmation.isConfirmed': true } },
     )
     return result.modifiedCount === 1
-  },
+  }
 
   async createUser(newUser: UserDBModel): Promise<UserViewModel> {
-    const user = await Users.create(newUser)
+    const user = await UserMongooseModel.create(newUser)
+    await user.save()
 
     return {
       id: user._id.toString(),
@@ -79,40 +82,40 @@ export const usersRepository = {
       email: user.accountData.email,
       createdAt: user.accountData.createdAt,
     }
-  },
+  }
 
   async findUserByLoginOrEmail(
     loginOrEmail: string,
   ): Promise<UserDBModel | null> {
-    return Users.findOne({
+    return UserMongooseModel.findOne({
       $or: [
         { 'accountData.login': loginOrEmail },
         { 'accountData.email': loginOrEmail },
       ],
     })
-  },
+  }
 
-  async findUserByEmail(email: string): Promise<UserDBModel | null> {
-    const user = await Users.findOne({
+  async findUserByEmail(email: string): Promise<UserModel | null> {
+    const user = await UserMongooseModel.findOne({
       'accountData.email': email,
     })
 
     return user ? user : null
-  },
+  }
 
-  async findUserByLogin(login: string): Promise<UserDBModel | null> {
-    const user = await Users.findOne({
+  async findUserByLogin(login: string): Promise<UserModel | null> {
+    const user = await UserMongooseModel.findOne({
       'accountData.login': login,
     })
 
     return user ? user : null
-  },
+  }
 
   async updateConfirmationCode(
     userId: ObjectId,
     code: string,
   ): Promise<boolean> {
-    const result: UpdateWriteOpResult = await Users.updateOne(
+    const result: UpdateWriteOpResult = await UserMongooseModel.updateOne(
       { _id: userId },
       {
         $set: {
@@ -122,19 +125,20 @@ export const usersRepository = {
     )
 
     return result.modifiedCount === 1
-  },
+  }
 
   async deleteUser(_id: ObjectId): Promise<boolean> {
-    const result: DeleteResult = await Users.deleteOne({ _id })
+    const result: DeleteResult = await UserMongooseModel.deleteOne({ _id })
 
     return result.deletedCount === 1
-  },
+  }
 
-  async deleteAllUsers(): Promise<void> {
-    try {
-      await Users.deleteMany({})
-    } catch (e) {
-      console.error('Error deleting documents:', e)
-    }
-  },
+  async deleteAllUsers(): Promise<boolean> {
+    await UserMongooseModel.deleteMany({})
+    return (await UserMongooseModel.countDocuments()) === 0
+  }
+
+  async save(model: any) {
+    return await model.save()
+  }
 }

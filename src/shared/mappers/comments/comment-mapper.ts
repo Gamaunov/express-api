@@ -1,7 +1,8 @@
-import { CommentViewModel, MappedCommentModel } from '../../../models'
+import { CommentDBModel, MappedCommentModel } from '../../../models'
 
 export const commentMapper = (
-  comment: CommentViewModel,
+  comment: CommentDBModel,
+  status?: string | null | undefined,
 ): MappedCommentModel => {
   return {
     id: comment._id.toString(),
@@ -11,5 +12,10 @@ export const commentMapper = (
       userLogin: comment.commentatorInfo.userLogin,
     },
     createdAt: comment.createdAt,
+    likesInfo: {
+      likesCount: comment.likesInfo.likesCount,
+      dislikesCount: comment.likesInfo.dislikesCount,
+      myStatus: typeof status === 'string' ? status : 'None',
+    },
   }
 }

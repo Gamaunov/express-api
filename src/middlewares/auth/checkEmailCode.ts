@@ -1,14 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { usersService } from '../../domain/users-service'
-import { UserDBModel } from '../../models'
+import { UsersService } from '../../application/users-service'
+import { container } from '../../composition-root'
+import { UserModel } from '../../models'
 
+const usersService = container.resolve(UsersService)
 export const checkEmailCode = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const foundUser: UserDBModel | null =
+  const foundUser: UserModel | null =
     await usersService.findUserByEmailConfirmationCode(req.body.code)
 
   if (!foundUser) {

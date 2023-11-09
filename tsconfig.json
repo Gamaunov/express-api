@@ -7,6 +7,8 @@
     // "paths": {
     //   "*": ["src/*"],
     // },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "allowSyntheticDefaultImports": true /* Allow 'import x from y' when a module doesn't have a default export. */,
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,

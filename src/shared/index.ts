@@ -19,6 +19,8 @@ export { PostIdType } from './types/posts/posts-types'
 export { IRTInfo } from './types/devices/devices-types'
 export { DeviceIdType } from './types/devices/devices-types'
 
+export { LikeStatusType } from './types/comments/comments-types'
+
 export { skipFn } from './utils/skipFn'
 export { pagesCount } from './utils/pagesCount'
 
@@ -28,6 +30,7 @@ export { SortDirections } from './enums/common/sortDirections'
 export { SortBlogFields } from './enums/blogs/sortBlogFields'
 export { SortPostFields } from './enums/posts/sortPostFields'
 export { SortCommentFields } from './enums/comments/sortCommentFields'
+export { LikeStatus } from './enums/comments/likeStatus'
 
 export { loginEmailFilter } from './filters/users/loginEmailFilter'
 

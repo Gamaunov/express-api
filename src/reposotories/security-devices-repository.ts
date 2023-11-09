@@ -1,15 +1,17 @@
+import { injectable } from 'inversify'
 import { DeleteResult, UpdateResult } from 'mongodb'
 
+import { SecurityDeviceMongooseModel } from '../domain/SecurityDeviceSchema'
 import { DeviceDBModel, DeviceViewModel } from '../models'
-import { Devices } from '../schemas/deviceSchema'
 
-export const securityDevicesRepository = {
+@injectable()
+export class SecurityDevicesRepository {
   async findDeviceById(deviceId: string): Promise<DeviceDBModel | null> {
-    return Devices.findOne({ deviceId })
-  },
+    return SecurityDeviceMongooseModel.findOne({ deviceId })
+  }
 
   async createDevice(device: DeviceDBModel): Promise<DeviceViewModel> {
-    await Devices.create(device)
+    await SecurityDeviceMongooseModel.create(device)
 
     return {
       ip: device.ip,
@@ -17,14 +19,14 @@ export const securityDevicesRepository = {
       lastActiveDate: device.lastActiveDate.toString(),
       deviceId: device.deviceId,
     }
-  },
+  }
 
   async updateDevice(
     ip: string,
     userId: string,
     issuedAt: number,
   ): Promise<boolean> {
-    const result: UpdateResult = await Devices.updateOne(
+    const result: UpdateResult = await SecurityDeviceMongooseModel.updateOne(
       { userId },
       {
         $set: {
@@ -35,23 +37,26 @@ export const securityDevicesRepository = {
     )
 
     return result.matchedCount === 1
-  },
+  }
 
   async terminateSession(deviceId: string): Promise<boolean> {
-    const result: DeleteResult = await Devices.deleteOne({ deviceId })
+    const result: DeleteResult = await SecurityDeviceMongooseModel.deleteOne({
+      deviceId,
+    })
 
     return result.deletedCount === 1
-  },
+  }
 
   async removeOutdatedDevices(currentDevice: string): Promise<boolean> {
-    await Devices.deleteMany({ deviceId: { $ne: currentDevice } })
+    await SecurityDeviceMongooseModel.deleteMany({
+      deviceId: { $ne: currentDevice },
+    })
 
-    return (await Devices.countDocuments()) === 1
-  },
+    return (await SecurityDeviceMongooseModel.countDocuments()) === 1
+  }
 
   async deleteAllDevices(): Promise<boolean> {
-    await Devices.deleteMany({})
-
-    return (await Devices.countDocuments()) === 0
-  },
+    await SecurityDeviceMongooseModel.deleteMany({})
+    return (await SecurityDeviceMongooseModel.countDocuments()) === 0
+  }
 }

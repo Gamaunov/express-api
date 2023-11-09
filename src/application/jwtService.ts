@@ -1,28 +1,30 @@
+import { injectable } from 'inversify'
 import jwt from 'jsonwebtoken'
 import { v4 as uuidv4 } from 'uuid'
 
-import { UserDBModel } from '../models'
+import { UserModel } from '../models'
 import { settings } from '../settings'
 import { ITokenPayload } from '../shared'
 
-export const jwtService = {
+@injectable()
+export class JwtService {
   async createAccessToken(
-    user: UserDBModel,
+    user: UserModel,
     deviceId: string = uuidv4(),
   ): Promise<string> {
     return jwt.sign({ userId: user._id, deviceId }, settings.JWT_SECRET, {
-      expiresIn: '10s',
+      expiresIn: '4h',
     })
-  },
+  }
 
   async createRefreshToken(
-    user: UserDBModel,
+    user: UserModel,
     deviceId: string = uuidv4(),
   ): Promise<string> {
     return jwt.sign({ userId: user._id, deviceId }, settings.JWT_SECRET, {
-      expiresIn: '20s',
+      expiresIn: '8h',
     })
-  },
+  }
 
   async verifyToken(token: string): Promise<ITokenPayload | null> {
     try {
@@ -30,5 +32,5 @@ export const jwtService = {
     } catch (error) {
       return null
     }
-  },
+  }
 }
