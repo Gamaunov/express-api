@@ -6,7 +6,7 @@ import {
   CreateCommentModel,
   MappedCommentModel,
   URIParamsBlogIdModel,
-  URIParamsCommentIdModel,
+  URIParamsCommentIdModel, URIParamsIdModel,
 } from '../models'
 import { CommentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
 import {
@@ -24,13 +24,13 @@ export class CommentsController {
   ) {}
 
   async getComment(
-    req: RequestWithParams<URIParamsCommentIdModel>,
+    req: RequestWithParams<URIParamsIdModel>,
     res: Response,
   ): Promise<void> {
     const comment: MappedCommentModel | null =
-      await this.commentsQueryRepository.getCommentById(req.params.commentId)
+      await this.commentsQueryRepository.getCommentById(req.params.id)
 
-    comment ? res.status(200).send(comment) : res.sendStatus(404)
+    comment ? res.status(200).json(comment) : res.sendStatus(404)
   }
 
   async updateComment(
