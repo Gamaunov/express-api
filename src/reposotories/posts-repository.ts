@@ -34,6 +34,29 @@ export class PostsRepository {
     return postMapper(post)
   }
 
+  async findUserLikeStatus(
+    postId: string,
+    userId: ObjectId,
+  ): Promise<string | null> {
+    const foundUser = await PostMongooseModel.findOne(
+      { _id: postId },
+      {
+        'likesInfo.users': {
+          $filter: {
+            input: '$likesInfo.users',
+            cond: { $eq: ['$$this.userId', userId.toString()] },
+          },
+        },
+      },
+    )
+
+    if (!foundUser || foundUser.likesInfo.users.length === 0) {
+      return null
+    }
+
+    return foundUser.likesInfo.users[0].likeStatus
+  }
+
   async deletePost(id: string): Promise<boolean> {
     const isPostDeleted: DeleteResult = await PostMongooseModel.deleteOne({
       _id: new ObjectId(id),

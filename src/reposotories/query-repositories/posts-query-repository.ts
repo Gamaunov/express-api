@@ -1,14 +1,14 @@
 import { inject, injectable } from 'inversify'
-import { ObjectId, WithId } from 'mongodb'
+import { ObjectId } from 'mongodb'
 
 import { PostMongooseModel } from '../../domain/PostSchema'
 import {
   PaginatorPostModel,
-  PostOutputModel,
+  PostDBModel,
   PostQueryModel,
   PostViewModel,
 } from '../../models'
-import { pagesCount, postMapper, skipFn } from '../../shared'
+import { pagesCount, skipFn } from '../../shared'
 import { PostsRepository } from '../posts-repository'
 
 @injectable()
@@ -18,6 +18,7 @@ export class PostsQueryRepository {
   ) {}
   async getAllPosts(
     queryData: PostQueryModel,
+    userId?: ObjectId,
   ): Promise<PaginatorPostModel | null> {
     try {
       const sortCriteria: { [key: string]: any } = {
@@ -28,14 +29,12 @@ export class PostsQueryRepository {
 
       const limit = queryData.pageSize
 
-      const posts: WithId<PostViewModel>[] = await PostMongooseModel.find()
+      const posts = await PostMongooseModel.find()
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
 
-      const postItems: PostOutputModel[] = posts.map(
-        (p: WithId<PostViewModel>) => postMapper(p),
-      )
+      const postItems = await this.postsMapping(posts, userId)
 
       const totalCount: number = await PostMongooseModel.countDocuments()
 
@@ -52,11 +51,67 @@ export class PostsQueryRepository {
     }
   }
 
-  async getPostById(id: string): Promise<PostOutputModel | null> {
-    const post = await PostMongooseModel.findOne({ _id: new ObjectId(id) })
+  async getPostById(
+    _id: string,
+    userId?: ObjectId,
+  ): Promise<PostViewModel | null> {
+    const foundPost = await PostMongooseModel.findOne({
+      _id: new ObjectId(_id),
+    })
 
-    if (!post) return null
+    if (!foundPost) {
+      return null
+    }
 
-    return postMapper(post)
+    let status
+
+    if (userId) {
+      status = await this.postsRepository.findUserLikeStatus(_id, userId)
+    }
+
+    return {
+      id: foundPost._id.toString(),
+      title: foundPost.title,
+      shortDescription: foundPost.shortDescription,
+      content: foundPost.content,
+      blogId: foundPost.blogId,
+      blogName: foundPost.blogName,
+      createdAt: foundPost.createdAt,
+      extendedLikesInfo: {
+        likesCount: foundPost.likesInfo.likesCount,
+        dislikesCount: foundPost.likesInfo.dislikesCount,
+        myStatus: status || 'None',
+      },
+    }
+  }
+
+  private async postsMapping(array: PostDBModel[], userId?: ObjectId) {
+    return Promise.all(
+      array.map(async (post) => {
+        let status
+
+        if (userId) {
+          status = await this.postsRepository.findUserLikeStatus(
+            post._id.toString(),
+            userId,
+          )
+        }
+
+        return {
+          id: post._id.toString(),
+          title: post.title,
+          shortDescription: post.shortDescription,
+          content: post.content,
+          blogId: post.blogId,
+          blogName: post.blogName,
+          createdAt: post.createdAt,
+          extendedLikesInfo: {
+            likesCount: post.likesInfo.likesCount,
+            dislikesCount: post.likesInfo.dislikesCount,
+            myStatus: status || 'None',
+          },
+        }
+      }),
+    )
   }
 }

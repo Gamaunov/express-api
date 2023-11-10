@@ -17,11 +17,16 @@ import {
 export const postsRouter = Router({})
 const postsController = container.resolve(PostsController)
 
-postsRouter.get(`/`, postsController.getPosts.bind(postsController))
+postsRouter.get(
+  `/`,
+  tokenParser,
+  postsController.getPosts.bind(postsController),
+)
 
 postsRouter.get(
   `/:id`,
   validateObjectId,
+  tokenParser,
   postsController.getPost.bind(postsController),
 )
 

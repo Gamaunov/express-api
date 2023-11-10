@@ -8,11 +8,7 @@ import {
   CommentViewModel,
   PaginatorCommentModel,
 } from '../../models'
-import {
-  LikeStatus,
-  queryCommentValidator,
-  skipFn,
-} from '../../shared'
+import { LikeStatus, queryCommentValidator, skipFn } from '../../shared'
 import { CommentsRepository } from '../comments-repository'
 
 @injectable()

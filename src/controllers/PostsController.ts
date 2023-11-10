@@ -40,9 +40,9 @@ export class PostsController {
     const data: PostQueryModel = req.query
 
     const posts: PaginatorPostModel | null =
-      await this.postsQueryRepository.getAllPosts(data)
+      await this.postsQueryRepository.getAllPosts(data, req.user?._id)
 
-    return res.status(200).send(posts)
+    return res.status(200).json(posts)
   }
 
   async getPost(
@@ -50,9 +50,9 @@ export class PostsController {
     res: Response,
   ): Promise<void> {
     const post: PostOutputModel | null =
-      await this.postsQueryRepository.getPostById(req.params.id)
+      await this.postsQueryRepository.getPostById(req.params.id, req.user?._id)
 
-    post ? res.status(200).send(post) : res.sendStatus(404)
+    post ? res.status(200).json(post) : res.sendStatus(404)
   }
 
   async createPost(req: RequestWithBody<CreatePostModel>, res: Response) {
