@@ -8,7 +8,7 @@ import {
   commentErrorsValidation,
   findCommentByCommentIdFromParams,
   likesErrorsValidation,
-  likesValidation,
+  likesValidation, tokenParser,
   validateComment,
   validateObjectId,
 } from '../middlewares'
@@ -19,6 +19,7 @@ const commentsController = container.resolve(CommentsController)
 commentsRouter.get(
   `/:id`,
   validateObjectId,
+  tokenParser,
   commentsController.getComment.bind(commentsController),
 )
 

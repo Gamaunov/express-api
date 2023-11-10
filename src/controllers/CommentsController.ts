@@ -30,7 +30,7 @@ export class CommentsController {
     res: Response,
   ): Promise<void> {
     const comment: MappedCommentModel | null =
-      await this.commentsQueryRepository.getCommentById(req.params.id)
+      await this.commentsQueryRepository.getCommentById(req.params.id, req.user?._id)
 
     comment ? res.status(200).json(comment) : res.sendStatus(404)
   }
