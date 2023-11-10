@@ -34,6 +34,11 @@ export class PostsService {
       data.blogId,
       blog.name,
       new Date().toISOString(),
+      {
+        likesCount: 0,
+        dislikesCount: 0,
+        users: [],
+      },
     )
 
     return await this.postsRepository.createPost(newPost)
@@ -56,6 +61,11 @@ export class PostsService {
       blogId,
       searchedBlog.name,
       new Date().toISOString(),
+      {
+        likesCount: 0,
+        dislikesCount: 0,
+        users: [],
+      },
     )
 
     return await this.postsRepository.createPost(newPost)

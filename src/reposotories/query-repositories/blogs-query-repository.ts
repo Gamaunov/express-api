@@ -2,16 +2,13 @@ import { injectable } from 'inversify'
 import { ObjectId, WithId } from 'mongodb'
 
 import { BlogMongooseModel } from '../../domain/BlogSchema'
-import { PostMongooseModel } from '../../domain/PostSchema'
 import {
   BlogOutputModel,
   BlogQueryModel,
   BlogViewModel,
   PaginatorBlogModel,
-  PaginatorPostModel,
-  PostOutputModel,
 } from '../../models'
-import { blogMapper, pagesCount, postMapper, skipFn } from '../../shared'
+import { blogMapper, pagesCount, skipFn } from '../../shared'
 
 @injectable()
 export class BlogsQueryRepository {
@@ -48,43 +45,6 @@ export class BlogsQueryRepository {
         pageSize: queryData.pageSize!,
         totalCount: totalCount,
         items: blogItems,
-      }
-    } catch (e) {
-      console.log(e)
-      return null
-    }
-  }
-
-  async getPostsByBlogId(
-    blogId: string,
-    queryData: BlogQueryModel,
-  ): Promise<PaginatorPostModel | null> {
-    try {
-      const filter = { blogId: blogId }
-
-      const sortCriteria: { [key: string]: any } = {
-        [queryData.sortBy as string]: queryData.sortDirection,
-      }
-
-      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
-
-      const limit = queryData.pageSize
-
-      const posts = await PostMongooseModel.find(filter)
-        .sort(sortCriteria)
-        .skip(skip)
-        .limit(limit!)
-
-      const postItems: PostOutputModel[] = posts.map((p) => postMapper(p))
-
-      const totalCount: number = await PostMongooseModel.countDocuments(filter)
-
-      return {
-        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
-        page: queryData.pageNumber!,
-        pageSize: queryData.pageSize!,
-        totalCount: totalCount,
-        items: postItems,
       }
     } catch (e) {
       console.log(e)

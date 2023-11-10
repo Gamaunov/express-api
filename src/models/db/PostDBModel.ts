@@ -8,6 +8,7 @@ export class ExtendedUserLikes {
     public likeStatus: string,
   ) {}
 }
+
 export class PostDBModel {
   constructor(
     public _id: ObjectId,

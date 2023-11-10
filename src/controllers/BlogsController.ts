@@ -54,17 +54,21 @@ export class BlogsController {
     const data = req.query
 
     const postsByBlogId: PaginatorPostModel | null =
-      await this.blogsQueryRepository.getPostsByBlogId(req.params.blogId, data)
+      await this.postsQueryRepository.getPostsByBlogId(
+        req.params.blogId,
+        data,
+        req.user?._id,
+      )
 
     return postsByBlogId
-      ? res.status(200).send(postsByBlogId)
+      ? res.status(200).json(postsByBlogId)
       : res.sendStatus(404)
   }
 
   async createBlog(req: RequestWithBody<CreateBlogModel>, res: Response) {
     const newBlog: BlogViewModel = await this.blogsService.createBlog(req.body)
 
-    return res.status(201).send(newBlog)
+    return res.status(201).json(newBlog)
   }
 
   async createPost(

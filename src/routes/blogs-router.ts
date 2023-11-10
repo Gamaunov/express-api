@@ -7,6 +7,7 @@ import {
   checkBasicMiddleware,
   postErrorsValidation,
   postValidation,
+  tokenParser,
   validateBlog,
   validateObjectId,
 } from '../middlewares'
@@ -26,6 +27,7 @@ blogsRouter.get(
 blogsRouter.get(
   `/:blogId/posts`,
   findBlogMiddleware,
+  tokenParser,
   blogsController.getPosts.bind(blogsController),
 )
 
