@@ -6,7 +6,6 @@ import {
   CreatePostByBlogIdModel,
   CreatePostModel,
   PostDBModel,
-  PostOutputModel,
   PostViewModel,
   UpdatePostModel,
 } from '../models'
@@ -77,7 +76,7 @@ export class PostsService {
     shortDescription: string,
     content: string,
     blogId: string,
-  ): Promise<PostOutputModel | null> {
+  ): Promise<boolean | null> {
     const postId = id
     const postData: UpdatePostModel = {
       title,

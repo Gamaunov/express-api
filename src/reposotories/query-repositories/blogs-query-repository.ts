@@ -3,12 +3,13 @@ import { ObjectId, WithId } from 'mongodb'
 
 import { BlogMongooseModel } from '../../domain/BlogSchema'
 import {
+  BlogDBModel,
   BlogOutputModel,
   BlogQueryModel,
   BlogViewModel,
   PaginatorBlogModel,
 } from '../../models'
-import { blogMapper, pagesCount, skipFn } from '../../shared'
+import { pagesCount, skipFn } from '../../shared'
 
 @injectable()
 export class BlogsQueryRepository {
@@ -35,7 +36,7 @@ export class BlogsQueryRepository {
         .skip(skip)
         .limit(limit!)
 
-      const blogItems: BlogOutputModel[] = blogs.map((b) => blogMapper(b))
+      const blogItems = await this.blogsMapping(blogs)
 
       const totalCount: number = await BlogMongooseModel.countDocuments(filter)
 
@@ -57,6 +58,26 @@ export class BlogsQueryRepository {
 
     if (!blog) return null
 
-    return blogMapper(blog)
+    return {
+      id: blog._id.toString(),
+      name: blog.name,
+      description: blog.description,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
+    }
+  }
+
+  private async blogsMapping(array: BlogDBModel[]): Promise<BlogOutputModel[]> {
+    return array.map((blog) => {
+      return {
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+        isMembership: blog.isMembership,
+      }
+    })
   }
 }

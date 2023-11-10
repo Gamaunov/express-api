@@ -109,14 +109,13 @@ export class PostsController {
   ): Promise<void> {
     const { blogId, content, shortDescription, title } = req.body
 
-    const isUpdated: PostOutputModel | null =
-      await this.postsService.updatePost(
-        req.params.id,
-        title,
-        shortDescription,
-        content,
-        blogId,
-      )
+    const isUpdated: boolean | null = await this.postsService.updatePost(
+      req.params.id,
+      title,
+      shortDescription,
+      content,
+      blogId,
+    )
 
     isUpdated ? res.sendStatus(204) : res.sendStatus(404)
   }

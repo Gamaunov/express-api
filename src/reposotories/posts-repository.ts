@@ -3,21 +3,33 @@ import { DeleteResult, ObjectId } from 'mongodb'
 
 import { PostMongooseModel } from '../domain/PostSchema'
 import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
-import { postMapper } from '../shared'
 
 @injectable()
 export class PostsRepository {
   async createPost(newPost: PostDBModel): Promise<PostOutputModel> {
     const post = await PostMongooseModel.create(newPost)
 
-    return postMapper(post)
+    return {
+      id: post._id.toString(),
+      title: newPost.title,
+      shortDescription: newPost.shortDescription,
+      content: newPost.content,
+      blogId: newPost.blogId,
+      blogName: newPost.blogName,
+      createdAt: newPost.createdAt,
+      extendedLikesInfo: {
+        likesCount: newPost.likesInfo.likesCount,
+        dislikesCount: newPost.likesInfo.dislikesCount,
+        myStatus: 'None',
+      },
+    }
   }
 
   async updatePost(
     postId: string,
     postData: UpdatePostModel,
-  ): Promise<PostOutputModel | null> {
-    const post = await PostMongooseModel.findOneAndUpdate(
+  ): Promise<boolean | null> {
+    const post = await PostMongooseModel.updateOne(
       { _id: new ObjectId(postId) },
       {
         $set: {
@@ -31,7 +43,7 @@ export class PostsRepository {
 
     if (!post) return null
 
-    return postMapper(post)
+    return post.matchedCount === 1
   }
 
   async findUserLikeStatus(

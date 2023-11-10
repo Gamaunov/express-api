@@ -34,9 +34,7 @@ export { LikeStatus } from './enums/comments/likeStatus'
 
 export { loginEmailFilter } from './filters/users/loginEmailFilter'
 
-export { blogMapper } from './mappers/blogs/blog-mapper'
 export { commentMapper } from './mappers/comments/comment-mapper'
-export { postMapper } from './mappers/posts/post-mapper'
 export { userMapper } from './mappers/users/user-mapper'
 export { securityDevicesMapper } from './mappers/devices/devices-mapper'
 

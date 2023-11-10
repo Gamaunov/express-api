@@ -4,14 +4,20 @@ import { UpdateWriteOpResult } from 'mongoose'
 
 import { BlogMongooseModel } from '../domain/BlogSchema'
 import { BlogOutputModel, BlogViewModel, CreateBlogModel } from '../models'
-import { blogMapper } from '../shared'
 
 @injectable()
 export class BlogsRepository {
   async createBlog(newBlog: BlogViewModel): Promise<BlogOutputModel> {
     const blog = await BlogMongooseModel.create(newBlog)
 
-    return blogMapper(blog)
+    return {
+      id: blog._id.toString(),
+      name: blog.name,
+      description: blog.description,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
+    }
   }
 
   async updateBlog(id: string, data: CreateBlogModel): Promise<boolean> {
