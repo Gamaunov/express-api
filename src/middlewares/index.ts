@@ -11,6 +11,7 @@ export { checkRefreshToken } from './auth/checkRefreshToken'
 export { checkForRefreshToken } from './auth/checkForRefreshToken'
 export { deviceIdMiddleware } from './auth/deviceIdMiddleware'
 export { checkBasicMiddleware } from './auth/checkBasicMiddleware'
+export { tokenParser } from './auth/tokenParser'
 
 export { validateBlog } from './blogs/blogValidationMiddleware'
 export { blogErrorsValidation } from './blogs/blogValidationMiddleware'

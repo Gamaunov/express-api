@@ -61,7 +61,7 @@ export class PostsController {
     const newPost: PostViewModel | null =
       await this.postsService.createPost(data)
 
-    return newPost ? res.status(201).send(newPost) : res.sendStatus(404)
+    return newPost ? res.status(201).json(newPost) : res.sendStatus(404)
   }
 
   async getComments(
@@ -74,9 +74,10 @@ export class PostsController {
       await this.commentsQueryRepository.getCommentsByPostId(
         req.params.postId,
         data,
+        req.user?._id,
       )
 
-    return res.status(200).send(commentsByPostId)
+    return res.status(200).json(commentsByPostId)
   }
 
   async createComment(

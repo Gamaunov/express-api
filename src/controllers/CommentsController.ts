@@ -6,7 +6,8 @@ import {
   CreateCommentModel,
   MappedCommentModel,
   URIParamsBlogIdModel,
-  URIParamsCommentIdModel, URIParamsIdModel,
+  URIParamsCommentIdModel,
+  URIParamsIdModel,
 } from '../models'
 import { CommentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
 import {
@@ -73,10 +74,7 @@ export class CommentsController {
         await this.commentsQueryRepository.getCommentById(req.params.commentId)
 
       res.status(204).json(updatedComment)
-      return
     }
-
-    res.sendStatus(404)
   }
 
   async deleteComment(

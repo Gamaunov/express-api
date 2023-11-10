@@ -3,13 +3,14 @@ import { ObjectId } from 'mongodb'
 
 import { CommentMongooseModel } from '../../domain/CommentSchema'
 import {
+  CommentDBModel,
   CommentQueryModel,
+  CommentViewModel,
   MappedCommentModel,
   PaginatorCommentModel,
 } from '../../models'
 import {
   LikeStatus,
-  commentMapper,
   queryCommentValidator,
   skipFn,
 } from '../../shared'
@@ -24,6 +25,7 @@ export class CommentsQueryRepository {
   async getCommentsByPostId(
     postId: string,
     data: CommentQueryModel,
+    userId?: ObjectId,
   ): Promise<PaginatorCommentModel | null> {
     const queryData: CommentQueryModel = queryCommentValidator(data)
 
@@ -43,8 +45,9 @@ export class CommentsQueryRepository {
         .skip(skip)
         .limit(limit!)
 
-      const commentItems: MappedCommentModel[] = comments.map((c) =>
-        commentMapper(c),
+      const commentItems: CommentViewModel[] = await this.commentsMapping(
+        comments,
+        userId,
       )
 
       const totalCount: number =
@@ -92,5 +95,38 @@ export class CommentsQueryRepository {
         myStatus: status || LikeStatus.none,
       },
     }
+  }
+
+  private async commentsMapping(
+    array: CommentDBModel[],
+    userId?: ObjectId,
+  ): Promise<CommentViewModel[]> {
+    return Promise.all(
+      array.map(async (comment) => {
+        let status
+
+        if (userId) {
+          status = await this.commentsRepository.findUserLikeStatus(
+            comment._id.toString(),
+            userId,
+          )
+        }
+
+        return {
+          id: comment._id.toString(),
+          content: comment.content,
+          commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin,
+          },
+          createdAt: comment.createdAt,
+          likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount,
+            myStatus: status || 'None',
+          },
+        }
+      }),
+    )
   }
 }

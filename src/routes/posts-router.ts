@@ -4,12 +4,12 @@ import { container } from '../composition-root'
 import { PostsController } from '../controllers/PostsController'
 import {
   authBearerMiddleware,
-  authGuardMiddleware,
   checkBasicMiddleware,
   commentErrorsValidation,
   findPostMiddleware,
   postErrorsValidation,
   postValidation,
+  tokenParser,
   validateComment,
   validateObjectId,
 } from '../middlewares'
@@ -36,6 +36,7 @@ postsRouter.post(
 postsRouter.get(
   `/:postId/comments`,
   findPostMiddleware,
+  tokenParser,
   postsController.getComments.bind(postsController),
 )
 
