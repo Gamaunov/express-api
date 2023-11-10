@@ -3,7 +3,6 @@ import { ObjectId } from 'mongodb'
 
 import {
   CommentDBModel,
-  CommentViewModel,
   CommentatorInfoModel,
   CreateCommentModel,
   MappedCommentModel,
@@ -34,7 +33,9 @@ export class CommentsService {
     const foundComment =
       await this.commentsRepository.findCommentById(commentId)
 
-    if (!foundComment) return false
+    if (!foundComment) {
+      return false
+    }
 
     let likesCount: number = foundComment.likesInfo.likesCount
     let dislikesCount: number = foundComment.likesInfo.dislikesCount

@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify'
 
 import { CommentsService } from '../application/comments-service'
 import {
+  CommentViewModel,
   CreateCommentModel,
   MappedCommentModel,
   URIParamsBlogIdModel,
@@ -70,7 +71,7 @@ export class CommentsController {
     )
 
     if (isUpdated) {
-      const updatedComment: MappedCommentModel | null =
+      const updatedComment: CommentViewModel | null =
         await this.commentsQueryRepository.getCommentById(req.params.commentId)
 
       res.status(204).json(updatedComment)

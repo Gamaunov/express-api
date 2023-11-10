@@ -6,7 +6,6 @@ import {
   CommentDBModel,
   CommentQueryModel,
   CommentViewModel,
-  MappedCommentModel,
   PaginatorCommentModel,
 } from '../../models'
 import {
@@ -69,7 +68,7 @@ export class CommentsQueryRepository {
   async getCommentById(
     _id: string,
     userId?: ObjectId,
-  ): Promise<MappedCommentModel | null> {
+  ): Promise<CommentViewModel | null> {
     const foundComment = await CommentMongooseModel.findOne({
       _id,
     })
