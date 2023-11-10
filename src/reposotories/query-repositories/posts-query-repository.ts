@@ -95,7 +95,7 @@ export class PostsQueryRepository {
     userId?: ObjectId,
   ): Promise<PostViewModel | null> {
     const foundPost = await PostMongooseModel.findOne({
-      _id: new ObjectId(_id),
+      _id,
     })
 
     if (!foundPost) {

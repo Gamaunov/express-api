@@ -8,7 +8,8 @@ import {
   commentErrorsValidation,
   findCommentByCommentIdFromParams,
   likesErrorsValidation,
-  likesValidation, tokenParser,
+  likesValidation,
+  tokenParser,
   validateComment,
   validateObjectId,
 } from '../middlewares'
