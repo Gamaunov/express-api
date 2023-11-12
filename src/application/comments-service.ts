@@ -9,7 +9,7 @@ import {
 } from '../models'
 import { CommentsRepository } from '../reposotories/comments-repository'
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
-import { LikeStatus } from '../shared'
+import { LikeStatus, likeSwitcher } from '../shared'
 import { UsersService } from './users-service'
 
 @injectable()
@@ -60,6 +60,7 @@ export class CommentsService {
       if (likeStatus == LikeStatus.dislike) {
         dislikesCount++
       }
+
       return this.commentsRepository.updateLikesCount(
         commentId,
         likesCount,
@@ -67,47 +68,20 @@ export class CommentsService {
       )
     }
 
-    let userLikeDBStatus: string | null =
+    const userLikeDBStatus: string | null =
       await this.commentsRepository.findUserLikeStatus(commentId, userId)
 
-    switch (userLikeDBStatus) {
-      case LikeStatus.none:
-        if (likeStatus === LikeStatus.like) {
-          likesCount++
-        }
-
-        if (likeStatus === LikeStatus.dislike) {
-          dislikesCount++
-        }
-
-        break
-
-      case LikeStatus.like:
-        if (likeStatus === LikeStatus.none) {
-          likesCount--
-        }
-
-        if (likeStatus === LikeStatus.dislike) {
-          likesCount--
-          dislikesCount++
-        }
-        break
-
-      case LikeStatus.dislike:
-        if (likeStatus === LikeStatus.none) {
-          dislikesCount--
-        }
-
-        if (likeStatus === LikeStatus.like) {
-          dislikesCount--
-          likesCount++
-        }
-    }
+    const updatedLikesCount = likeSwitcher(
+      userLikeDBStatus,
+      likeStatus,
+      likesCount,
+      dislikesCount,
+    )
 
     await this.commentsRepository.updateLikesCount(
       commentId,
-      likesCount,
-      dislikesCount,
+      updatedLikesCount.likesCount,
+      updatedLikesCount.dislikesCount,
     )
 
     return this.commentsRepository.updateLikesStatus(

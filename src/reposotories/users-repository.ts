@@ -7,7 +7,7 @@ import { UserDBModel, UserModel, UserViewModel } from '../models'
 
 @injectable()
 export class UsersRepository {
-  async getUserById(
+  async findUserById(
     _id: ObjectId,
   ): Promise<HydratedDocument<UserDBModel> | null> {
     const foundUser = await UserMongooseModel.findOne({ _id })

@@ -16,7 +16,7 @@ export class UsersService {
     @inject(UsersRepository) protected usersRepository: UsersRepository,
   ) {}
   async getUserById(_id: ObjectId): Promise<UserModel | null> {
-    return await this.usersRepository.getUserById(_id)
+    return await this.usersRepository.findUserById(_id)
   }
 
   async findUserByLoginOrEmail(

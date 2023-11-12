@@ -13,11 +13,13 @@ import {
   PostOutputModel,
   PostQueryModel,
   PostViewModel,
+  URIParamsPostIdModel,
   URIParamsPostModel,
 } from '../models'
 import { CommentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
 import {
+  LikeStatusType,
   PostIdType,
   RequestWithBody,
   RequestWithParams,
@@ -120,13 +122,34 @@ export class PostsController {
     isUpdated ? res.sendStatus(204) : res.sendStatus(404)
   }
 
-  async deletePost(req: RequestWithParams<URIParamsPostModel>, res: Response) {
+  async updateLikeStatus(
+    req: RequestWithParamsAndBody<URIParamsPostIdModel, LikeStatusType>,
+    res: Response,
+  ): Promise<void> {
+    const isUpdated: boolean = await this.postsService.updateLikeStatus(
+      req.params.postId,
+      req.body.likeStatus,
+      req.user!._id,
+    )
+
+    if (isUpdated) {
+      const updatedPost: PostViewModel | null =
+        await this.postsQueryRepository.getPostById(req.params.postId)
+
+      res.status(204).json(updatedPost)
+    }
+  }
+
+  async deletePost(
+    req: RequestWithParams<URIParamsPostModel>,
+    res: Response,
+  ): Promise<void> {
     const isDeleted: boolean = await this.postsService.deletePost(req.params.id)
 
     isDeleted ? res.sendStatus(204) : res.sendStatus(404)
   }
 
-  async deletePosts(req: Request, res: Response) {
+  async deletePosts(req: Request, res: Response): Promise<void> {
     const isDeleted: boolean = await this.postsService.deleteAllPosts()
 
     isDeleted ? res.sendStatus(204) : res.sendStatus(404)

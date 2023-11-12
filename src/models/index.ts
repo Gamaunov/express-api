@@ -30,6 +30,7 @@ export { QueryPostModel } from './post/QueryPostModel'
 export { UpdatePostModel } from './post/UpdatePostModel'
 export { PostViewModel } from './post/PostViewModel'
 export { URIParamsPostModel } from './post/URIParamsPostModel'
+export { URIParamsPostIdModel } from './post/URIParamsPostIdModel'
 export { PostModel } from './post/PostModel'
 
 export { CreateUserModel } from './user/CreatUserModel'

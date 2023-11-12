@@ -1,5 +1,6 @@
 import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
+import { HydratedDocument } from 'mongoose'
 
 import { PostMongooseModel } from '../domain/PostSchema'
 import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
@@ -46,6 +47,41 @@ export class PostsRepository {
     return post.matchedCount === 1
   }
 
+  async updateLikesCount(
+    postId: string,
+    likesCount: number,
+    dislikesCount: number,
+  ): Promise<boolean> {
+    const result = await PostMongooseModel.updateOne(
+      { _id: postId },
+      {
+        $set: {
+          'likesInfo.likesCount': likesCount,
+          'likesInfo.dislikesCount': dislikesCount,
+        },
+      },
+    )
+
+    return result.matchedCount === 1
+  }
+
+  async updateLikesStatus(
+    postId: string,
+    userId: ObjectId,
+    likeStatus: string,
+  ): Promise<boolean> {
+    const result = await PostMongooseModel.updateOne(
+      { _id: postId, 'likesInfo.users.userId': userId },
+      {
+        $set: {
+          'likesInfo.users.$.likeStatus': likeStatus,
+        },
+      },
+    )
+
+    return result.matchedCount === 1
+  }
+
   async findUserLikeStatus(
     postId: string,
     userId: ObjectId,
@@ -67,6 +103,50 @@ export class PostsRepository {
     }
 
     return foundUser.likesInfo.users[0].likeStatus
+  }
+
+  async findUserInLikesInfo(
+    postId: string,
+    userId: ObjectId,
+  ): Promise<PostDBModel | null> {
+    const foundUser = await PostMongooseModel.findOne(
+      PostMongooseModel.findOne({
+        _id: postId,
+        'likesInfo.users.userId': userId,
+      }),
+    )
+
+    return foundUser ? foundUser : null
+  }
+
+  async findPostById(
+    _id: string,
+  ): Promise<HydratedDocument<PostDBModel> | null> {
+    return PostMongooseModel.findOne({ _id })
+  }
+
+  async pushUserInLikesInfo(
+    postId: string,
+    userId: ObjectId,
+    likeStatus: string,
+    addedAt: string,
+    userLogin: string,
+  ): Promise<boolean> {
+    const result = await PostMongooseModel.updateOne(
+      { _id: postId },
+      {
+        $push: {
+          'likesInfo.users': {
+            addedAt,
+            userId,
+            userLogin,
+            likeStatus,
+          },
+        },
+      },
+    )
+
+    return result.matchedCount === 1
   }
 
   async deletePost(id: string): Promise<boolean> {

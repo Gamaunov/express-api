@@ -22,7 +22,7 @@ export { findCommentByCommentIdFromParams } from './comments/findCommentByCommen
 export { likesValidation } from './comments/likesValidation'
 export { likesErrorsValidation } from './comments/likesValidation'
 
-export { findPostMiddleware } from './posts/findPostMiddleware'
+export { findPostByIdFromParams } from './posts/findPostByIdFromParams'
 export { postValidation } from './posts/postValidationMiddleware'
 export { postErrorsValidation } from './posts/postValidationMiddleware'
 

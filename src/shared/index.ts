@@ -23,6 +23,7 @@ export { LikeStatusType } from './types/comments/comments-types'
 
 export { skipFn } from './utils/skipFn'
 export { pagesCount } from './utils/pagesCount'
+export { likeSwitcher } from './utils/likeSwitcher'
 
 export { RouterPath } from './enums/common/routerPath'
 export { HS } from './enums/common/httpStatuses'

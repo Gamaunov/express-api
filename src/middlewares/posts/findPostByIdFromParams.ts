@@ -5,7 +5,7 @@ import { PostOutputModel } from '../../models'
 import { PostsQueryRepository } from '../../reposotories/query-repositories/posts-query-repository'
 
 const postsQueryRepository = container.resolve(PostsQueryRepository)
-export const findPostMiddleware = async (
+export const findPostByIdFromParams = async (
   req: Request,
   res: Response,
   next: NextFunction,

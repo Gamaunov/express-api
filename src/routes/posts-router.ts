@@ -6,7 +6,9 @@ import {
   authBearerMiddleware,
   checkBasicMiddleware,
   commentErrorsValidation,
-  findPostMiddleware,
+  findPostByIdFromParams,
+  likesErrorsValidation,
+  likesValidation,
   postErrorsValidation,
   postValidation,
   tokenParser,
@@ -40,7 +42,7 @@ postsRouter.post(
 
 postsRouter.get(
   `/:postId/comments`,
-  findPostMiddleware,
+  findPostByIdFromParams,
   tokenParser,
   postsController.getComments.bind(postsController),
 )
@@ -48,7 +50,7 @@ postsRouter.get(
 postsRouter.post(
   `/:postId/comments`,
   authBearerMiddleware,
-  findPostMiddleware,
+  findPostByIdFromParams,
   validateComment(),
   commentErrorsValidation,
   postsController.createComment.bind(postsController),
@@ -61,6 +63,15 @@ postsRouter.put(
   postValidation(),
   postErrorsValidation,
   postsController.updatePost.bind(postsController),
+)
+
+postsRouter.put(
+  '/:postId/like-status',
+  findPostByIdFromParams,
+  authBearerMiddleware,
+  likesValidation(),
+  likesErrorsValidation,
+  postsController.updateLikeStatus.bind(postsController),
 )
 
 postsRouter.delete(
