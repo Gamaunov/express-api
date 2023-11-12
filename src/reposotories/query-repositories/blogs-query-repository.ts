@@ -35,8 +35,9 @@ export class BlogsQueryRepository {
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
+        .lean()
 
-      const blogItems = await this.blogsMapping(blogs)
+      const blogItems: BlogOutputModel[] = await this.blogsMapping(blogs)
 
       const totalCount: number = await BlogMongooseModel.countDocuments(filter)
 
