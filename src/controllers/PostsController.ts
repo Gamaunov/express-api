@@ -52,7 +52,7 @@ export class PostsController {
     res: Response,
   ): Promise<void> {
     const post: PostOutputModel | null =
-      await this.postsQueryRepository.getPostById(req.params.id, req.user?._id)
+      await this.postsQueryRepository.findPostById(req.params.id, req.user?._id)
 
     post ? res.status(200).json(post) : res.sendStatus(404)
   }
@@ -134,7 +134,7 @@ export class PostsController {
 
     if (isUpdated) {
       const updatedPost: PostViewModel | null =
-        await this.postsQueryRepository.getPostById(req.params.postId)
+        await this.postsQueryRepository.findPostById(req.params.postId)
 
       res.status(204).json(updatedPost)
     }

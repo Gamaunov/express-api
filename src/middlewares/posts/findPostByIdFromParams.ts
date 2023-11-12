@@ -10,7 +10,7 @@ export const findPostByIdFromParams = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const post: PostOutputModel | null = await postsQueryRepository.getPostById(
+  const post: PostOutputModel | null = await postsQueryRepository.findPostById(
     req.params.postId,
   )
 

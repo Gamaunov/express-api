@@ -4,6 +4,7 @@ import { HydratedDocument } from 'mongoose'
 
 import { PostMongooseModel } from '../domain/PostSchema'
 import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
+import { LikeStatus } from '../shared'
 
 @injectable()
 export class PostsRepository {
@@ -21,7 +22,8 @@ export class PostsRepository {
       extendedLikesInfo: {
         likesCount: newPost.likesInfo.likesCount,
         dislikesCount: newPost.likesInfo.dislikesCount,
-        myStatus: 'None',
+        myStatus: LikeStatus.none,
+        newestLikes: [],
       },
     }
   }

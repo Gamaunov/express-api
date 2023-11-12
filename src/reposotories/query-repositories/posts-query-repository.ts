@@ -9,7 +9,9 @@ import {
   PostQueryModel,
   PostViewModel,
 } from '../../models'
-import { pagesCount, skipFn } from '../../shared'
+import { ExtendedUserLikes } from '../../models/db/PostDBModel'
+import { LikeStatus, pagesCount, skipFn } from '../../shared'
+import { getThreeNewestLikes } from '../../shared/utils/getThreeNewestLikes'
 import { PostsRepository } from '../posts-repository'
 
 @injectable()
@@ -90,7 +92,7 @@ export class PostsQueryRepository {
     }
   }
 
-  async getPostById(
+  async findPostById(
     _id: string,
     userId?: ObjectId,
   ): Promise<PostViewModel | null> {
@@ -108,6 +110,9 @@ export class PostsQueryRepository {
       status = await this.postsRepository.findUserLikeStatus(_id, userId)
     }
 
+    const likesArray: ExtendedUserLikes[] = foundPost.likesInfo.users
+    const threeNewestLikesArray = getThreeNewestLikes(likesArray)
+
     return {
       id: foundPost._id.toString(),
       title: foundPost.title,
@@ -119,7 +124,8 @@ export class PostsQueryRepository {
       extendedLikesInfo: {
         likesCount: foundPost.likesInfo.likesCount,
         dislikesCount: foundPost.likesInfo.dislikesCount,
-        myStatus: status || 'None',
+        myStatus: status || LikeStatus.none,
+        newestLikes: threeNewestLikesArray,
       },
     }
   }
@@ -136,6 +142,9 @@ export class PostsQueryRepository {
           )
         }
 
+        const likesArray: ExtendedUserLikes[] = post.likesInfo.users
+        const threeNewestLikesArray = getThreeNewestLikes(likesArray)
+
         return {
           id: post._id.toString(),
           title: post.title,
@@ -147,7 +156,8 @@ export class PostsQueryRepository {
           extendedLikesInfo: {
             likesCount: post.likesInfo.likesCount,
             dislikesCount: post.likesInfo.dislikesCount,
-            myStatus: status || 'None',
+            myStatus: status || LikeStatus.none,
+            newestLikes: threeNewestLikesArray,
           },
         }
       }),

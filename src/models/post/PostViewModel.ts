@@ -1,3 +1,9 @@
+type likes = {
+  addedAt: string
+  userId: string
+  login: string
+}
+
 export type PostViewModel = {
   id: string
   title: string
@@ -10,5 +16,6 @@ export type PostViewModel = {
     likesCount: number
     dislikesCount: number
     myStatus: string
+    newestLikes: likes[]
   }
 }
