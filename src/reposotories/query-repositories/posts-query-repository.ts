@@ -36,6 +36,7 @@ export class PostsQueryRepository {
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
+        .lean()
 
       const postItems = await this.postsMapping(posts, userId)
 
