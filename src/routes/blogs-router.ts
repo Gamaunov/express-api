@@ -3,9 +3,8 @@ import { Router } from 'express'
 import { container } from '../composition-root'
 import { BlogsController } from '../controllers/BlogsController'
 import {
-  blogErrorsValidation,
   checkBasicMiddleware,
-  postErrorsValidation,
+  errorsValidation,
   postValidation,
   tokenParser,
   validateBlog,
@@ -34,8 +33,8 @@ blogsRouter.get(
 blogsRouter.post(
   `/`,
   checkBasicMiddleware,
-  validateBlog(),
-  blogErrorsValidation,
+  validateBlog,
+  errorsValidation,
   blogsController.createBlog.bind(blogsController),
 )
 
@@ -43,8 +42,8 @@ blogsRouter.post(
   `/:blogId/posts`,
   checkBasicMiddleware,
   findBlogMiddleware,
-  postValidation(),
-  postErrorsValidation,
+  postValidation,
+  errorsValidation,
   blogsController.createPost.bind(blogsController),
 )
 
@@ -52,8 +51,8 @@ blogsRouter.put(
   `/:id`,
   validateObjectId,
   checkBasicMiddleware,
-  validateBlog(),
-  blogErrorsValidation,
+  validateBlog,
+  errorsValidation,
   blogsController.updateBlog.bind(blogsController),
 )
 

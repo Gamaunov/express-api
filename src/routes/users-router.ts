@@ -4,7 +4,7 @@ import { container } from '../composition-root'
 import { UsersController } from '../controllers/UsersController'
 import {
   checkBasicMiddleware,
-  userErrorsValidation,
+  errorsValidation,
   userValidation,
   validateObjectId,
 } from '../middlewares'
@@ -21,8 +21,8 @@ usersRouter.get(
 usersRouter.post(
   `/`,
   checkBasicMiddleware,
-  userValidation(),
-  userErrorsValidation,
+  userValidation,
+  errorsValidation,
   usersController.createUser.bind(usersController),
 )
 

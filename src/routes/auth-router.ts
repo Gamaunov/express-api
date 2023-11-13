@@ -4,21 +4,16 @@ import { container } from '../composition-root'
 import { AuthController } from '../controllers/AuthController'
 import {
   authBearerMiddleware,
-  authErrorsValidation,
   authValidation,
   checkEmail,
   checkEmailCode,
   checkRefreshToken,
-  emailErrorsValidation,
   emailValidation,
-  userErrorsValidation,
+  errorsValidation,
   userValidation,
 } from '../middlewares'
 import { rateLimitMiddleware } from '../middlewares/auth/rateLimitMiddleware'
-import {
-  recoveryInputErrorsValidation,
-  recoveryInputValidation,
-} from '../middlewares/auth/recoveryInputValidation'
+import { recoveryInputValidation } from '../middlewares/auth/recoveryInputValidation'
 
 export const authRouter = Router({})
 const authController = container.resolve(AuthController)
@@ -32,8 +27,8 @@ authRouter.get(
 authRouter.post(
   '/login',
   rateLimitMiddleware,
-  authValidation(),
-  authErrorsValidation,
+  authValidation,
+  errorsValidation,
   authController.login.bind(authController),
 )
 
@@ -42,8 +37,8 @@ authRouter.post('/logout', authController.logout.bind(authController))
 authRouter.post(
   '/registration',
   rateLimitMiddleware,
-  userValidation(),
-  userErrorsValidation,
+  userValidation,
+  errorsValidation,
   authController.registerUser.bind(authController),
 )
 
@@ -57,8 +52,8 @@ authRouter.post(
 authRouter.post(
   '/registration-email-resending',
   rateLimitMiddleware,
-  emailValidation(),
-  emailErrorsValidation,
+  emailValidation,
+  errorsValidation,
   checkEmail,
   authController.emailResending.bind(authController),
 )
@@ -66,16 +61,16 @@ authRouter.post(
 authRouter.post(
   '/password-recovery',
   rateLimitMiddleware,
-  emailValidation(),
-  emailErrorsValidation,
+  emailValidation,
+  errorsValidation,
   authController.passwordRecovery.bind(authController),
 )
 
 authRouter.post(
   '/new-password',
   rateLimitMiddleware,
-  recoveryInputValidation(),
-  recoveryInputErrorsValidation,
+  recoveryInputValidation,
+  errorsValidation,
   authController.changePassword.bind(authController),
 )
 

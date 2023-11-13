@@ -5,9 +5,8 @@ import { CommentsController } from '../controllers/CommentsController'
 import {
   authBearerMiddleware,
   checkBasicMiddleware,
-  commentErrorsValidation,
+  errorsValidation,
   findCommentByCommentIdFromParams,
-  likesErrorsValidation,
   likesValidation,
   tokenParser,
   validateComment,
@@ -27,8 +26,8 @@ commentsRouter.get(
 commentsRouter.put(
   `/:id`,
   authBearerMiddleware,
-  validateComment(),
-  commentErrorsValidation,
+  validateComment,
+  errorsValidation,
   commentsController.updateComment.bind(commentsController),
 )
 
@@ -36,8 +35,8 @@ commentsRouter.put(
   '/:commentId/like-status',
   authBearerMiddleware,
   findCommentByCommentIdFromParams,
-  likesValidation(),
-  likesErrorsValidation,
+  likesValidation,
+  errorsValidation,
   commentsController.updateLikeStatus.bind(commentsController),
 )
 

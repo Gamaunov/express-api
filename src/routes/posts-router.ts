@@ -5,11 +5,9 @@ import { PostsController } from '../controllers/PostsController'
 import {
   authBearerMiddleware,
   checkBasicMiddleware,
-  commentErrorsValidation,
+  errorsValidation,
   findPostByIdFromParams,
-  likesErrorsValidation,
   likesValidation,
-  postErrorsValidation,
   postValidation,
   tokenParser,
   validateComment,
@@ -35,8 +33,8 @@ postsRouter.get(
 postsRouter.post(
   `/`,
   checkBasicMiddleware,
-  postValidation(),
-  postErrorsValidation,
+  postValidation,
+  errorsValidation,
   postsController.createPost.bind(postsController),
 )
 
@@ -51,8 +49,8 @@ postsRouter.post(
   `/:postId/comments`,
   authBearerMiddleware,
   findPostByIdFromParams,
-  validateComment(),
-  commentErrorsValidation,
+  validateComment,
+  errorsValidation,
   postsController.createComment.bind(postsController),
 )
 
@@ -60,8 +58,8 @@ postsRouter.put(
   `/:id`,
   validateObjectId,
   checkBasicMiddleware,
-  postValidation(),
-  postErrorsValidation,
+  postValidation,
+  errorsValidation,
   postsController.updatePost.bind(postsController),
 )
 
@@ -69,8 +67,8 @@ postsRouter.put(
   '/:postId/like-status',
   findPostByIdFromParams,
   authBearerMiddleware,
-  likesValidation(),
-  likesErrorsValidation,
+  likesValidation,
+  errorsValidation,
   postsController.updateLikeStatus.bind(postsController),
 )
 
