@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { BlogDBModel } from '../models'
+import { BlogDBModel } from '../../models'
 
 const blogSchema = new mongoose.Schema<BlogDBModel>({
   name: { type: String, required: true },

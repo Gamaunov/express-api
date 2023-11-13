@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 
-import { UserMongooseModel } from '../../domain/UserSchema'
+import { UserMongooseModel } from '../../domain/entities/user.schema'
 import { PaginatorUserModel, UserQueryModel, UserViewModel } from '../../models'
 import {
   loginEmailFilter,

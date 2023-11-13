@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 
-import { RateLimitMongooseModel } from '../domain/RateLimitSchema'
-import { RateLimitDBModel, RateLimitModel } from '../models'
+import { RateLimitMongooseModel } from '../domain/entities/rateLimit.schema'
+import { RateLimitDBModel } from '../models'
 
 @injectable()
 export class RateLimitsRepository {

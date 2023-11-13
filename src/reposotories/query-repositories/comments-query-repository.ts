@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
-import { CommentMongooseModel } from '../../domain/CommentSchema'
+import { CommentMongooseModel } from '../../domain/entities/comment.schema'
 import {
   CommentDBModel,
   CommentQueryModel,

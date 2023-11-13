@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
-import { RateLimitMongooseModel } from '../domain/RateLimitSchema'
 import { RateLimitDBModel } from '../models'
 import { RateLimitsRepository } from '../reposotories/rate-limits-repository'
 

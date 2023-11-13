@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { DeleteResult, UpdateResult } from 'mongodb'
 
-import { SecurityDeviceMongooseModel } from '../domain/SecurityDeviceSchema'
+import { SecurityDeviceMongooseModel } from '../domain/entities/securityDevice.schema'
 import { DeviceDBModel, DeviceViewModel } from '../models'
 
 @injectable()

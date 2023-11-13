@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { DeviceDBModel } from '../models'
+import { DeviceDBModel } from '../../models'
 
 const securityDeviceSchema = new mongoose.Schema<DeviceDBModel>({
   ip: { type: String, required: true },

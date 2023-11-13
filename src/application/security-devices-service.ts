@@ -1,7 +1,6 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
-import { SecurityDeviceMongooseModel } from '../domain/SecurityDeviceSchema'
 import {
   DeviceDBModel,
   DeviceViewModel,

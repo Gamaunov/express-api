@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { RateLimitDBModel } from '../models'
+import { RateLimitDBModel } from '../../models'
 
 const rateLimitSchema = new mongoose.Schema<RateLimitDBModel>({
   ip: { type: String, required: true },

@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
 import { HydratedDocument, UpdateWriteOpResult } from 'mongoose'
 
-import { CommentMongooseModel } from '../domain/CommentSchema'
+import { CommentMongooseModel } from '../domain/entities/comment.schema'
 import { CommentDBModel, CommentViewModel } from '../models'
 import { LikeStatus } from '../shared'
 

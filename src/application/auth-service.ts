@@ -5,7 +5,7 @@ import Jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 
-import { UserMongooseModel } from '../domain/UserSchema'
+import { UserMongooseModel } from '../domain/entities/user.schema'
 import { emailManager } from '../managers/email-manager'
 import { UserModel, UserViewModel } from '../models'
 import { UsersRepository } from '../reposotories/users-repository'

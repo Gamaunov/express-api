@@ -1,6 +1,6 @@
 import { injectable } from 'inversify'
 
-import { SecurityDeviceMongooseModel } from '../../domain/SecurityDeviceSchema'
+import { SecurityDeviceMongooseModel } from '../../domain/entities/securityDevice.schema'
 import { DeviceViewModel } from '../../models'
 import { securityDevicesMapper } from '../../shared'
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-import { CommentDBModel } from '../models'
+import { CommentDBModel } from '../../models'
 
 const commentSchema = new mongoose.Schema<CommentDBModel>({
   content: { type: String, required: true },

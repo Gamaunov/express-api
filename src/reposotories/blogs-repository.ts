@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
 import { UpdateWriteOpResult } from 'mongoose'
 
-import { BlogMongooseModel } from '../domain/BlogSchema'
+import { BlogMongooseModel } from '../domain/entities/blog.schema'
 import { BlogOutputModel, BlogViewModel, CreateBlogModel } from '../models'
 
 @injectable()

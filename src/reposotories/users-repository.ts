@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
 import { HydratedDocument, UpdateWriteOpResult } from 'mongoose'
 
-import { IUser, IUserMethods, UserMongooseModel } from '../domain/UserSchema'
+import { IUser, IUserMethods, UserMongooseModel } from '../domain/entities/user.schema'
 import { UserDBModel, UserModel, UserViewModel } from '../models'
 
 @injectable()

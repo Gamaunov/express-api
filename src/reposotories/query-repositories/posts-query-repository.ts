@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 import { FilterQuery } from 'mongoose'
 
-import { PostMongooseModel } from '../../domain/PostSchema'
+import { PostMongooseModel } from '../../domain/entities/post.schema'
 import {
   PaginatorPostModel,
   PostDBModel,

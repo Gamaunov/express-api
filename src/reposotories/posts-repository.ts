@@ -2,7 +2,7 @@ import { injectable } from 'inversify'
 import { DeleteResult, ObjectId } from 'mongodb'
 import { HydratedDocument } from 'mongoose'
 
-import { PostMongooseModel } from '../domain/PostSchema'
+import { PostMongooseModel } from '../domain/entities/post.schema'
 import { PostDBModel, PostOutputModel, UpdatePostModel } from '../models'
 import { LikeStatus } from '../shared'
 

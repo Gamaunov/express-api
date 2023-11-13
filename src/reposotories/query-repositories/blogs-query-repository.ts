@@ -1,7 +1,7 @@
 import { injectable } from 'inversify'
 import { ObjectId, WithId } from 'mongodb'
 
-import { BlogMongooseModel } from '../../domain/BlogSchema'
+import { BlogMongooseModel } from '../../domain/entities/blog.schema'
 import {
   BlogDBModel,
   BlogOutputModel,
