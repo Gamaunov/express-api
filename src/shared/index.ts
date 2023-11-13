@@ -2,6 +2,7 @@ export { RequestWithBody } from './types/types'
 export { RequestWithQuery } from './types/types'
 export { RequestWithParams } from './types/types'
 export { RequestWithParamsAndBody } from './types/types'
+export { RequestWithParamsAndQuery } from './types/types'
 
 export { ConfirmCodeType } from './types/auth/auth-types'
 export { EmailType } from './types/auth/auth-types'

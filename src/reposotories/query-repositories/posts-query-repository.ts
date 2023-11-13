@@ -1,9 +1,9 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
+import { FilterQuery } from 'mongoose'
 
 import { PostMongooseModel } from '../../domain/PostSchema'
 import {
-  BlogQueryModel,
   PaginatorPostModel,
   PostDBModel,
   PostQueryModel,
@@ -27,47 +27,16 @@ export class PostsQueryRepository {
   async getPosts(
     data: PostQueryModel,
     userId?: ObjectId,
+    blogId?: string,
   ): Promise<PaginatorPostModel | null> {
     try {
+      const filter: FilterQuery<PostDBModel> = {}
+
+      if (blogId) {
+        filter.blogId = blogId
+      }
+
       const queryData: PostQueryModel = queryPostValidator(data)
-
-      const sortCriteria: { [key: string]: any } = {
-        [queryData.sortBy as string]: queryData.sortDirection,
-      }
-
-      const skip = skipFn(queryData.pageNumber!, queryData.pageSize!)
-
-      const limit = queryData.pageSize
-
-      const posts = await PostMongooseModel.find()
-        .sort(sortCriteria)
-        .skip(skip)
-        .limit(limit!)
-
-      const postItems = await this.postsMapping(posts, userId)
-
-      const totalCount: number = await PostMongooseModel.countDocuments()
-
-      return {
-        pagesCount: pagesCount(totalCount, queryData.pageSize!),
-        page: queryData.pageNumber!,
-        pageSize: queryData.pageSize!,
-        totalCount: totalCount,
-        items: postItems,
-      }
-    } catch (e) {
-      console.log(e)
-      return null
-    }
-  }
-
-  async getPostsByBlogId(
-    blogId: string,
-    queryData: BlogQueryModel,
-    userId?: ObjectId,
-  ): Promise<PaginatorPostModel | null> {
-    try {
-      const filter = { blogId: blogId }
 
       const sortCriteria: { [key: string]: any } = {
         [queryData.sortBy as string]: queryData.sortDirection,
@@ -87,7 +56,7 @@ export class PostsQueryRepository {
       const totalCount: number = await PostMongooseModel.countDocuments(filter)
 
       return {
-        pagesCount: Math.ceil(totalCount / queryData.pageSize!),
+        pagesCount: pagesCount(totalCount, queryData.pageSize!),
         page: queryData.pageNumber!,
         pageSize: queryData.pageSize!,
         totalCount: totalCount,

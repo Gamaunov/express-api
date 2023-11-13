@@ -1,4 +1,4 @@
-import {BlogDBModel, BlogOutputModel} from '../../../models'
+import { BlogDBModel, BlogOutputModel } from '../../../models'
 
 export const blogMapper = (blog: BlogDBModel): BlogOutputModel => {
   return {
