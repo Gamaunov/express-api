@@ -10,7 +10,6 @@ export { ITokenPayload } from './types/auth/auth-types'
 export { LoginOrEmailType } from './types/auth/auth-types'
 export { LoginType } from './types/auth/auth-types'
 export { UserInfoType } from './types/auth/auth-types'
-export { IRTokenInfo } from './types/auth/auth-types'
 export { NewPasswordRecoveryInputType } from './types/auth/auth-types'
 
 export { BlogIdType } from './types/blogs/blogs-types'
