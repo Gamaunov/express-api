@@ -42,7 +42,7 @@ export class PostsController {
     const data: PostQueryModel = req.query
 
     const posts: PaginatorPostModel | null =
-      await this.postsQueryRepository.getAllPosts(data, req.user?._id)
+      await this.postsQueryRepository.getPosts(data, req.user?._id)
 
     return res.status(200).json(posts)
   }

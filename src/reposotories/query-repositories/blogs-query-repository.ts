@@ -9,14 +9,18 @@ import {
   BlogViewModel,
   PaginatorBlogModel,
 } from '../../models'
-import { pagesCount, skipFn } from '../../shared'
+import {
+  pagesCount,
+  queryBlogValidator,
+  skipFn,
+} from '../../shared'
 
 @injectable()
 export class BlogsQueryRepository {
-  async getAllBlogs(
-    queryData: BlogQueryModel,
-  ): Promise<PaginatorBlogModel | null> {
+  async getAllBlogs(data: BlogQueryModel): Promise<PaginatorBlogModel | null> {
     try {
+      const queryData: BlogQueryModel = queryBlogValidator(data)
+
       const filter = {
         name: { $regex: queryData.searchNameTerm ?? '', $options: 'i' },
       }

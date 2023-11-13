@@ -1,16 +1,26 @@
 import { injectable } from 'inversify'
 
 import { UserMongooseModel } from '../../domain/UserSchema'
-import { PaginatorUserModel, UserQueryModel } from '../../models'
-import { loginEmailFilter, pagesCount, skipFn, userMapper } from '../../shared'
+import {
+  MappedUserModel,
+  PaginatorUserModel,
+  UserQueryModel,
+} from '../../models'
+import {
+  loginEmailFilter,
+  pagesCount,
+  queryUserValidator,
+  skipFn,
+  userMapper,
+} from '../../shared'
 
 @injectable()
 export class UsersQueryRepository {
-  async getAllUsers(
-    queryData: UserQueryModel,
-  ): Promise<PaginatorUserModel | null> {
+  async getAllUsers(data: UserQueryModel): Promise<PaginatorUserModel | null> {
     try {
-      const filter = loginEmailFilter(
+      const queryData: UserQueryModel = queryUserValidator(data)
+
+      const filter: UserQueryModel = loginEmailFilter(
         queryData.searchLoginTerm,
         queryData.searchEmailTerm,
       )
@@ -28,7 +38,7 @@ export class UsersQueryRepository {
         .skip(skip)
         .limit(limit!)
 
-      const userItems = users.map((u) => userMapper(u))
+      const userItems: MappedUserModel[] = users.map((u) => userMapper(u))
 
       const totalCount = await UserMongooseModel.countDocuments(filter)
 
