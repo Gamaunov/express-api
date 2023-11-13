@@ -1,14 +1,14 @@
 import cookieParser from 'cookie-parser'
 import express from 'express'
 
-import { authRouter } from './routes/auth-router'
-import { blogsRouter } from './routes/blogs-router'
-import { commentsRouter } from './routes/comments-router'
-import { homeRouter } from './routes/home-router'
-import { postsRouter } from './routes/posts-router'
-import { securityDevicesRouter } from './routes/security-devices-router'
-import { testingRouter } from './routes/testing-router'
-import { usersRouter } from './routes/users-router'
+import { authRouter } from './routes/auth.router'
+import { blogsRouter } from './routes/blogs.router'
+import { commentsRouter } from './routes/comments.router'
+import { homeRouter } from './routes/home.router'
+import { postsRouter } from './routes/posts.router'
+import { securityDevicesRouter } from './routes/securityDevices.router'
+import { testingRouter } from './routes/testing.router'
+import { usersRouter } from './routes/users.router'
 import { RouterPath } from './shared'
 
 export const app = express()
