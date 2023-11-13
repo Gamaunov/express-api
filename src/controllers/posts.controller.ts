@@ -16,8 +16,8 @@ import {
   URIParamsPostIdModel,
   URIParamsPostModel,
 } from '../models'
-import { CommentsQueryRepository } from '../infrastructure/query-repositories/commentsQuery.repository'
-import { PostsQueryRepository } from '../infrastructure/query-repositories/postsQuery.repository'
+import { CommentsQueryRepository } from '../infrastructure/query/comments.query.repository'
+import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import {
   LikeStatusType,
   RequestWithBody,

@@ -5,7 +5,7 @@ import { JwtService } from '../application/jwt.service'
 import { SecurityDevicesService } from '../application/securityDevices.service'
 import { DeviceViewModel } from '../models'
 import { URIParamsDeviceIdModel } from '../models/device/URIParamsDeviceIdModel'
-import { SecurityDevicesQueryRepository } from '../infrastructure/query-repositories/securityDevicesQuery.repository'
+import { SecurityDevicesQueryRepository } from '../infrastructure/query/securityDevices.query.repository'
 import { ITokenPayload, RequestWithParams } from '../shared'
 
 @injectable()

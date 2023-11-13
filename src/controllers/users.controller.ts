@@ -9,7 +9,7 @@ import {
   UserQueryModel,
   UserViewModel,
 } from '../models'
-import { UsersQueryRepository } from '../infrastructure/query-repositories/usersQuery.repository'
+import { UsersQueryRepository } from '../infrastructure/query/users.query.repository'
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
 
 @injectable()

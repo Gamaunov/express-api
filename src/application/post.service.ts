@@ -10,7 +10,7 @@ import {
   UpdatePostModel,
 } from '../models'
 import { PostsRepository } from '../infrastructure/posts.repository'
-import { BlogsQueryRepository } from '../infrastructure/query-repositories/blogsQuery.repository'
+import { BlogsQueryRepository } from '../infrastructure/query/blogs.query.repository'
 import { UsersRepository } from '../infrastructure/users.repository'
 import { LikeStatus, likeSwitcher } from '../shared'
 

@@ -8,7 +8,7 @@ import {
   CreateCommentModel,
 } from '../models'
 import { CommentsRepository } from '../infrastructure/comments.repository'
-import { PostsQueryRepository } from '../infrastructure/query-repositories/postsQuery.repository'
+import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import { LikeStatus, likeSwitcher } from '../shared'
 import { UsersService } from './users.service'
 

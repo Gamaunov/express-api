@@ -1,7 +1,7 @@
 import { body } from 'express-validator'
 
 import { BlogOutputModel } from '../../models'
-import { BlogsQueryRepository } from '../../infrastructure/query-repositories/blogsQuery.repository'
+import { BlogsQueryRepository } from '../../infrastructure/query/blogs.query.repository'
 
 const blogsQueryRepository = new BlogsQueryRepository()
 const validateBlogId = async (blogId: string): Promise<boolean> => {
