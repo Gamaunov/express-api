@@ -4,6 +4,7 @@ import { inject, injectable } from 'inversify'
 import { BlogsService } from '../application/blogs-service'
 import { PostsService } from '../application/post-service'
 import {
+  BlogByBlogIdQueryModel,
   BlogOutputModel,
   BlogQueryModel,
   BlogViewModel,
@@ -21,6 +22,7 @@ import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
+  RequestWithParamsAndQuery,
 } from '../shared'
 
 @injectable()
@@ -50,14 +52,17 @@ export class BlogsController {
     blog ? res.status(200).send(blog) : res.sendStatus(404)
   }
 
-  async getPosts(req: RequestWithParams<BlogIdType>, res: Response) {
-    const data = req.query
+  async getPosts(
+    req: RequestWithParamsAndQuery<BlogIdType, BlogByBlogIdQueryModel>,
+    res: Response,
+  ) {
+    const data: BlogByBlogIdQueryModel = req.query
 
     const postsByBlogId: PaginatorPostModel | null =
-      await this.postsQueryRepository.getPostsByBlogId(
-        req.params.blogId,
+      await this.postsQueryRepository.getPosts(
         data,
         req.user?._id,
+        req.params.blogId,
       )
 
     return postsByBlogId
