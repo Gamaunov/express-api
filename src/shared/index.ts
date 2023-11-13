@@ -37,6 +37,7 @@ export { loginEmailFilter } from './filters/users/loginEmailFilter'
 
 export { userMapper } from './mappers/users/user-mapper'
 export { securityDevicesMapper } from './mappers/devices/devices-mapper'
+export { blogMapper } from './mappers/blogs/blog-mapper'
 
 export { queryBlogValidator } from './validators/blogs/queryBlogValidator'
 export { queryPostValidator } from './validators/posts/queryPostValidator'

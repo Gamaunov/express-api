@@ -10,6 +10,7 @@ import {
   PaginatorBlogModel,
 } from '../../models'
 import {
+  blogMapper,
   pagesCount,
   queryBlogValidator,
   skipFn,
@@ -49,7 +50,7 @@ export class BlogsQueryRepository {
         pagesCount: pagesCount(totalCount, queryData.pageSize!),
         page: queryData.pageNumber!,
         pageSize: queryData.pageSize!,
-        totalCount: totalCount,
+        totalCount,
         items: blogItems,
       }
     } catch (e) {
@@ -63,14 +64,7 @@ export class BlogsQueryRepository {
 
     if (!blog) return null
 
-    return {
-      id: blog._id.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-      isMembership: blog.isMembership,
-    }
+    return blogMapper(blog)
   }
 
   private async blogsMapping(array: BlogDBModel[]): Promise<BlogOutputModel[]> {
