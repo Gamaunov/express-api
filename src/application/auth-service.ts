@@ -7,8 +7,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import { UserMongooseModel } from '../domain/UserSchema'
 import { emailManager } from '../managers/email-manager'
-import { UserModel } from '../models'
-import { MappedUserModel } from '../models'
+import { UserModel, UserViewModel } from '../models'
 import { UsersRepository } from '../reposotories/users-repository'
 import { settings } from '../settings'
 import { ITokenPayload } from '../shared'
@@ -24,7 +23,7 @@ export class AuthService {
     login: string,
     email: string,
     password: string,
-  ): Promise<MappedUserModel | null> {
+  ): Promise<UserViewModel | null> {
     const passwordHash: string = await this._generateHash(password)
 
     const smartUserModel = await UserMongooseModel.makeInstance(

@@ -3,9 +3,9 @@ import { ObjectId } from 'mongodb'
 
 import {
   CommentDBModel,
+  CommentViewModel,
   CommentatorInfoModel,
   CreateCommentModel,
-  MappedCommentModel,
 } from '../models'
 import { CommentsRepository } from '../reposotories/comments-repository'
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
@@ -95,7 +95,7 @@ export class CommentsService {
     postId: string,
     userInfo: CommentatorInfoModel,
     data: CreateCommentModel,
-  ): Promise<MappedCommentModel> {
+  ): Promise<CommentViewModel> {
     const newComment: CommentDBModel = new CommentDBModel(
       new ObjectId(),
       data.content,

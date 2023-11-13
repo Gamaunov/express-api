@@ -6,12 +6,16 @@ import { AuthService } from '../application/auth-service'
 import { JwtService } from '../application/jwtService'
 import { SecurityDevicesService } from '../application/security-devices-service'
 import { UsersService } from '../application/users-service'
-import { CreateUserModel, MappedUserModel, UserModel } from '../models'
+import {
+  CreateUserModel,
+  PostAuthModel,
+  UserModel,
+  UserViewModel,
+} from '../models'
 import {
   ConfirmCodeType,
   EmailType,
   ITokenPayload,
-  LoginOrEmailType,
   NewPasswordRecoveryInputType,
   RequestWithBody,
   UserInfoType,
@@ -27,7 +31,7 @@ export class AuthController {
     @inject(UsersService) protected usersService: UsersService,
   ) {}
   async registerUser(req: RequestWithBody<CreateUserModel>, res: Response) {
-    const user: MappedUserModel | null = await this.authService.registerUser(
+    const user: UserViewModel | null = await this.authService.registerUser(
       req.body.login,
       req.body.email,
       req.body.password,
@@ -52,7 +56,7 @@ export class AuthController {
     return result ? res.sendStatus(204) : res.sendStatus(400)
   }
 
-  async login(req: RequestWithBody<LoginOrEmailType>, res: Response) {
+  async login(req: RequestWithBody<PostAuthModel>, res: Response) {
     const user: UserModel | null = await this.authService.checkCredentials(
       req.body.loginOrEmail,
       req.body.password,

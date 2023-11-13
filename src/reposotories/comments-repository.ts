@@ -3,12 +3,12 @@ import { DeleteResult, ObjectId } from 'mongodb'
 import { HydratedDocument, UpdateWriteOpResult } from 'mongoose'
 
 import { CommentMongooseModel } from '../domain/CommentSchema'
-import { CommentDBModel, MappedCommentModel } from '../models'
+import { CommentDBModel, CommentViewModel } from '../models'
 import { LikeStatus } from '../shared'
 
 @injectable()
 export class CommentsRepository {
-  async createComment(newComment: CommentDBModel): Promise<MappedCommentModel> {
+  async createComment(newComment: CommentDBModel): Promise<CommentViewModel> {
     const comment = await CommentMongooseModel.create(newComment)
 
     return {

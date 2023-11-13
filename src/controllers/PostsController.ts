@@ -5,9 +5,9 @@ import { CommentsService } from '../application/comments-service'
 import { PostsService } from '../application/post-service'
 import {
   CommentQueryModel,
+  CommentViewModel,
   CreateCommentModel,
   CreatePostModel,
-  MappedCommentModel,
   PaginatorCommentModel,
   PaginatorPostModel,
   PostOutputModel,
@@ -20,7 +20,6 @@ import { CommentsQueryRepository } from '../reposotories/query-repositories/comm
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
 import {
   LikeStatusType,
-  PostIdType,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
@@ -67,10 +66,10 @@ export class PostsController {
   }
 
   async getComments(
-    req: RequestWithParamsAndBody<PostIdType, CommentQueryModel>,
+    req: RequestWithParamsAndBody<URIParamsPostIdModel, CommentQueryModel>,
     res: Response,
   ) {
-    const data = req.query
+    const data: CommentQueryModel = req.query
 
     const commentsByPostId: PaginatorCommentModel | null =
       await this.commentsQueryRepository.getCommentsByPostId(
@@ -83,7 +82,7 @@ export class PostsController {
   }
 
   async createComment(
-    req: RequestWithParamsAndBody<PostIdType, CreateCommentModel>,
+    req: RequestWithParamsAndBody<URIParamsPostIdModel, CreateCommentModel>,
     res: Response,
   ) {
     const data: CreateCommentModel = req.body
@@ -95,7 +94,7 @@ export class PostsController {
       userLogin: req.user.accountData.login,
     }
 
-    const createdCommentByPostId: MappedCommentModel =
+    const createdCommentByPostId: CommentViewModel =
       await this.commentsService.createCommentByPostId(
         req.params.postId,
         userInfo,

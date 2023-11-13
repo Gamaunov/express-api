@@ -5,8 +5,7 @@ import { CommentsService } from '../application/comments-service'
 import {
   CommentViewModel,
   CreateCommentModel,
-  MappedCommentModel,
-  URIParamsBlogIdModel,
+  URIParamsBlogModel,
   URIParamsCommentIdModel,
   URIParamsIdModel,
 } from '../models'
@@ -29,7 +28,7 @@ export class CommentsController {
     req: RequestWithParams<URIParamsIdModel>,
     res: Response,
   ): Promise<void> {
-    const comment: MappedCommentModel | null =
+    const comment: CommentViewModel | null =
       await this.commentsQueryRepository.getCommentById(
         req.params.id,
         req.user?._id,
@@ -39,12 +38,12 @@ export class CommentsController {
   }
 
   async updateComment(
-    req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreateCommentModel>,
+    req: RequestWithParamsAndBody<URIParamsBlogModel, CreateCommentModel>,
     res: Response,
   ) {
     if (!req.user) return res.sendStatus(401)
 
-    const comment: MappedCommentModel | null =
+    const comment: CommentViewModel | null =
       await this.commentsQueryRepository.getCommentById(req.params.id)
 
     if (!comment) return res.sendStatus(404)
@@ -87,7 +86,7 @@ export class CommentsController {
   ) {
     if (!req.user) return res.sendStatus(401)
 
-    const comment: MappedCommentModel | null =
+    const comment: CommentViewModel | null =
       await this.commentsQueryRepository.getCommentById(req.params.commentId)
 
     if (!comment) return res.sendStatus(404)

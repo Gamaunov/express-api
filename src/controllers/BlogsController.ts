@@ -13,12 +13,13 @@ import {
   PaginatorBlogModel,
   PaginatorPostModel,
   PostViewModel,
-  URIParamsBlogIdModel,
+  URIParamsBlogModel,
+  URIParamsPostModel,
 } from '../models'
+import { URIParamsBlogIdModel } from '../models/blog/URIParamsBlogIdModel'
 import { BlogsQueryRepository } from '../reposotories/query-repositories/blogs-query-repository'
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
 import {
-  BlogIdType,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
@@ -45,7 +46,7 @@ export class BlogsController {
     return res.status(200).send(blogs)
   }
 
-  async getBlog(req: RequestWithParams<URIParamsBlogIdModel>, res: Response) {
+  async getBlog(req: RequestWithParams<URIParamsBlogModel>, res: Response) {
     const blog: BlogOutputModel | null =
       await this.blogsQueryRepository.getBlogById(req.params.id)
 
@@ -53,7 +54,10 @@ export class BlogsController {
   }
 
   async getPosts(
-    req: RequestWithParamsAndQuery<BlogIdType, BlogByBlogIdQueryModel>,
+    req: RequestWithParamsAndQuery<
+      URIParamsBlogIdModel,
+      BlogByBlogIdQueryModel
+    >,
     res: Response,
   ) {
     const data: BlogByBlogIdQueryModel = req.query
@@ -77,7 +81,10 @@ export class BlogsController {
   }
 
   async createPost(
-    req: RequestWithParamsAndBody<BlogIdType, CreatePostByBlogIdModel>,
+    req: RequestWithParamsAndBody<
+      URIParamsBlogIdModel,
+      CreatePostByBlogIdModel
+    >,
     res: Response,
   ) {
     const createdPostByBlogId: PostViewModel | null =
@@ -89,7 +96,7 @@ export class BlogsController {
   }
 
   async updateBlog(
-    req: RequestWithParamsAndBody<URIParamsBlogIdModel, CreateBlogModel>,
+    req: RequestWithParamsAndBody<URIParamsBlogModel, CreateBlogModel>,
     res: Response,
   ): Promise<void> {
     const isUpdated: boolean = await this.blogsService.updateBlog(
@@ -100,7 +107,7 @@ export class BlogsController {
     isUpdated ? res.sendStatus(204) : res.sendStatus(404)
   }
   async deleteBlog(
-    req: RequestWithParams<URIParamsBlogIdModel>,
+    req: RequestWithParams<URIParamsBlogModel>,
     res: Response,
   ): Promise<void> {
     const isDeleted: boolean = await this.blogsService.deleteBlog(req.params.id)

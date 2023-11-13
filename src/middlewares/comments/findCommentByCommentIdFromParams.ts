@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { container } from '../../composition-root'
-import { MappedCommentModel } from '../../models'
+import { CommentViewModel } from '../../models'
 import { CommentsQueryRepository } from '../../reposotories/query-repositories/comments-query-repository'
 
 const commentsQueryRepository = container.resolve(CommentsQueryRepository)
@@ -10,7 +10,7 @@ export const findCommentByCommentIdFromParams = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const comment: MappedCommentModel | null =
+  const comment: CommentViewModel | null =
     await commentsQueryRepository.getCommentById(req.params.commentId)
 
   if (!comment) return res.sendStatus(404)

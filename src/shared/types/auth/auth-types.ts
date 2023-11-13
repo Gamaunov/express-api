@@ -8,15 +8,6 @@ export type EmailType = {
   email: string
 }
 
-export type LoginType = {
-  login: string
-}
-
-export type LoginOrEmailType = {
-  loginOrEmail: string
-  password: string
-}
-
 export type NewPasswordRecoveryInputType = {
   newPassword: 'string'
   recoveryCode: 'string'
@@ -34,5 +25,3 @@ export interface ITokenPayload {
   iat: number
   exp: number
 }
-
-

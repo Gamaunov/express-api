@@ -4,8 +4,9 @@ import { inject, injectable } from 'inversify'
 import { JwtService } from '../application/jwtService'
 import { SecurityDevicesService } from '../application/security-devices-service'
 import { DeviceViewModel } from '../models'
+import { URIParamsDeviceIdModel } from '../models/device/URIParamsDeviceIdModel'
 import { SecurityDevicesQueryRepository } from '../reposotories/query-repositories/security-devices-query-repository'
-import { DeviceIdType, ITokenPayload, RequestWithParams } from '../shared'
+import { ITokenPayload, RequestWithParams } from '../shared'
 
 @injectable()
 export class SecurityDevicesController {
@@ -32,7 +33,7 @@ export class SecurityDevicesController {
   }
 
   async deleteDevice(
-    req: RequestWithParams<DeviceIdType>,
+    req: RequestWithParams<URIParamsDeviceIdModel>,
     res: Response,
   ): Promise<void> {
     const isDeleted: boolean =

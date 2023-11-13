@@ -1,3 +1,3 @@
-export type URIParamsBlogIdModel = {
+export type URIParamsBlogModel = {
   id: string
 }

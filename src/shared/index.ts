@@ -7,17 +7,8 @@ export { RequestWithParamsAndQuery } from './types/types'
 export { ConfirmCodeType } from './types/auth/auth-types'
 export { EmailType } from './types/auth/auth-types'
 export { ITokenPayload } from './types/auth/auth-types'
-export { LoginOrEmailType } from './types/auth/auth-types'
-export { LoginType } from './types/auth/auth-types'
 export { UserInfoType } from './types/auth/auth-types'
 export { NewPasswordRecoveryInputType } from './types/auth/auth-types'
-
-export { BlogIdType } from './types/blogs/blogs-types'
-
-export { PostIdType } from './types/posts/posts-types'
-
-export { IRTInfo } from './types/devices/devices-types'
-export { DeviceIdType } from './types/devices/devices-types'
 
 export { LikeStatusType } from './types/comments/comments-types'
 

@@ -1,11 +1,7 @@
 import { injectable } from 'inversify'
 
 import { UserMongooseModel } from '../../domain/UserSchema'
-import {
-  MappedUserModel,
-  PaginatorUserModel,
-  UserQueryModel,
-} from '../../models'
+import { PaginatorUserModel, UserQueryModel, UserViewModel } from '../../models'
 import {
   loginEmailFilter,
   pagesCount,
@@ -39,7 +35,7 @@ export class UsersQueryRepository {
         .limit(limit!)
         .lean()
 
-      const userItems: MappedUserModel[] = users.map((u) => userMapper(u))
+      const userItems: UserViewModel[] = users.map((u) => userMapper(u))
 
       const totalCount = await UserMongooseModel.countDocuments(filter)
 
