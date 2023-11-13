@@ -53,7 +53,7 @@ export class PostsQueryRepository {
 
       const postItems = await this.postsMapping(posts, userId)
 
-      const totalCount: number = await PostMongooseModel.countDocuments(filter)
+      const totalCount: number = await PostMongooseModel.countDocuments()
 
       return {
         pagesCount: pagesCount(totalCount, queryData.pageSize!),
