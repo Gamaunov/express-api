@@ -39,6 +39,7 @@ export class CommentsQueryRepository {
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
+        .lean()
 
       const commentItems: CommentViewModel[] = await this.commentsMapping(
         comments,

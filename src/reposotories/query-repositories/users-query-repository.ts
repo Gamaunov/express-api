@@ -37,6 +37,7 @@ export class UsersQueryRepository {
         .sort(sortCriteria)
         .skip(skip)
         .limit(limit!)
+        .lean()
 
       const userItems: MappedUserModel[] = users.map((u) => userMapper(u))
 
