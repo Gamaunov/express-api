@@ -10,7 +10,12 @@ import {
   PostViewModel,
 } from '../../models'
 import { ExtendedUserLikes } from '../../models/db/PostDBModel'
-import { LikeStatus, pagesCount, skipFn } from '../../shared'
+import {
+  LikeStatus,
+  pagesCount,
+  queryPostValidator,
+  skipFn,
+} from '../../shared'
 import { getThreeNewestLikes } from '../../shared/utils/getThreeNewestLikes'
 import { PostsRepository } from '../posts-repository'
 
@@ -19,11 +24,13 @@ export class PostsQueryRepository {
   constructor(
     @inject(PostsRepository) protected postsRepository: PostsRepository,
   ) {}
-  async getAllPosts(
-    queryData: PostQueryModel,
+  async getPosts(
+    data: PostQueryModel,
     userId?: ObjectId,
   ): Promise<PaginatorPostModel | null> {
     try {
+      const queryData: PostQueryModel = queryPostValidator(data)
+
       const sortCriteria: { [key: string]: any } = {
         [queryData.sortBy as string]: queryData.sortDirection,
       }
