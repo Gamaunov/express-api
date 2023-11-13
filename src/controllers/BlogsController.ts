@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { BlogsService } from '../application/blogs-service'
-import { PostsService } from '../application/post-service'
+import { BlogsService } from '../application/blogs.service'
+import { PostsService } from '../application/post.service'
 import {
   BlogByBlogIdQueryModel,
   BlogOutputModel,
@@ -14,7 +14,6 @@ import {
   PaginatorPostModel,
   PostViewModel,
   URIParamsBlogModel,
-  URIParamsPostModel,
 } from '../models'
 import { URIParamsBlogIdModel } from '../models/blog/URIParamsBlogIdModel'
 import { BlogsQueryRepository } from '../reposotories/query-repositories/blogs-query-repository'

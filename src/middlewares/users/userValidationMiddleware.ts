@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-import { UsersService } from '../../application/users-service'
+import { UsersService } from '../../application/users.service'
 import { container } from '../../composition-root'
 import { UserModel } from '../../models'
 

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { UsersService } from '../../application/users-service'
+import { UsersService } from '../../application/users.service'
 import { container } from '../../composition-root'
 import { UserModel } from '../../models'
 

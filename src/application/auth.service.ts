@@ -11,7 +11,7 @@ import { UserModel, UserViewModel } from '../models'
 import { UsersRepository } from '../reposotories/users-repository'
 import { settings } from '../settings'
 import { ITokenPayload } from '../shared'
-import { UsersService } from './users-service'
+import { UsersService } from './users.service'
 
 @injectable()
 export class AuthService {

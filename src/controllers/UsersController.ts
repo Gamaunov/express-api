@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { UsersService } from '../application/users-service'
+import { UsersService } from '../application/users.service'
 import {
   CreateUserModel,
   PaginatorUserModel,

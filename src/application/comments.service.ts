@@ -10,7 +10,7 @@ import {
 import { CommentsRepository } from '../reposotories/comments-repository'
 import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
 import { LikeStatus, likeSwitcher } from '../shared'
-import { UsersService } from './users-service'
+import { UsersService } from './users.service'
 
 @injectable()
 export class CommentsService {

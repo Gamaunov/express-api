@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { CommentsService } from '../application/comments-service'
+import { CommentsService } from '../application/comments.service'
 import {
   CommentViewModel,
   CreateCommentModel,

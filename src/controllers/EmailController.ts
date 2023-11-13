@@ -1,7 +1,7 @@
 import { Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { EmailService } from '../application/email-service'
+import { EmailService } from '../application/email.service'
 import { EmailViewModel } from '../models'
 import { RequestWithBody } from '../shared'
 

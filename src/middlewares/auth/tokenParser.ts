@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 
-import { JwtService } from '../../application/jwtService'
-import { UsersService } from '../../application/users-service'
+import { JwtService } from '../../application/jwt.service'
+import { UsersService } from '../../application/users.service'
 import { container } from '../../composition-root'
 import { ITokenPayload } from '../../shared'
 

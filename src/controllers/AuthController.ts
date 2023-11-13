@@ -2,10 +2,10 @@ import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
-import { AuthService } from '../application/auth-service'
-import { JwtService } from '../application/jwtService'
-import { SecurityDevicesService } from '../application/security-devices-service'
-import { UsersService } from '../application/users-service'
+import { AuthService } from '../application/auth.service'
+import { JwtService } from '../application/jwt.service'
+import { SecurityDevicesService } from '../application/securityDevices.service'
+import { UsersService } from '../application/users.service'
 import {
   CreateUserModel,
   PostAuthModel,

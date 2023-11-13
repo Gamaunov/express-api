@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { JwtService } from '../application/jwtService'
-import { SecurityDevicesService } from '../application/security-devices-service'
+import { JwtService } from '../application/jwt.service'
+import { SecurityDevicesService } from '../application/securityDevices.service'
 import { DeviceViewModel } from '../models'
 import { URIParamsDeviceIdModel } from '../models/device/URIParamsDeviceIdModel'
 import { SecurityDevicesQueryRepository } from '../reposotories/query-repositories/security-devices-query-repository'

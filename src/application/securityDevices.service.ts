@@ -8,7 +8,7 @@ import {
 } from '../models'
 import { SecurityDevicesRepository } from '../reposotories/security-devices-repository'
 import { ITokenPayload } from '../shared'
-import { JwtService } from './jwtService'
+import { JwtService } from './jwt.service'
 
 @injectable()
 export class SecurityDevicesService {

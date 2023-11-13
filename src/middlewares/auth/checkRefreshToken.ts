@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { AuthService } from '../../application/auth-service'
-import { SecurityDevicesService } from '../../application/security-devices-service'
+import { AuthService } from '../../application/auth.service'
+import { SecurityDevicesService } from '../../application/securityDevices.service'
 import { container } from '../../composition-root'
 import { DeviceDBModel } from '../../models'
 import { ITokenPayload } from '../../shared'

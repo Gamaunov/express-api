@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
-import { CommentsService } from '../application/comments-service'
-import { PostsService } from '../application/post-service'
+import { CommentsService } from '../application/comments.service'
+import { PostsService } from '../application/post.service'
 import {
   CommentQueryModel,
   CommentViewModel,
