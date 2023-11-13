@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { container } from '../composition-root'
-import { SecurityDevicesController } from '../controllers/SecurityDevicesController'
+import { SecurityDevicesController } from '../controllers/securityDevices.controller'
 import { checkForRefreshToken, deviceIdMiddleware } from '../middlewares'
 
 export const securityDevicesRouter = Router({})

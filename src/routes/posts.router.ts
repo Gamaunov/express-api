@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { container } from '../composition-root'
-import { PostsController } from '../controllers/PostsController'
+import { PostsController } from '../controllers/posts.controller'
 import {
   authBearerMiddleware,
   checkBasicMiddleware,

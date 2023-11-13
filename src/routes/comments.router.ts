@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { container } from '../composition-root'
-import { CommentsController } from '../controllers/CommentsController'
+import { CommentsController } from '../controllers/comments.controller'
 import {
   authBearerMiddleware,
   checkBasicMiddleware,

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { container } from '../composition-root'
-import { BlogsController } from '../controllers/BlogsController'
+import { BlogsController } from '../controllers/blogs.controller'
 import {
   checkBasicMiddleware,
   errorsValidation,

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { container } from '../composition-root'
-import { AuthController } from '../controllers/AuthController'
+import { AuthController } from '../controllers/auth.controller'
 import {
   authBearerMiddleware,
   authValidation,
