@@ -8,7 +8,7 @@ import {
   UserModel,
   UserViewModel,
 } from '../models'
-import { UsersRepository } from '../reposotories/users-repository'
+import { UsersRepository } from '../infrastructure/users.repository'
 
 @injectable()
 export class UsersService {

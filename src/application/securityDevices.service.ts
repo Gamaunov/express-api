@@ -6,7 +6,7 @@ import {
   DeviceViewModel,
   SecurityDeviceDBModel,
 } from '../models'
-import { SecurityDevicesRepository } from '../reposotories/security-devices-repository'
+import { SecurityDevicesRepository } from '../infrastructure/securityDevices.repository'
 import { ITokenPayload } from '../shared'
 import { JwtService } from './jwt.service'
 

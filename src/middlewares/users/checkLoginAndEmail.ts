@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { UserModel } from '../../models'
-import { UsersRepository } from '../../reposotories/users-repository'
+import { UsersRepository } from '../../infrastructure/users.repository'
 
 const usersRepository = new UsersRepository()
 

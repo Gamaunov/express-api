@@ -17,7 +17,7 @@ import {
   skipFn,
 } from '../../shared'
 import { getThreeNewestLikes } from '../../shared/utils/getThreeNewestLikes'
-import { PostsRepository } from '../posts-repository'
+import { PostsRepository } from '../posts.repository'
 
 @injectable()
 export class PostsQueryRepository {

@@ -9,7 +9,7 @@ import {
   PaginatorCommentModel,
 } from '../../models'
 import { LikeStatus, queryCommentValidator, skipFn } from '../../shared'
-import { CommentsRepository } from '../comments-repository'
+import { CommentsRepository } from '../comments.repository'
 
 @injectable()
 export class CommentsQueryRepository {

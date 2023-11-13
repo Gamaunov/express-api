@@ -9,9 +9,9 @@ import {
   PostViewModel,
   UpdatePostModel,
 } from '../models'
-import { PostsRepository } from '../reposotories/posts-repository'
-import { BlogsQueryRepository } from '../reposotories/query-repositories/blogs-query-repository'
-import { UsersRepository } from '../reposotories/users-repository'
+import { PostsRepository } from '../infrastructure/posts.repository'
+import { BlogsQueryRepository } from '../infrastructure/query-repositories/blogsQuery.repository'
+import { UsersRepository } from '../infrastructure/users.repository'
 import { LikeStatus, likeSwitcher } from '../shared'
 
 @injectable()

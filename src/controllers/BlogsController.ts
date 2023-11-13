@@ -16,8 +16,8 @@ import {
   URIParamsBlogModel,
 } from '../models'
 import { URIParamsBlogIdModel } from '../models/blog/URIParamsBlogIdModel'
-import { BlogsQueryRepository } from '../reposotories/query-repositories/blogs-query-repository'
-import { PostsQueryRepository } from '../reposotories/query-repositories/posts-query-repository'
+import { BlogsQueryRepository } from '../infrastructure/query-repositories/blogsQuery.repository'
+import { PostsQueryRepository } from '../infrastructure/query-repositories/postsQuery.repository'
 import {
   RequestWithBody,
   RequestWithParams,

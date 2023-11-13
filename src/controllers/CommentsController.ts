@@ -9,7 +9,7 @@ import {
   URIParamsCommentIdModel,
   URIParamsIdModel,
 } from '../models'
-import { CommentsQueryRepository } from '../reposotories/query-repositories/comments-query-repository'
+import { CommentsQueryRepository } from '../infrastructure/query-repositories/commentsQuery.repository'
 import {
   LikeStatusType,
   RequestWithParams,

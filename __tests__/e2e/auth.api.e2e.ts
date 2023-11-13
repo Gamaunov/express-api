@@ -1,7 +1,7 @@
 import request from 'supertest'
 
 import { CreateUserModel } from '../../src/models'
-import { loginAttemptsRepository } from '../../src/reposotories/loginAttempts-repository'
+import { loginAttemptsRepository } from '../../src/infrastructure/loginAttempts-repository'
 import { LoginOrEmailType } from '../../src/shared'
 
 const getRequest = () => {

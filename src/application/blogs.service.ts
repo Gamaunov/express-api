@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
 import { BlogDBModel, BlogViewModel, CreateBlogModel } from '../models'
-import { BlogsRepository } from '../reposotories/blogs-repository'
+import { BlogsRepository } from '../infrastructure/blogs.repository'
 
 @injectable()
 export class BlogsService {

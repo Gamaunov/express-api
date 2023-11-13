@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 import { container } from '../../composition-root'
 import { CommentViewModel } from '../../models'
-import { CommentsQueryRepository } from '../../reposotories/query-repositories/comments-query-repository'
+import { CommentsQueryRepository } from '../../infrastructure/query-repositories/commentsQuery.repository'
 
 const commentsQueryRepository = container.resolve(CommentsQueryRepository)
 export const findCommentByCommentIdFromParams = async (
