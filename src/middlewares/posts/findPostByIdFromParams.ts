@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { container } from '../../composition-root'
-import { PostOutputModel } from '../../models'
 import { PostsQueryRepository } from '../../infrastructure/query/posts.query.repository'
+import { PostOutputModel } from '../../models'
 
 const postsQueryRepository = container.resolve(PostsQueryRepository)
 export const findPostByIdFromParams = async (

@@ -3,6 +3,8 @@ import { inject, injectable } from 'inversify'
 
 import { BlogsService } from '../application/blogs.service'
 import { PostsService } from '../application/post.service'
+import { BlogsQueryRepository } from '../infrastructure/query/blogs.query.repository'
+import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import {
   BlogByBlogIdQueryModel,
   BlogOutputModel,
@@ -16,8 +18,6 @@ import {
   URIParamsBlogModel,
 } from '../models'
 import { URIParamsBlogIdModel } from '../models/blog/URIParamsBlogIdModel'
-import { BlogsQueryRepository } from '../infrastructure/query/blogs.query.repository'
-import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import {
   RequestWithBody,
   RequestWithParams,

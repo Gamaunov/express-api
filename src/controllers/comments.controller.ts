@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import { CommentsService } from '../application/comments.service'
+import { CommentsQueryRepository } from '../infrastructure/query/comments.query.repository'
 import {
   CommentViewModel,
   CreateCommentModel,
@@ -9,7 +10,6 @@ import {
   URIParamsCommentIdModel,
   URIParamsIdModel,
 } from '../models'
-import { CommentsQueryRepository } from '../infrastructure/query/comments.query.repository'
 import {
   LikeStatusType,
   RequestWithParams,

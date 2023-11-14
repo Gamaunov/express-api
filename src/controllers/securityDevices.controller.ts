@@ -3,9 +3,9 @@ import { inject, injectable } from 'inversify'
 
 import { JwtService } from '../application/jwt.service'
 import { SecurityDevicesService } from '../application/securityDevices.service'
+import { SecurityDevicesQueryRepository } from '../infrastructure/query/securityDevices.query.repository'
 import { DeviceViewModel } from '../models'
 import { URIParamsDeviceIdModel } from '../models/device/URIParamsDeviceIdModel'
-import { SecurityDevicesQueryRepository } from '../infrastructure/query/securityDevices.query.repository'
 import { ITokenPayload, RequestWithParams } from '../shared'
 
 @injectable()

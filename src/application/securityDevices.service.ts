@@ -1,12 +1,12 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
+import { SecurityDevicesRepository } from '../infrastructure/securityDevices.repository'
 import {
   DeviceDBModel,
   DeviceViewModel,
   SecurityDeviceDBModel,
 } from '../models'
-import { SecurityDevicesRepository } from '../infrastructure/securityDevices.repository'
 import { ITokenPayload } from '../shared'
 import { JwtService } from './jwt.service'
 

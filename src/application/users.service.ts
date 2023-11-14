@@ -2,13 +2,13 @@ import bcrypt from 'bcrypt'
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
+import { UsersRepository } from '../infrastructure/users.repository'
 import {
   CreateUserModel,
   UserDBModel,
   UserModel,
   UserViewModel,
 } from '../models'
-import { UsersRepository } from '../infrastructure/users.repository'
 
 @injectable()
 export class UsersService {

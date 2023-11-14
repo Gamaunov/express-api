@@ -1,8 +1,8 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
-import { RateLimitDBModel } from '../models'
 import { RateLimitsRepository } from '../infrastructure/rateLimits.repository'
+import { RateLimitDBModel } from '../models'
 
 @injectable()
 export class RateLimitsService {

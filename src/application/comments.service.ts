@@ -1,14 +1,14 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
+import { CommentsRepository } from '../infrastructure/comments.repository'
+import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import {
   CommentDBModel,
   CommentViewModel,
   CommentatorInfoModel,
   CreateCommentModel,
 } from '../models'
-import { CommentsRepository } from '../infrastructure/comments.repository'
-import { PostsQueryRepository } from '../infrastructure/query/posts.query.repository'
 import { LikeStatus, likeSwitcher } from '../shared'
 import { UsersService } from './users.service'
 

@@ -1,6 +1,9 @@
 import { inject, injectable } from 'inversify'
 import { ObjectId } from 'mongodb'
 
+import { PostsRepository } from '../infrastructure/posts.repository'
+import { BlogsQueryRepository } from '../infrastructure/query/blogs.query.repository'
+import { UsersRepository } from '../infrastructure/users.repository'
 import {
   BlogOutputModel,
   CreatePostByBlogIdModel,
@@ -9,9 +12,6 @@ import {
   PostViewModel,
   UpdatePostModel,
 } from '../models'
-import { PostsRepository } from '../infrastructure/posts.repository'
-import { BlogsQueryRepository } from '../infrastructure/query/blogs.query.repository'
-import { UsersRepository } from '../infrastructure/users.repository'
 import { LikeStatus, likeSwitcher } from '../shared'
 
 @injectable()

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
-import { BlogOutputModel } from '../../models'
 import { BlogsQueryRepository } from '../../infrastructure/query/blogs.query.repository'
+import { BlogOutputModel } from '../../models'
 
 const blogsQueryRepository = new BlogsQueryRepository()
 

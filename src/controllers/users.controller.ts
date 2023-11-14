@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { inject, injectable } from 'inversify'
 
 import { UsersService } from '../application/users.service'
+import { UsersQueryRepository } from '../infrastructure/query/users.query.repository'
 import {
   CreateUserModel,
   PaginatorUserModel,
@@ -9,7 +10,6 @@ import {
   UserQueryModel,
   UserViewModel,
 } from '../models'
-import { UsersQueryRepository } from '../infrastructure/query/users.query.repository'
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../shared'
 
 @injectable()
