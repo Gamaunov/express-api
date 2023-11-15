@@ -15,3 +15,15 @@ export const EmptyOutput = {
   totalCount: 0,
   items: [],
 }
+
+export const likeData = {
+  likeStatus: 'Like',
+}
+
+export const dislikeData = {
+  likeStatus: 'Dislike',
+}
+
+export const noneData = {
+  likeStatus: 'None',
+}
