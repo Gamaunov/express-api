@@ -7,3 +7,11 @@ export function encodeCredentials(username: string, password: string) {
 export const username = 'admin'
 export const password = 'qwerty'
 export const authHeader = encodeCredentials(username, password)
+
+export const EmptyOutput = {
+  pagesCount: 0,
+  page: 1,
+  pageSize: 10,
+  totalCount: 0,
+  items: [],
+}

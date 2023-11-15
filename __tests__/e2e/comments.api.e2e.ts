@@ -10,6 +10,7 @@ import {
   CreateUserModel,
 } from '../../src/models'
 import { authHeader } from '../helpers.test'
+import {ObjectId} from "mongodb";
 
 dotenv.config()
 
@@ -36,6 +37,7 @@ describe('comments router', () => {
     let createdPost: any = null
     let createdUser: any = null
     let BearerUserToken: any = null
+    let InvalidBearerUserToken = BearerUserToken + 'q'
     let commentId: any = null
     let userToken: any = null
 
@@ -262,5 +264,153 @@ describe('comments router', () => {
         .set('Authorization', BearerUserToken)
         .expect(404)
     })
+
+    //like-status
+    it(`shouldn't update like status if the inputModel has incorrect values`, async () => {
+      const data = {
+        likeStatus: 'Nonsense',
+      }
+
+      const updatedComment = await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .set('Authorization', BearerUserToken)
+        .send(data)
+        .expect(400)
+
+      const responseBody = updatedComment.body
+
+      expect(responseBody).toEqual({
+        errorsMessages: [ { message: expect.any(String), field: 'likeStatus' } ]
+      })
+    })
+
+    it(`shouldn't update like status if user unauthorized or has incorrect data`, async () => {
+      const data = {
+        likeStatus: 'None',
+      }
+
+       await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .set('Authorization', InvalidBearerUserToken)
+        .send(data)
+        .expect(401)
+
+      await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .send(data)
+        .expect(401)
+    })
+
+    it(`shouldn't update like status if comment with specified id doesn't exists`, async () => {
+      const data = {
+        likeStatus: 'None',
+      }
+
+      await request(app)
+        .put(`/comments/${new ObjectId()}/like-status`)
+        .set('Authorization', BearerUserToken)
+        .send(data)
+        .expect(404)
+    })
+
+    it(`should update like status`, async () => {
+      const data = {
+        likeStatus: 'Like',
+      }
+
+       await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .set('Authorization', BearerUserToken)
+        .send(data)
+        .expect(204)
+
+      const updatedComment = await request(app)
+        .get(`/comments/${commentId}`)
+        .expect(200)
+
+      const responseBody = updatedComment.body
+
+      expect(responseBody).toEqual({
+        id: responseBody.id,
+        content: responseBody.content,
+        commentatorInfo: {
+          userId: responseBody.commentatorInfo.userId,
+          userLogin: responseBody.commentatorInfo.userLogin,
+        },
+        createdAt: responseBody.createdAt,
+        likesInfo: {
+          likesCount: 1,
+          dislikesCount: 0,
+          myStatus: 'None',
+        },
+      })
+    });
+
+    it(`should update like status`, async () => {
+      const data = {
+        likeStatus: 'Dislike',
+      }
+
+      await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .set('Authorization', BearerUserToken)
+        .send(data)
+        .expect(204)
+
+      const updatedComment = await request(app)
+        .get(`/comments/${commentId}`)
+        .expect(200)
+
+      const responseBody = updatedComment.body
+
+      expect(responseBody).toEqual({
+        id: responseBody.id,
+        content: responseBody.content,
+        commentatorInfo: {
+          userId: responseBody.commentatorInfo.userId,
+          userLogin: responseBody.commentatorInfo.userLogin,
+        },
+        createdAt: responseBody.createdAt,
+        likesInfo: {
+          likesCount: 0, // -1
+          dislikesCount: 1, // +1
+          myStatus: 'None',
+        },
+      })
+    });
+
+    it(`should update like status`, async () => {
+      const data = {
+        likeStatus: 'None',
+      }
+
+      await request(app)
+        .put(`/comments/${commentId}/like-status`)
+        .set('Authorization', BearerUserToken)
+        .send(data)
+        .expect(204)
+
+      const updatedComment = await request(app)
+        .get(`/comments/${commentId}`)
+        .expect(200)
+
+      const responseBody = updatedComment.body
+
+      expect(responseBody).toEqual({
+        id: responseBody.id,
+        content: responseBody.content,
+        commentatorInfo: {
+          userId: responseBody.commentatorInfo.userId,
+          userLogin: responseBody.commentatorInfo.userLogin,
+        },
+        createdAt: responseBody.createdAt,
+        likesInfo: {
+          likesCount: 0,
+          dislikesCount: 0, //-1
+          myStatus: 'None',
+        },
+      })
+    });
+    //like-status ends
   })
 })
