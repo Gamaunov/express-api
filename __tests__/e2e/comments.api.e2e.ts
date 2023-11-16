@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import { ObjectId } from 'mongodb'
 import mongoose from 'mongoose'
 import request from 'supertest'
 
@@ -10,7 +11,6 @@ import {
   CreateUserModel,
 } from '../../src/models'
 import { authHeader } from '../helpers.test'
-import {ObjectId} from "mongodb";
 
 dotenv.config()
 
@@ -280,7 +280,7 @@ describe('comments router', () => {
       const responseBody = updatedComment.body
 
       expect(responseBody).toEqual({
-        errorsMessages: [ { message: expect.any(String), field: 'likeStatus' } ]
+        errorsMessages: [{ message: expect.any(String), field: 'likeStatus' }],
       })
     })
 
@@ -289,7 +289,7 @@ describe('comments router', () => {
         likeStatus: 'None',
       }
 
-       await request(app)
+      await request(app)
         .put(`/comments/${commentId}/like-status`)
         .set('Authorization', InvalidBearerUserToken)
         .send(data)
@@ -318,7 +318,7 @@ describe('comments router', () => {
         likeStatus: 'Like',
       }
 
-       await request(app)
+      await request(app)
         .put(`/comments/${commentId}/like-status`)
         .set('Authorization', BearerUserToken)
         .send(data)
@@ -344,7 +344,7 @@ describe('comments router', () => {
           myStatus: 'None',
         },
       })
-    });
+    })
 
     it(`should update like status`, async () => {
       const data = {
@@ -377,7 +377,7 @@ describe('comments router', () => {
           myStatus: 'None',
         },
       })
-    });
+    })
 
     it(`should update like status`, async () => {
       const data = {
@@ -410,7 +410,7 @@ describe('comments router', () => {
           myStatus: 'None',
         },
       })
-    });
+    })
     //like-status ends
   })
 })
